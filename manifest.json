@@ -1,0 +1,41 @@
+{
+  "name": "Aplikasi Islam - Tahlil, Yasin & Doa",
+  "short_name": "Islam App",
+  "description": "Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain dengan sokongan audio.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2c3e50",
+  "theme_color": "#2c3e50",
+  "categories": ["education", "lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "type": "image/png",
+      "sizes": "1080x1920",
+      "form_factor": "narrow",
+      "label": "Halaman Utama Aplikasi Islam"
+    },
+    {
+      "src": "screenshot2.png",
+      "type": "image/png",
+      "sizes": "1920x1080",
+      "form_factor": "wide",
+      "label": "Paparan Surah Yasin"
+    }
+  ]
+}
