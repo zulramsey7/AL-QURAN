@@ -30,19 +30,19 @@
         isNovel: true, 
         scenes: [
             { 
-                img: "assets/sirah1.jpg", 
+                img: "sirah1.jpg", 
                 text: `Tahun itu dikenali sebagai Amul Huzni (Tahun Kesedihan). Rasulullah SAW baru sahaja kehilangan penyokong kuatnya, Abu Talib, dan permaisuri hatinya, Khadijah binti Khuwailid. Di tengah tekanan kaum Quraisy yang semakin hebat, Allah SWT ingin menghiburkan kekasih-Nya dengan satu jemputan protokol diraja ke langit.
     
                 Pada malam yang tenang, sedang baginda berbaring di antara tidur dan jaga di kawasan Hijir Ismail, Malaikat Jibril AS datang. Dada baginda dibelah, hati baginda dicuci dengan air Zamzam, lalu dituangkan iman dan hikmah ke dalamnya.` 
             },
             { 
-                img: "assets/sirah2.jpg", 
+                img: "sirah2.jpg", 
                 text: `Di hadapan baginda, berdirilah seiras makhluk putih yang dipanggil Buraq. Saiznya lebih besar daripada keldai tetapi lebih kecil daripada bagal. Dengan satu langkah yang sejauh mata memandang, Buraq membawa Rasulullah dari Masjidil Haram di Makkah ke Masjidil Aqsa di Palestin dalam sekelip mata.
   
                 Di Masjidil Aqsa, satu pemandangan menakjubkan menanti. Roh para Nabi terdahulu berkumpul, dan Rasulullah SAW berdiri di hadapan sebagai Imam, memimpin solat berjemaah.` 
             },
             { 
-                img: "assets/sirah3.jpg", 
+                img: "sirah3.jpg", 
                 text: `Dari Masjidil Aqsa, satu tangga cahaya (al-Mirqat) diturunkan. Rasulullah menembusi lapisan langit dan bertemu para Nabi:
                 
                 Langit 1: Nabi Adam AS.
@@ -54,7 +54,7 @@
                 Langit 7: Nabi Ibrahim AS bersandar di Baitul Ma'mur.` 
             },
             { 
-                img: "assets/sirah4.jpg", 
+                img: "sirah4.jpg", 
                 text: `Jibril membawa Rasulullah ke Sidratul Muntaha. Di sini, Jibril berhenti kerana tidak mampu melepasi sempadan keagungan Allah. 
                 
                 Rasulullah meneruskan seorang diri menghadap Allah SWT dan menerima perintah solat 50 waktu. Setelah berulang-alik atas nasihat Nabi Musa AS, akhirnya Allah menetapkan solat 5 waktu sehari semalam.` 
@@ -128,33 +128,33 @@
           const modalContent = document.getElementById('modalContent');
           
           if (story.isNovel) {
-              modalDialog.classList.add('modal-xl');
-              modalContent.innerHTML = `
-                  <div id="novelCarousel" class="carousel slide" data-bs-interval="false">
-                      <div class="carousel-inner">
-                          ${story.scenes.map((scene, i) => `
-                              <div class="carousel-item ${i === 0 ? 'active' : ''}">
-                                  <div class="row g-0 bg-white">
-                                      <div class="col-lg-7 bg-dark novel-img-container">
-                                          <img src="img/${scene.img}" class="w-100 h-100" style="object-fit: cover;" onerror="this.src='https://placehold.co/800x600?text=Imej+Sirah'">
-                                      </div>
-                                      <div class="col-lg-5 novel-text-container">
-                                          <div class="mb-4">
-                                              <span class="badge bg-success mb-2">Bahagian ${i + 1} / ${story.scenes.length}</span>
-                                              <p class="story-text">${scene.text}</p>
-                                          </div>
-                                          <div class="d-flex justify-content-between mt-auto">
-                                              <button class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-target="#novelCarousel" data-bs-slide="prev" ${i === 0 ? 'disabled' : ''}>Sebut Sebelumnya</button>
-                                              <button class="btn btn-success btn-sm rounded-pill" data-bs-target="#novelCarousel" data-bs-slide="next">
-                                                  ${i === story.scenes.length - 1 ? 'Selesai' : 'Seterusnya'}
-                                              </button>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          `).join('')}
-                      </div>
-                  </div>
+            modalDialog.classList.add('modal-xl');
+            modalContent.innerHTML = `
+                <div id="novelCarousel" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        ${story.scenes.map((scene, i) => `
+                            <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                                <div class="row g-0 bg-white">
+                                    <div class="col-lg-7 bg-dark novel-img-container">
+                                        <img src="assets/${scene.img}" class="w-100 h-100" style="object-fit: cover;" onerror="this.src='https://placehold.co/800x600?text=Imej+Tidak+Ditemui'">
+                                    </div>
+                                    <div class="col-lg-5 novel-text-container">
+                                        <div class="p-4 mb-4">
+                                            <span class="badge bg-success mb-2">Bahagian ${i + 1} / ${story.scenes.length}</span>
+                                            <p class="story-text" style="white-space: pre-line;">${scene.text}</p>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-auto p-4">
+                                            <button class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-target="#novelCarousel" data-bs-slide="prev" ${i === 0 ? 'disabled' : ''}>Sebelumnya</button>
+                                            <button class="btn btn-success btn-sm rounded-pill" data-bs-target="#novelCarousel" data-bs-slide="next">
+                                                ${i === story.scenes.length - 1 ? 'Selesai' : 'Seterusnya'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
               `;
           } else {
               modalDialog.classList.remove('modal-xl');
@@ -186,4 +186,3 @@
   });
   
   document.addEventListener('DOMContentLoaded', renderAllStories);
-
