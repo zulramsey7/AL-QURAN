@@ -6,159 +6,42 @@
     <title>Bacaan Surah Yasin - Aplikasi Islam</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2c3e50">
+    <meta name="theme-color" content="#198754">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     
-    <style>
-        :root {
-            --primary-dark: #2c3e50;
-            --quran-green: #27ae60;
-            --bg-light: #f4f7f6;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            font-family: 'Roboto', sans-serif;
-        }
-
-        /* Navbar */
-        .navbar {
-            background: linear-gradient(to right, #2c3e50, #34495e) !important;
-            border-bottom: 3px solid var(--quran-green);
-        }
-
-        /* Hero Section */
-        .hero-yasin {
-            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9)), 
-                        url('https://picsum.photos/seed/mosque/1200/400');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 60px 0;
-            margin-bottom: 30px;
-            border-radius: 0 0 50px 50px;
-        }
-
-        /* Audio Player Glassmorphism */
-        .audio-player-glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 20px;
-            max-width: 500px;
-            margin-top: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Verse Card Styling */
-        .verse-card {
-            background: white;
-            border: none;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .verse-header {
-            background: #fcfcfc;
-            padding: 15px 25px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .arabic-text {
-            font-family: 'Amiri', serif;
-            font-size: 2.8rem;
-            line-height: 5rem;
-            direction: rtl;
-            color: #222;
-            padding: 30px;
-            text-align: right;
-        }
-
-        .verse-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: var(--quran-green);
-            color: white;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .translation-box {
-            background: #f9f9f9;
-            border-left: 5px solid var(--quran-green);
-            padding: 20px 25px;
-        }
-
-        .latin-text {
-            color: var(--quran-green);
-            font-style: italic;
-            font-weight: 500;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-
-        .meaning-text {
-            color: #555;
-            line-height: 1.6;
-        }
-
-        /* Floating Action Button */
-        .fab-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-            display: none;
-        }
-
-        #loading-spinner {
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="yasin.css">
 </head>
-<body>
+<body class="bg-light">
 
-    <nav class="navbar navbar-dark sticky-top shadow-sm">
+    <nav class="navbar navbar-dark bg-success sticky-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand animate__animated animate__fadeInLeft" href="index.html">
-                <i class="fas fa-home me-2"></i> Utama
+            <a class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft" href="index.html">
+                <i class="fas fa-arrow-left me-3"></i>
+                <span class="fw-bold">Surah Yasin</span>
             </a>
-            <span class="navbar-text text-white fw-bold animate__animated animate__fadeIn">
-                Surah Yasin
-            </span>
+            <div class="d-flex align-items-center">
+                <button class="btn btn-sm btn-outline-light me-2" onclick="adjustFont(-1)">A-</button>
+                <button class="btn btn-sm btn-outline-light" onclick="adjustFont(1)">A+</button>
+            </div>
         </div>
     </nav>
 
     <header class="hero-yasin text-center shadow-lg">
         <div class="container animate__animated animate__fadeInDown">
             <h1 class="display-2 fw-bold mb-0">سورة يس</h1>
-            <p class="lead opacity-75 mt-2">Surah Yasin (83 Ayat)</p>
+            <p class="lead opacity-75 mt-2">Yasin (83 Ayat)</p>
             
-            <div class="audio-player-glass mx-auto">
+            <div class="audio-player-glass mx-auto mt-4">
                 <p class="small fw-bold mb-3 text-white">
-                    <i class="fas fa-headphones-alt me-2"></i>Mendengar Bacaan Penuh
+                    <i class="fas fa-headphones-alt me-2"></i>Dengar Bacaan Syeikh Mishary Rashid
                 </p>
                 <audio id="full-audio" controls class="w-100">
-                    <source id="audio-source" src="https://server8.mp3quran.net/afs/036.mp3" type="audio/mpeg">
+                    <source src="https://server8.mp3quran.net/afs/036.mp3" type="audio/mpeg">
                     Browser anda tidak menyokong audio.
                 </audio>
             </div>
@@ -166,7 +49,7 @@
     </header>
 
     <div class="container py-4">
-        <div id="loading-spinner">
+        <div id="loading-spinner" class="text-center py-5">
             <div class="spinner-grow text-success mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
             <p class="text-muted fw-bold">Memuatkan Kalam Ilahi...</p>
         </div>
@@ -177,18 +60,21 @@
         </div>
     </div>
 
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-success rounded-circle shadow-lg fab-top" id="backToTop">
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-success rounded-circle shadow-lg fab-top" id="backToTop" style="position: fixed; bottom: 30px; right: 30px; display: none; width: 50px; height: 50px; z-index: 1000;">
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <footer class="text-center py-5 text-muted small">
-        <hr class="w-25 mx-auto mb-4">
-        <p>© 04/12/2025 Aplikasi Islam • ABDUL AZIZ BIN KAMSI</p>
-        <p class="x-small text-uppercase">Sumber Data: EQuran API</p>
+    <footer class="text-center py-5 text-muted small bg-white border-top mt-5">
+        <div class="container">
+            <hr class="w-25 mx-auto mb-4">
+            <p class="mb-0">04/12/2025 Aplikasi Islam. QuranDigital2025</p>
+            <p class="fw-bold">ABDUL AZIZ BIN KAMSI</p>
+            <p class="x-small text-uppercase" style="font-size: 0.65rem;">Sumber Data: EQuran API</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="yasin.js"></script>
+    <script src="app.js"></script> <script src="yasin.js"></script>
     
     <script>
         // Logik Butang Back to Top
@@ -200,15 +86,6 @@
                 btn.style.display = "none";
             }
         };
-
-        // PWA Service Worker Registration (Sesuai dengan app.js)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log("SW Registered for Yasin"))
-                    .catch(err => console.log("SW Register Fail"));
-            });
-        }
     </script>
 </body>
 </html>

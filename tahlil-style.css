@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef&display=swap');
+
+:root {
+    --tahlil-primary: #198754;
+    --tahlil-bg-light: #f8f9fa;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --arabic-color: #2c3e50;
+}
+
+/* Base Body */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+}
+
+/* Tulisan Arab - Dioptimumkan untuk pembacaan */
+.arabic-text {
+    font-family: 'Amiri', serif;
+    /* Font size dikawal oleh JS (currentFontSize), ini adalah fallback */
+    font-size: 2.2rem; 
+    line-height: 2.5;
+    direction: rtl;
+    text-align: right;
+    margin-bottom: 20px;
+    color: var(--arabic-color);
+    word-spacing: 4px;
+    /* Mengelakkan pemotongan baris yang pelik */
+    overflow-wrap: break-word; 
+}
+
+/* Tulisan Latin - Rumi */
+.latin-text {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-style: italic;
+    color: #157347; /* Hijau yang lebih pekat sedikit untuk kontras */
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.5;
+    border-left: 3px solid var(--tahlil-primary);
+    padding-left: 15px;
+}
+
+/* Terjemahan */
+.translation-text {
+    color: #5a6268;
+    font-size: 0.95rem;
+    padding-left: 18px;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+/* Kotak Kandungan Tahlil */
+.tahlil-item {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tahlil-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+/* Lencana Nombor/Tajuk */
+.badge.bg-success {
+    font-size: 0.85rem;
+    padding: 10px 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    background-color: var(--tahlil-primary) !important;
+}
+
+/* --- Support Dark Mode --- */
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+}
+
+body.dark-mode .tahlil-item {
+    background: #1e1e1e;
+    border-color: #2c2c2c;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .arabic-text {
+    color: #f8f9fa;
+}
+
+body.dark-mode .latin-text {
+    color: #52c41a; /* Hijau cerah sikit supaya senang baca dalam gelap */
+    border-left-color: #52c41a;
+}
+
+body.dark-mode .translation-text {
+    color: #b0b0b0;
+}
+
+body.dark-mode .navbar {
+    background-color: #0b4a2d !important;
+}
+
+body.dark-mode .bg-white {
+    background-color: #1e1e1e !important;
+}
+
+/* Animasi semasa loading */
+#loader {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsive adjustment untuk skrin kecil (Handphone) */
+@media (max-width: 576px) {
+    .tahlil-item {
+        padding: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .arabic-text {
+        font-size: 1.8rem; /* Lebih kecil sikit di phone supaya tak terlalu panjang */
+    }
+}

@@ -15,26 +15,21 @@ async function loadYasin() {
     const loadingSpinner = document.getElementById('loading-spinner');
     const contentDiv = document.getElementById('yasin-content');
     const fullAudio = document.getElementById('full-audio');
-    const audioSource = document.getElementById('audio-source');
 
     // 1. SEMAK DATA DALAM STORAN (OFFLINE FIRST)
     const cachedData = localStorage.getItem('surah_yasin_36');
 
     if (cachedData) {
-        console.log("Memuatkan Surah Yasin dari cache...");
         const data = JSON.parse(cachedData);
         displayData(data);
     } else {
-        console.log("Mengambil data Yasin baru dari API...");
         try {
-            // Menggunakan API v2 equran.id (Surah 36: Yasin)
             const response = await fetch('https://equran.id/api/v2/surat/36');
             if (!response.ok) throw new Error('Respon API gagal');
             
             const result = await response.json();
             const data = result.data;
             
-            // Simpan ke LocalStorage untuk kegunaan offline
             localStorage.setItem('surah_yasin_36', JSON.stringify(data));
             displayData(data);
         } catch (error) {
@@ -51,30 +46,28 @@ async function loadYasin() {
     }
 
     function displayData(data) {
-        // Set audio penuh (Guna audio dari Mishary Rashid - ID 05)
+        // Set audio penuh
         if (data.audioFull && data.audioFull["05"]) {
-            audioSource.src = data.audioFull["05"];
+            fullAudio.querySelector('source').src = data.audioFull["05"];
             fullAudio.load();
         }
 
-        // Hentikan sebarang audio ayat jika audio penuh dimainkan
         fullAudio.onplay = () => stopAnyCurrentAyat();
 
         yasinContainer.innerHTML = '';
         
-        // Loop setiap ayat
         data.ayat.forEach((item, index) => {
             const verseHTML = `
                 <div class="card verse-card border-0 animate__animated animate__fadeInUp" id="verse-${item.nomorAyat}" style="animation-delay: ${index * 0.05}s">
                     <div class="card-body p-4 p-md-5">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <div class="verse-number shadow-sm">${item.nomorAyat}</div>
-                            <p class="arabic-text text-end mb-0 w-100">
+                            <div class="arabic-text text-end mb-0 w-100">
                                 ${item.teksArab}
-                            </p>
+                            </div>
                         </div>
-                        <div class="ps-md-5">
-                            <p class="latin-text small mb-2">${item.teksLatin}</p>
+                        <div class="content-box">
+                            <p class="latin-text mb-2">${item.teksLatin}</p>
                             <div class="translation-box">
                                 <p class="meaning-text mb-4">
                                     ${item.teksIndonesia}
@@ -103,6 +96,7 @@ async function loadYasin() {
 function handleAyatAudio(url, btn, verseId) {
     const fullAudio = document.getElementById('full-audio');
     const currentCard = document.getElementById(`verse-${verseId}`);
+    const isDarkMode = document.body.classList.contains('dark-mode');
 
     if (currentActiveButton === btn && currentAyatAudio) {
         stopAnyCurrentAyat();
@@ -116,12 +110,13 @@ function handleAyatAudio(url, btn, verseId) {
     }
 
     currentActiveButton = btn;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Memuatkan...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>';
     btn.classList.replace('btn-outline-success', 'btn-warning');
     
-    // Highlight Kad
-    currentCard.style.backgroundColor = "#f0fff4";
-    currentCard.style.borderLeft = "5px solid #27ae60"; 
+    // Highlight Kad (Warna mengikut mod)
+    currentCard.style.transition = "all 0.4s ease";
+    currentCard.style.backgroundColor = isDarkMode ? "#2d3748" : "#f0fff4";
+    currentCard.style.borderLeft = "5px solid #198754"; 
     currentCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     currentAyatAudio = new Audio(url);
@@ -132,7 +127,6 @@ function handleAyatAudio(url, btn, verseId) {
     };
 
     currentAyatAudio.play().catch(e => {
-        console.error("Audio play error:", e);
         resetButton(btn);
         removeHighlight(currentCard);
     });
@@ -142,12 +136,6 @@ function handleAyatAudio(url, btn, verseId) {
         removeHighlight(currentCard);
         currentAyatAudio = null;
         currentActiveButton = null;
-    };
-
-    currentAyatAudio.onerror = () => {
-        resetButton(btn);
-        removeHighlight(currentCard);
-        alert("Gagal memuatkan audio ayat.");
     };
 }
 
@@ -165,7 +153,8 @@ function stopAnyCurrentAyat() {
 }
 
 function removeHighlight(card) {
-    card.style.backgroundColor = "#ffffff";
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    card.style.backgroundColor = isDarkMode ? "#1e1e1e" : "#ffffff";
     card.style.borderLeft = "none";
 }
 
