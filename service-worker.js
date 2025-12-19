@@ -1,37 +1,36 @@
-const CACHE_NAME = 'islam-app-v4'; // Naikkan versi ke v3
+const CACHE_NAME = 'islam-app-v5'; 
 const urlsToCache = [
     './',
     './index.html',
+    './icon-192x192.png',
     './yasin.html',
-    './quran.html',    /* Tambah ini */
-    './surah.html',    /* Tambah ini */
-    './doa.html',      /* Tambah ini */
+    './quran.html',
+    './surah.html',
+    './doa.html',
+    './sirah.html',
+    './solat.html',
+    './tahlil.html', // Pastikan nama fail memang tahli.html (bukan tahlil.html)
     './style.css',
     './yasin.css',
-    './quran.css',    /* Tambah ini */
-    './doa.css',      /* Tambah ini */
+    './quran.css',
+    './doa.css',
+    './solat.css',
+    './tahlil-style.css',
     './app.js',
     './yasin.js',
-    './quran.js',    /* Tambah ini */
-    './surah.js',    /* Tambah ini */
-    './doa.js',      /* Tambah ini */
-    './tahli.html',
-    './tahli.js',
-    './tahlil-style.css',
-    './sirah.html',
-    './sirah.js',
-    './solat.html',
-    './solat.js',
-    './solat.css',
-    './quran.html',
     './quran.js',
-    './quran.css',
+    './surah.js',
+    './doa.js',
+    './sirah.js',
+    './solat.js',
+    './tahlil.js', // Pastikan ejaan sama dengan nama fail asal
     './manifest.json',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
     'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'
 ];
+
 // ... kod install, activate, fetch dikekalkan ...
 // 1. INSTALL: Simpan semua fail statik
 self.addEventListener('install', event => {
@@ -63,7 +62,6 @@ self.addEventListener('activate', event => {
 
 // 3. FETCH: Strategi Cache
 self.addEventListener('fetch', event => {
-    // Abaikan permintaan untuk audio (biarkan browser kendali streaming secara normal)
     if (event.request.url.includes('.mp3')) {
         return;
     }
@@ -71,27 +69,20 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
             .then(response => {
-                // Jika ada dalam cache, hantar dari cache
                 if (response) {
                     return response;
                 }
-                
-                // Jika tiada, ambil dari network
                 return fetch(event.request).then(networkResponse => {
-                    // Simpan salinan ke cache secara dinamik untuk fail baru
                     if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
                         return networkResponse;
                     }
-                    
                     const responseToCache = networkResponse.clone();
                     caches.open(CACHE_NAME).then(cache => {
                         cache.put(event.request, responseToCache);
                     });
-                    
                     return networkResponse;
                 });
             }).catch(() => {
-                // Jika network gagal & tiada cache (fallback)
                 if (event.request.mode === 'navigate') {
                     return caches.match('./index.html');
                 }
