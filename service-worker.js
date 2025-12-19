@@ -1,4 +1,4 @@
-const CACHE_NAME = 'islam-app-v6'; 
+const CACHE_NAME = 'islam-app-v7'; 
 const urlsToCache = [
     './',
     './index.html',
@@ -25,7 +25,11 @@ const urlsToCache = [
     './solat.js',
     './tahlil.js',
     './assets/quran-bg.jpg',
-    './assets/masjid.jpg', 
+    './assets/masjid.jpg',
+    './assets/sirah1.jpg',
+    './assets/sirah2.jpg',
+    './assets/sirah3.jpg',
+    './assets/sirah4.jpg',
     './manifest.json',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
