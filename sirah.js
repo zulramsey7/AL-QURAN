@@ -30,19 +30,19 @@
         isNovel: true, 
         scenes: [
             { 
-                img: "sirah1.jpg", 
+                img: "assets/sirah1.jpg", 
                 text: `Tahun itu dikenali sebagai Amul Huzni (Tahun Kesedihan). Rasulullah SAW baru sahaja kehilangan penyokong kuatnya, Abu Talib, dan permaisuri hatinya, Khadijah binti Khuwailid. Di tengah tekanan kaum Quraisy yang semakin hebat, Allah SWT ingin menghiburkan kekasih-Nya dengan satu jemputan protokol diraja ke langit.
     
                 Pada malam yang tenang, sedang baginda berbaring di antara tidur dan jaga di kawasan Hijir Ismail, Malaikat Jibril AS datang. Dada baginda dibelah, hati baginda dicuci dengan air Zamzam, lalu dituangkan iman dan hikmah ke dalamnya.` 
             },
             { 
-                img: "sirah2.jpg", 
+                img: "assets/sirah2.jpg", 
                 text: `Di hadapan baginda, berdirilah seiras makhluk putih yang dipanggil Buraq. Saiznya lebih besar daripada keldai tetapi lebih kecil daripada bagal. Dengan satu langkah yang sejauh mata memandang, Buraq membawa Rasulullah dari Masjidil Haram di Makkah ke Masjidil Aqsa di Palestin dalam sekelip mata.
   
                 Di Masjidil Aqsa, satu pemandangan menakjubkan menanti. Roh para Nabi terdahulu berkumpul, dan Rasulullah SAW berdiri di hadapan sebagai Imam, memimpin solat berjemaah.` 
             },
             { 
-                img: "sirah3.jpg", 
+                img: "assets/sirah3.jpg", 
                 text: `Dari Masjidil Aqsa, satu tangga cahaya (al-Mirqat) diturunkan. Rasulullah menembusi lapisan langit dan bertemu para Nabi:
                 
                 Langit 1: Nabi Adam AS.
@@ -54,7 +54,7 @@
                 Langit 7: Nabi Ibrahim AS bersandar di Baitul Ma'mur.` 
             },
             { 
-                img: "sirah4.jpg", 
+                img: "assets/sirah4.jpg", 
                 text: `Jibril membawa Rasulullah ke Sidratul Muntaha. Di sini, Jibril berhenti kerana tidak mampu melepasi sempadan keagungan Allah. 
                 
                 Rasulullah meneruskan seorang diri menghadap Allah SWT dan menerima perintah solat 50 waktu. Setelah berulang-alik atas nasihat Nabi Musa AS, akhirnya Allah menetapkan solat 5 waktu sehari semalam.` 
@@ -186,3 +186,4 @@
   });
   
   document.addEventListener('DOMContentLoaded', renderAllStories);
+
