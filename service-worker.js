@@ -1,4 +1,4 @@
-const CACHE_NAME = 'islam-app-v5'; 
+const CACHE_NAME = 'islam-app-v6'; 
 const urlsToCache = [
     './',
     './index.html',
@@ -9,7 +9,7 @@ const urlsToCache = [
     './doa.html',
     './sirah.html',
     './solat.html',
-    './tahlil.html', // Pastikan nama fail memang tahli.html (bukan tahlil.html)
+    './tahlil.html', )
     './style.css',
     './yasin.css',
     './quran.css',
@@ -23,7 +23,9 @@ const urlsToCache = [
     './doa.js',
     './sirah.js',
     './solat.js',
-    './tahlil.js', // Pastikan ejaan sama dengan nama fail asal
+    './tahlil.js',
+    './assets/quran-bg.jpg',
+    './assets/masjid.jpg', 
     './manifest.json',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
