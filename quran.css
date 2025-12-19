@@ -25,7 +25,7 @@ body {
 /* Hero Quran Section */
 .hero-quran {
     background: linear-gradient(rgba(25, 135, 84, 0.9), rgba(44, 62, 80, 0.9)), 
-                url('https://images.unsplash.com/photo-1609599006353-e629aaabfeae?q=80&w=1920&auto=format&fit=crop');
+                url('assets/quran-bg.jpg');
     background-size: cover;
     background-position: center;
     color: white;
@@ -152,4 +152,5 @@ body.dark-mode .form-control {
     .surah-card {
         padding: 1rem !important;
     }
+
 }
