@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <meta name="description" content="Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain">
+    <meta name="keywords" content="Quran, Tahlil, Yasin, Doa, Sirah, Waktu Solat">
+    <meta name="author" content="ABDUL AZIZ BIN KAMSI">
+    <meta property="og:title" content="QuranDigital2025 - Aplikasi Islamik">
+    <meta property="og:description" content="Bacaan Tahlil, Yasin & Doa Harian di hujung jari anda.">
+    <meta property="og:image" content="https://picsum.photos/seed/mosque/600/315">
     <meta name="theme-color" content="#2c3e50">
     
     <link rel="manifest" href="manifest.json">
@@ -14,7 +20,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <title>QuranDigital2025 - Tahlil, Yasin, Doa Harian</title>
+
+    <style>
+        /* CSS Tambahan untuk Skeleton Loading */
+        .initial-loading {
+            overflow: hidden !important;
+        }
+        .initial-loading body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; /* Warna background loading */
+            z-index: 9999;
+        }
+        .initial-loading .card, .initial-loading .hero-section {
+            position: relative;
+            background: #eeeeee !important; /* Warna skeleton */
+            border: none !important;
+        }
+        .initial-loading .card *, .initial-loading .hero-section * {
+            visibility: hidden !important;
+        }
+        .initial-loading .card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
 </head>
+<script>
+    // Menambah class loading sebelum halaman render
+    document.documentElement.classList.add('initial-loading');
+</script>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
         <div class="container">
@@ -64,7 +107,10 @@
                     </li>
                 </ul>
             </div>
-        </div> </nav> <section class="hero-section py-5" style="background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), url('https://picsum.photos/seed/mosque/1920/1080.jpg'); background-size: cover; background-position: center;">
+        </div> 
+    </nav> 
+    
+    <section class="hero-section py-5" style="background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), url('https://picsum.photos/seed/mosque/1920/1080.jpg'); background-size: cover; background-position: center;">
         <div class="container text-center text-white">
             <div class="animate__animated animate__fadeIn">
                 <i class="fas fa-mosque fa-6x mb-4"></i>
@@ -85,7 +131,8 @@
                     <button id="install-button" class="btn btn-light btn-lg me-2" style="display: none;">
                         <i class="fas fa-download me-2"></i> Pasang
                     </button>
-                    <button class="btn btn-outline-light btn-lg">
+                    
+                    <button class="btn btn-outline-light btn-lg" onclick="shareApp()">
                         <i class="fas fa-share me-2"></i> Kongsi
                     </button>
                 </div>
@@ -258,6 +305,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Logik Attendance (Original)
             const today = new Date().toLocaleDateString();
             let lastVisit = localStorage.getItem('lastVisit');
             let attendance = parseInt(localStorage.getItem('attendanceCount') || '0');
@@ -275,6 +323,11 @@
             document.getElementById('count-doa').innerText = localStorage.getItem('count_doa') || '1,234';
             document.getElementById('count-yasin').innerText = localStorage.getItem('count_yasin') || '987';
             document.getElementById('count-tahlil').innerText = localStorage.getItem('count_tahlil') || '856';
+
+            // Mematikan Skeleton Loading selepas data siap
+            setTimeout(() => {
+                document.documentElement.classList.remove('initial-loading');
+            }, 600); // 0.6 saat loading
         });
     </script>
     <script src="app.js"></script>

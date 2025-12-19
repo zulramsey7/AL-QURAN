@@ -1,4 +1,4 @@
-const CACHE_NAME = 'islam-app-v3'; // Naikkan versi ke v3
+const CACHE_NAME = 'islam-app-v4'; // Naikkan versi ke v3
 const urlsToCache = [
     './',
     './index.html',
@@ -15,6 +15,17 @@ const urlsToCache = [
     './quran.js',    /* Tambah ini */
     './surah.js',    /* Tambah ini */
     './doa.js',      /* Tambah ini */
+    './tahli.html',
+    './tahli.js',
+    './tahlil-style.css',
+    './sirah.html',
+    './sirah.js',
+    './solat.html',
+    './solat.js',
+    './solat.css',
+    './quran.html',
+    './quran.js',
+    './quran.css',
     './manifest.json',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
