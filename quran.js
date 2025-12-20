@@ -11,7 +11,7 @@
      const surahList = document.getElementById('surah-list');
  
      // --- TAMBAHAN: Padam cache lama jika format tidak padan ---
-     const cacheVersion = "v2.1"; // Tukar versi ini jika anda buat perubahan besar
+     const cacheVersion = "v2.2"; // Tukar versi ini jika anda buat perubahan besar
      if (localStorage.getItem('quran_version') !== cacheVersion) {
          localStorage.clear();
          localStorage.setItem('quran_version', cacheVersion);
@@ -109,3 +109,4 @@
  
  // Jalankan fungsi apabila halaman siap dimuatkan
  document.addEventListener('DOMContentLoaded', getSurahList);
+
