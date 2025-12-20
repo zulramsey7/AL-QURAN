@@ -36,6 +36,13 @@ createApp({
             this.loading = true;
             this.startClock();
             
+            // Konfigurasi GPS yang lebih stabil
+            const geoOptions = {
+                enableHighAccuracy: true, // Guna sensor GPS sebenar
+                timeout: 15000,           // Tunggu satelit sehingga 15 saat
+                maximumAge: 0             // Sentiasa ambil lokasi terkini (bukan cache)
+            };
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async (pos) => {
@@ -43,8 +50,12 @@ createApp({
                         this.coords.lon = pos.coords.longitude;
                         await this.fetchData();
                     },
-                    async () => { await this.fetchData(); },
-                    { timeout: 5000 }
+                    async (err) => {
+                        console.warn("GPS gagal: " + err.message);
+                        // Jika gagal, teruskan guna koordinat default
+                        await this.fetchData(); 
+                    },
+                    geoOptions
                 );
             } else {
                 await this.fetchData();
@@ -59,14 +70,7 @@ createApp({
                 const month = now.getMonth() + 1;
                 const year = now.getFullYear();
 
-                /**
-                 * OPTIMASI UNTUK JAKIM MALAYSIA:
-                 * 1. method=11 (Majlis Ugama Islam Malaysia)
-                 * 2. school=0 (Syafi'i)
-                 * 3. tune=0,1,0,0,0,0,0,0 (Seringkali Syuruk/Zohor Aladhan lari 1-2 minit dari JAKIM)
-                 * Format tune: Imsak,Fajr,Sunrise,Zhuhr,Asr,Maghrib,Sunset,Isha
-                 */
-                const tune = "0,2,0,2,0,2,0,2"; // Penyelarasan minit untuk ketepatan ekstra
+                const tune = "0,2,0,2,0,2,0,2"; 
                 const url = `https://api.aladhan.com/v1/calendar?latitude=${this.coords.lat}&longitude=${this.coords.lon}&method=11&school=0&tune=${tune}&month=${month}&year=${year}`;
                 
                 const res = await fetch(url);
@@ -98,9 +102,12 @@ createApp({
                         fullDate: d.date.gregorian.date
                     }));
 
-                    // Tarikh Hijri Malaysia (kadangkala Aladhan beza 1 hari, kita guna adjustment)
                     this.hijriDate = `${todayData.date.hijri.day} ${todayData.date.hijri.month.en} ${todayData.date.hijri.year}`;
-                    this.locationName = todayData.meta.timezone.split('/')[1].replace('_', ' ');
+                    
+                    // Ambil nama lokasi dari timezone API
+                    if(todayData.meta.timezone) {
+                        this.locationName = todayData.meta.timezone.split('/')[1].replace('_', ' ');
+                    }
                     
                     this.calculateNextPrayer();
                 }
