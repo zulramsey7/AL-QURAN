@@ -3,28 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waktu Solat & Kiblat - © 04/12/2025 Aplikasi Islam. QuranDigital2025l</title>
+    <title>Waktu Solat & Kiblat - QuranDigital2025</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="solat.css">
+
     <style>
+        /* Hanya CSS kritikal untuk Vue supaya tidak berkelip sebelum loading */
         [v-cloak] { display: none; }
     </style>
 </head>
 <body class="bg-light">
 
 <div id="solat-app" v-cloak>
-    <div v-if="isAzanPlaying" class="stop-azan-overlay animate__animated animate__bounceInUp">
-        <div class="spinner-grow text-success spinner-grow-sm"></div>
-        <span class="fw-bold ms-2">Azan Sedang Berkumandang...</span>
-        <button @click="stopAzan" class="btn btn-danger rounded-pill px-4 ms-3 shadow">
-            <i class="fas fa-stop me-2"></i>Berhenti
-        </button>
+    
+    <div v-if="isAzanPlaying" class="stop-azan-overlay animate__animated animate__fadeIn">
+        <div class="d-flex justify-content-center align-items-center">
+            <span class="fw-bold">Azan Sedang Berkumandang...</span>
+            <button @click="stopAzan" class="btn btn-danger ms-3">
+                <i class="fas fa-stop me-2"></i>Berhenti
+            </button>
+        </div>
     </div>
 
     <nav class="navbar navbar-dark bg-success sticky-top shadow-sm">
@@ -33,84 +36,78 @@
                 <i class="fas fa-arrow-left me-3"></i>
                 <span class="fw-bold">Waktu Solat (JAKIM)</span>
             </a>
-            <button @click="refreshData" class="btn btn-sm btn-light rounded-pill px-3 shadow-sm">
+            <button @click="init" class="btn btn-light btn-sm" :disabled="loading">
                 <i class="fas fa-sync-alt me-1" :class="{'fa-spin': loading}"></i> 
                 {{ loading ? 'Memuat...' : 'Refresh' }}
             </button>
         </div>
     </nav>
 
-    <header class="prayer-hero text-center shadow-lg">
+    <header class="prayer-hero text-center text-white py-5">
         <div class="container animate__animated animate__fadeIn">
             <div class="location-badge mb-3">
-                <i class="fas fa-map-marker-alt me-2 text-warning"></i>{{ locationName || 'Mencari Lokasi...' }}
+                <i class="fas fa-map-marker-alt me-2"></i>
+                {{ locationName }}
             </div>
-            <h1 class="display-3 fw-bold mb-1">{{ currentTime }}</h1>
-            <p class="lead opacity-75 mb-4">{{ hijriDate }}</p>
+            <h1 class="display-3 fw-bold">{{ currentTime }}</h1>
+            <p class="lead">{{ hijriDate }}</p>
             
-            <div class="countdown-box mx-auto animate__animated animate__zoomIn">
-                <small class="text-uppercase fw-bold text-warning">Menuju {{ nextPrayerName }}</small>
-                <div class="h3 mb-0">- {{ countdown }}</div>
+            <div class="countdown-box mt-4">
+                <small class="text-uppercase fw-bold">Menuju {{ nextPrayerName }}</small>
+                <div class="h3 mb-0">{{ countdown }}</div>
             </div>
         </div>
     </header>
 
-    <main class="container py-5">
-        <div v-if="error" class="alert alert-danger rounded-4 border-0 shadow-sm mb-4 animate__animated animate__shakeX">
+    <main class="container py-4">
+        
+        <div v-if="error" class="alert alert-danger animate__animated animate__shakeX">
             <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
         </div>
 
         <div class="row g-4">
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm mb-4 card-rounded">
-                    <div class="card-body text-center p-4">
-                        <h5 class="fw-bold mb-4">Penunjuk Kiblat</h5>
-                        <div class="compass-dial">
+                
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Arah Kiblat</h5>
+                        <div class="compass-dial my-4">
                             <i class="fas fa-kaaba fa-2x kaaba-center"></i>
                             <div id="compass-pointer" class="needle" :style="{ transform: 'rotate(' + qiblaAngle + 'deg)' }"></div>
                         </div>
-                        <p class="text-muted small mt-4">Pastikan peranti diletakkan rata. Jarum menunjukkan arah kiblat.</p>
-                        <div class="badge bg-success rounded-pill px-3 py-2 fs-6">{{ qiblaAngle }}°</div>
+                        <div class="badge bg-success fs-6 px-3">{{ qiblaAngle }}°</div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm card-rounded">
-                    <div class="card-body p-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="fw-bold mb-0"><i class="fas fa-bell me-2 text-success"></i>Tetapan Azan</h6>
-                            <button @click="testAzan" class="btn btn-outline-success btn-sm rounded-pill px-3">
-                                <i class="fas" :class="isAzanPlaying ? 'fa-stop' : 'fa-play'"></i> Uji
-                            </button>
+                            <h6 class="fw-bold mb-0">Tetapan Azan</h6>
+                            <button @click="testAzan" class="btn btn-outline-success btn-sm">Uji</button>
                         </div>
-                        <hr>
-                        <div v-for="(status, name) in azanSettings" :key="name" class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-secondary">{{ name }}</span>
+                        <div v-for="(status, name) in azanSettings" :key="name" class="d-flex justify-content-between align-items-center mb-2">
+                            <span>{{ name }}</span>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" v-model="azanSettings[name]">
                             </div>
                         </div>
-                        <small class="text-muted d-block mt-3">
-                            <i class="fas fa-info-circle me-1"></i> Audio azan akan dimainkan secara automatik.
-                        </small>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-8">
-                <h5 class="fw-bold mb-4 px-2">Waktu Solat Hari Ini</h5>
+                <h5 class="fw-bold mb-3">Waktu Solat Hari Ini</h5>
+                
                 <div class="prayer-list">
                     <div v-for="prayer in orderedPrayers" :key="prayer.name" 
                          :class="['prayer-card', {'active-now': prayer.name === nextPrayerName}]">
                         
                         <div class="d-flex align-items-center">
-                            <div class="prayer-icon-wrapper shadow-sm">
+                            <div class="prayer-icon-wrapper">
                                 <i :class="getIcon(prayer.name)"></i>
                             </div>
-                            <div class="ms-4">
-                                <div class="fw-bold fs-5 mb-0">{{ prayer.name }}</div>
-                                <div class="text-muted small">
-                                    {{ prayer.name === nextPrayerName ? 'Seterusnya' : (prayer.name === 'Syuruk' ? 'Terbit Matahari' : 'Waktu Rasmi') }}
-                                </div>
+                            <div class="ms-3">
+                                <div class="fw-bold">{{ prayer.name }}</div>
                             </div>
                         </div>
                         
@@ -123,27 +120,29 @@
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mt-5 overflow-hidden card-rounded">
-                    <div class="card-header bg-white py-3 border-0">
-                        <h6 class="fw-bold mb-0">Jadual Bulanan (Zon Semasa)</h6>
+                <div class="card border-0 shadow-sm mt-5 overflow-hidden">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="fw-bold mb-0">Jadual Bulanan</h6>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover mb-0 text-center">
-                            <thead class="bg-light">
-                                <tr class="small text-muted">
+                            <thead class="table-light">
+                                <tr>
                                     <th>HB</th>
                                     <th>Subuh</th>
-                                    <th>Syuruk</th> <th>Zohor</th>
+                                    <th>Syuruk</th>
+                                    <th>Zohor</th>
                                     <th>Asar</th>
                                     <th>Maghrib</th>
                                     <th>Isyak</th>
                                 </tr>
                             </thead>
-                            <tbody class="small">
+                            <tbody>
                                 <tr v-for="day in monthlyData" :key="day.day" :class="{'table-success fw-bold': isToday(day.fullDate)}">
                                     <td>{{ day.day }}</td>
                                     <td>{{ day.fajr }}</td>
-                                    <td>{{ day.syuruk }}</td> <td>{{ day.dhuhr }}</td>
+                                    <td>{{ day.syuruk }}</td>
+                                    <td>{{ day.dhuhr }}</td>
                                     <td>{{ day.asr }}</td>
                                     <td>{{ day.maghrib }}</td>
                                     <td>{{ day.isha }}</td>
@@ -156,9 +155,9 @@
         </div>
     </main>
 
-    <footer class="text-center py-5 text-muted small border-top bg-white mt-5">
+    <footer class="text-center py-4 text-muted border-top mt-5">
         <div class="container">
-            <p>© 04/12/2025 Aplikasi Islam. QuranDigital2025. Waktu Solat Rasmi JAKIM</p>
+            <p>© 2025 QuranDigital. Sumber data: E-Solat JAKIM</p>
         </div>
     </footer>
 </div>
