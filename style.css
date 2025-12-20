@@ -1,6 +1,7 @@
 /* 1. VARIABLE DEFINITIONS */
 @font-face {
   font-family: 'Uthman-Taha';
+  /* Menggunakan path relatif yang paling selamat untuk Netlify */
   src: url('./assets/fonts/Uthman-Taha.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
@@ -33,21 +34,24 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* KHAS UNTUK TEKS ARAB */
+/* KHAS UNTUK TEKS ARAB (Ditingkatkan saiz dan ketetapan font) */
 .arabic-name {
   font-family: 'Uthman-Taha', serif !important;
-  font-size: 1.6rem !important;
+  font-size: 2.2rem !important; /* Saiz lebih besar supaya rupa font jelas */
   direction: rtl;
+  font-weight: normal !important;
 }
 
 .quran-text {
   font-family: 'Uthman-Taha', serif !important;
   direction: rtl;
-  font-size: 2.5rem !important;
-  line-height: 2.5 !important;
+  font-size: 3rem !important; /* Sangat besar untuk paparan ayat */
+  line-height: 2.2 !important;
   text-align: right;
   display: block;
 }
+
+/* Seterusnya kekalkan kod NAVIGATION, HERO, dan lain-lain milik anda... */
 
 /* 3. NAVIGATION */
 .navbar {
