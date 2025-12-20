@@ -22,6 +22,15 @@ createApp({
             coords: { lat: 3.1390, lon: 101.6869 },
         }
     },
+    watch: {
+        // Simpan tetapan azan setiap kali pengguna ubah
+        azanSettings: {
+            handler(val) {
+                localStorage.setItem('azanSettings', JSON.stringify(val));
+            },
+            deep: true
+        }
+    },
     computed: {
         orderedPrayers() {
             const order = ['Subuh', 'Syuruk', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
@@ -36,11 +45,10 @@ createApp({
             this.loading = true;
             this.startClock();
             
-            // Konfigurasi GPS yang lebih stabil
             const geoOptions = {
-                enableHighAccuracy: true, // Guna sensor GPS sebenar
-                timeout: 15000,           // Tunggu satelit sehingga 15 saat
-                maximumAge: 0             // Sentiasa ambil lokasi terkini (bukan cache)
+                enableHighAccuracy: true, 
+                timeout: 10000,           
+                maximumAge: 0             
             };
 
             if (navigator.geolocation) {
@@ -48,18 +56,35 @@ createApp({
                     async (pos) => {
                         this.coords.lat = pos.coords.latitude;
                         this.coords.lon = pos.coords.longitude;
+                        // Kira qiblat sebaik dapat koordinat
+                        this.calculateQibla(this.coords.lat, this.coords.lon);
                         await this.fetchData();
                     },
                     async (err) => {
-                        console.warn("GPS gagal: " + err.message);
-                        // Jika gagal, teruskan guna koordinat default
+                        console.error("GPS Gagal, guna default:", err.message);
+                        this.calculateQibla(this.coords.lat, this.coords.lon);
                         await this.fetchData(); 
                     },
                     geoOptions
                 );
             } else {
+                this.calculateQibla(this.coords.lat, this.coords.lon);
                 await this.fetchData();
             }
+        },
+
+        // FUNGSI BARU: Pengiraan Arah Qiblat
+        calculateQibla(lat, lon) {
+            const phiK = 21.4225 * Math.PI / 180; // Lat Kaabah
+            const lambdaK = 39.8262 * Math.PI / 180; // Lon Kaabah
+            const phi = lat * Math.PI / 180;
+            const lambda = lon * Math.PI / 180;
+
+            const y = Math.sin(lambdaK - lambda);
+            const x = Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(lambdaK - lambda);
+            
+            let qibla = Math.atan2(y, x) * 180 / Math.PI;
+            this.qiblaAngle = (qibla + 360) % 360;
         },
 
         async fetchData() {
@@ -92,27 +117,25 @@ createApp({
                     };
 
                     this.monthlyData = json.data.map(d => ({
-                        day: d.date.gregorian.day,
+                        day: parseInt(d.date.gregorian.day),
                         fajr: fmt(d.timings.Fajr),
                         syuruk: fmt(d.timings.Sunrise),
                         dhuhr: fmt(d.timings.Dhuhr),
                         asr: fmt(d.timings.Asr),
                         maghrib: fmt(d.timings.Maghrib),
-                        isha: fmt(d.timings.Isha),
-                        fullDate: d.date.gregorian.date
+                        isha: fmt(d.timings.Isha)
                     }));
 
                     this.hijriDate = `${todayData.date.hijri.day} ${todayData.date.hijri.month.en} ${todayData.date.hijri.year}`;
                     
-                    // Ambil nama lokasi dari timezone API
-                    if(todayData.meta.timezone) {
+                    if(todayData.meta && todayData.meta.timezone) {
                         this.locationName = todayData.meta.timezone.split('/')[1].replace('_', ' ');
                     }
                     
                     this.calculateNextPrayer();
                 }
             } catch (e) {
-                this.error = "Ralat memuatkan data.";
+                this.error = "Ralat memuatkan data solat.";
             } finally {
                 this.loading = false;
             }
@@ -171,7 +194,7 @@ createApp({
         playAzan() {
             if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
                 this.isAzanPlaying = true;
-                this.audio.play().catch(() => {});
+                this.audio.play().catch(e => console.log("Audio diblock browser:", e));
             }
         },
 
