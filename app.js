@@ -1,7 +1,6 @@
 /**
- * Fail: app.js
- * Kemaskini: PWA Handler, Global Font Adjuster (Persistent), Dark Mode, Share API & UI Logic
- * Versi: 2025.1.0
+ * Fail: app.js (VERSI PENUH & LENGKAP)
+ * Kemaskini: PWA Handler, Specific Font Adjuster, Dark Mode, Attendance & Update UI
  */
 
 // 1. TEMA (DARK MODE) - Serta-merta untuk elak flicker
@@ -11,31 +10,35 @@
         document.body.classList.add('dark-mode');
     }
     
-    // Muat saiz font yang disimpan (jika ada)
-    const savedFontSize = localStorage.getItem('preferredFontSize');
-    if (savedFontSize) {
-        document.documentElement.style.setProperty('--global-font-size', savedFontSize);
-    }
+    // Muat saiz font yang disimpan dan aplikasikan ke elemen berkaitan selepas DOM sedia
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedFontSize = localStorage.getItem('preferredFontSize');
+        if (savedFontSize) {
+            const contentElements = document.querySelectorAll('.arabic-text, .translation-text, #modalContent, .card-title-text, .lead, .card-text');
+            contentElements.forEach(el => el.style.fontSize = savedFontSize);
+        }
+    });
 })();
 
-// 2. GLOBAL FONT ADJUSTER (A+ / A-) - Ditambah simpanan localStorage
+// 2. GLOBAL FONT ADJUSTER (A+ / A-) - Guna logik asal anda yang spesifik
 function adjustFont(step) {
     const contentElements = document.querySelectorAll('.arabic-text, .translation-text, #modalContent, .card-title-text, .lead, .card-text');
-    let newSize;
+    let finalSize;
 
     contentElements.forEach(el => {
         let currentSize = parseFloat(window.getComputedStyle(el, null).getPropertyValue('font-size'));
-        newSize = currentSize + (step * 2);
+        let newSize = currentSize + (step * 2);
         
-        // Hadkan saiz (12px - 50px)
-        if (newSize >= 12 && newSize <= 50) {
+        // Hadkan saiz (12px - 60px)
+        if (newSize >= 12 && newSize <= 60) {
             el.style.fontSize = newSize + 'px';
+            finalSize = newSize + 'px';
         }
     });
 
-    // Simpan saiz terakhir untuk rujukan (menggunakan nilai elemen pertama sebagai rujukan)
-    if (newSize) {
-        localStorage.setItem('preferredFontSize', newSize + 'px');
+    // Simpan saiz terakhir ke localStorage supaya tetap sama bila buka page lain
+    if (finalSize) {
+        localStorage.setItem('preferredFontSize', finalSize);
     }
 }
 
@@ -60,10 +63,9 @@ async function shareApp() {
             console.log('Perkongsian dibatalkan');
         }
     } else {
-        // Fallback: Salin pautan
         try {
             await navigator.clipboard.writeText(window.location.href);
-            alert("Pautan telah disalin ke clipboard!");
+            alert("Pautan telah disalin!");
         } catch (err) {
             alert("Gagal menyalin pautan.");
         }
@@ -82,13 +84,14 @@ function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 6. PWA SERVICE WORKER REGISTRATION
+// 6. PWA SERVICE WORKER REGISTRATION & UPDATE LOGIC
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js')
             .then(reg => {
                 console.log('SW Registered');
                 
+                // Pantau jika ada update baru
                 reg.addEventListener('updatefound', () => {
                     const newWorker = reg.installing;
                     newWorker.addEventListener('statechange', () => {
@@ -101,7 +104,7 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('SW Registration Failed', err));
     });
 
-    // Refresh automatik selepas 'skipWaiting' dipanggil
+    // Refresh automatik selepas 'skipWaiting' dipanggil di SW
     let refreshing;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (refreshing) return;
@@ -110,7 +113,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// 7. PWA INSTALL HANDLER
+// 7. PWA INSTALL HANDLER (Butang Pasang Custom)
 let deferredPrompt;
 const installBtn = document.getElementById('install-button');
 
@@ -132,12 +135,11 @@ if (installBtn) {
     });
 }
 
-// 8. PENGURUSAN DATA & UI
+// 8. DATA & UI INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     updateAttendance();
     updateCounters();
 
-    // Welcome Message (Sekali setiap sesi)
     if (!sessionStorage.getItem('welcomeShown')) {
         console.log('Selamat datang ke QuranDigital2025');
         sessionStorage.setItem('welcomeShown', 'true');
@@ -175,17 +177,15 @@ function updateCounters() {
     for (let id in counters) {
         const el = document.getElementById(id);
         if (el) {
-            // Jika tiada data, papar nilai simulasi
             const fallback = id === 'count-doa' ? '1,240' : (id === 'count-yasin' ? '950' : '810');
             el.innerText = localStorage.getItem(counters[id]) || fallback;
         }
     }
 }
 
-// 11. OFFLINE/ONLINE DETECTION (Ditambah baik)
+// 11. OFFLINE/ONLINE DETECTION
 function toggleOfflineStatus(isOffline) {
     let status = document.getElementById("offline-status");
-    
     if (isOffline) {
         if (!status) {
             status = document.createElement('div');
@@ -199,11 +199,10 @@ function toggleOfflineStatus(isOffline) {
         if (status) status.remove();
     }
 }
-
 window.addEventListener('offline', () => toggleOfflineStatus(true));
 window.addEventListener('online', () => toggleOfflineStatus(false));
 
-// 12. UPDATE NOTIFICATION UI
+// 12. UPDATE NOTIFICATION UI (Butang Kemaskini)
 function showUpdateNotification(worker) {
     const updateDiv = document.createElement('div');
     updateDiv.className = "animate__animated animate__fadeInUp";
@@ -218,3 +217,59 @@ function showUpdateNotification(worker) {
         worker.postMessage({ action: 'skipWaiting' });
     });
 }
+
+// 13. LIVE PRAYER STATUS FOR HOME PAGE
+async function updateHomePrayerStatus() {
+    const statusEl = document.getElementById('current-prayer-status');
+    if (!statusEl) return;
+
+    try {
+        // Ambil lokasi pengguna
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            
+            // Panggil API Aladhan (Method 11 - JAKIM)
+            const response = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=11`);
+            const data = await response.json();
+            
+            if (data.data) {
+                const timings = data.data.timings;
+                const now = new Date();
+                const prayerOrder = [
+                    { name: 'Subuh', time: timings.Fajr },
+                    { name: 'Zohor', time: timings.Dhuhr },
+                    { name: 'Asar', time: timings.Asr },
+                    { name: 'Maghrib', time: timings.Maghrib },
+                    { name: 'Isyak', time: timings.Isha }
+                ];
+
+                let nextPrayer = null;
+
+                for (let p of prayerOrder) {
+                    const [h, m] = p.time.split(':');
+                    const pTime = new Date();
+                    pTime.setHours(parseInt(h), parseInt(m), 0, 0);
+
+                    if (pTime > now) {
+                        nextPrayer = p;
+                        break;
+                    }
+                }
+
+                if (nextPrayer) {
+                    statusEl.innerHTML = `<i class="fas fa-clock me-1"></i> ${nextPrayer.name} : <strong>${nextPrayer.time}</strong>`;
+                } else {
+                    statusEl.innerHTML = `<i class="fas fa-moon me-1"></i> Seterusnya: Subuh`;
+                }
+            }
+        }, () => {
+            statusEl.innerText = "Sila aktifkan GPS";
+        });
+    } catch (err) {
+        statusEl.innerText = "Semak Jadual";
+    }
+}
+
+// Panggil fungsi ini apabila halaman dimuatkan
+document.addEventListener('DOMContentLoaded', updateHomePrayerStatus);
