@@ -25,7 +25,7 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Hero Section dengan Animasi Gradient yang Lebih Smooth */
+/* Hero Section */
 .prayer-hero {
   background: linear-gradient(-45deg, #146c43, #198754, #20c997, #157347);
   background-size: 400% 400%;
@@ -87,9 +87,9 @@ body {
 
 /* Compass Styling */
 .compass-dial {
-  width: 220px;
-  height: 220px;
-  border: 12px solid #f8f9fa;
+  width: 200px;
+  height: 200px;
+  border: 10px solid #f8f9fa;
   border-radius: 50%;
   margin: 0 auto;
   position: relative;
@@ -103,90 +103,72 @@ body {
 .kaaba-center {
   color: #343a40;
   z-index: 1;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
 }
 
 .needle {
-  width: 6px;
-  height: 90px;
+  width: 4px;
+  height: 80px;
   background: linear-gradient(to bottom, #dc3545 50%, #2c3e50 50%);
   position: absolute;
-  top: 20px; /* Adjust based on size */
-  left: calc(50% - 3px);
+  top: 20px;
+  left: calc(50% - 2px);
   transform-origin: bottom center;
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 10px;
   z-index: 2;
 }
 
-.needle::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: -2px;
-  width: 10px;
-  height: 10px;
-  background: #2c3e50;
-  border-radius: 50%;
-}
-
 /* Prayer Cards */
 .prayer-list {
   display: grid;
-  gap: 18px;
+  gap: 15px;
 }
 
 .prayer-card {
   background: white;
-  padding: 22px 28px;
-  border-radius: 24px;
+  padding: 20px 25px;
+  border-radius: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.3s ease;
   border: 1px solid rgba(0,0,0,0.04);
   box-shadow: var(--shadow-sm);
-}
-
-.prayer-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
 }
 
 .prayer-card.active-now {
   background: var(--soft-green);
   border: 2px solid var(--primary-green);
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .prayer-icon-wrapper {
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
   background: #f1f3f5;
-  border-radius: 18px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary-green);
-  font-size: 1.5rem;
-  transition: 0.3s;
+  font-size: 1.3rem;
 }
 
 .active-now .prayer-icon-wrapper {
   background: var(--primary-green);
   color: white;
-  box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3);
 }
 
-/* Jadual Bulanan */
+/* Jadual Bulanan - Pembetulan Skrol & Teks */
 .card-rounded {
-  border-radius: 30px !important;
+  border-radius: 25px !important;
   border: none !important;
   box-shadow: var(--shadow-sm) !important;
 }
 
-.table-responsive {
-  border-radius: 0 0 30px 30px;
+.table {
+  min-width: 500px; /* Memastikan jadual tidak mengecil keterlaluan */
 }
 
 .table thead th {
@@ -194,21 +176,16 @@ body {
   color: #868e96;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 1px;
-  padding: 20px 15px;
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+  padding: 15px 10px;
   border: none;
 }
 
 .table tbody td {
-  padding: 16px 15px;
+  padding: 12px 10px;
   vertical-align: middle;
   border-color: #f1f3f5;
-}
-
-.table-success {
-  background-color: var(--soft-green) !important;
-  color: var(--dark-green) !important;
 }
 
 /* Animasi Volume */
@@ -225,19 +202,20 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .prayer-hero {
-    padding: 60px 0 100px 0;
-    border-radius: 0 0 45px 45px;
+    padding: 50px 0 90px 0;
+    border-radius: 0 0 40px 40px;
   }
   
-  .display-3 { font-size: 2.8rem; }
+  .display-3 { font-size: 2.5rem; }
   
   .prayer-card {
-    padding: 18px 20px;
+    padding: 15px 18px;
   }
 
   .stop-azan-overlay {
-    width: 92%;
+    width: 90%;
     min-width: unset;
-    padding: 12px 20px;
+    padding: 10px 15px;
+    bottom: 20px;
   }
 }
