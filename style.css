@@ -2,7 +2,7 @@
 @font-face {
   font-family: 'Uthman-Taha';
   /* Menggunakan path relatif yang paling selamat untuk Netlify */
-  src: url('./assets/fonts/Uthman-Taha.ttf') format('truetype');
+  src: url('/assets/fonts/Uthman-Taha.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
