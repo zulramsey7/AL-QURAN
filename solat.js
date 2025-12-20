@@ -9,20 +9,21 @@ createApp({
             hijriDate: '',
             locationName: 'Mencari lokasi...',
             nextPrayerName: '',
-            nextPrayerTime: '',
+            nextPrayerTime: null,
             dailyTimes: {},
             monthlyData: [],
             qiblaAngle: 0,
             error: null,
-            // Muat tetapan dari LocalStorage jika ada
+            isAzanPlaying: false,
+            // Menggunakan audio azan yang stabil
+            audio: new Audio('azan.mp3'),
+            // Tetapan azan disimpan dalam LocalStorage
             azanSettings: JSON.parse(localStorage.getItem('azanSettings')) || { 
                 Subuh: true, Zohor: true, Asar: true, Maghrib: true, Isyak: true 
-            },
-            currentMonthName: new Date().toLocaleString('ms-MY', { month: 'long' })
+            }
         }
     },
     watch: {
-        // Simpan setiap kali user tukar switch azan
         azanSettings: {
             handler(val) {
                 localStorage.setItem('azanSettings', JSON.stringify(val));
@@ -37,9 +38,13 @@ createApp({
             setInterval(this.updateClock, 1000);
             
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(this.handleLocation, this.handleLocationError);
+                navigator.geolocation.getCurrentPosition(this.handleLocation, this.handleLocationError, {
+                    enableHighAccuracy: true,
+                    timeout: 8000,
+                    maximumAge: 0
+                });
             } else {
-                this.error = "Geolocation tidak disokong oleh pelayar anda.";
+                this.error = "Geolocation tidak disokong oleh peranti anda.";
                 this.loading = false;
             }
         },
@@ -47,9 +52,11 @@ createApp({
         async handleLocation(position) {
             const { latitude, longitude } = position.coords;
             try {
-                // 1. Ambil Waktu Solat Harian & Tarikh Hijri
-                const date = new Date().toISOString().split('T')[0];
-                const res = await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${latitude}&longitude=${longitude}&method=11`);
+                // Method 3: Muslim World League (Sesuai untuk Malaysia/JAKIM)
+                const baseUrl = `https://api.aladhan.com/v1`;
+                const config = `latitude=${latitude}&longitude=${longitude}&method=3`;
+
+                const res = await fetch(`${baseUrl}/timings?${config}`);
                 const data = await res.json();
                 
                 if (data.code === 200) {
@@ -64,16 +71,15 @@ createApp({
                     };
                     
                     this.hijriDate = `${data.data.date.hijri.day} ${data.data.date.hijri.month.en} ${data.data.date.hijri.year}H`;
-                    // Bersihkan nama lokasi (contoh: Asia/Kuala_Lumpur jadi Kuala Lumpur)
                     this.locationName = data.data.meta.timezone.split('/').pop().replace('_', ' ');
 
-                    // 2. Ambil Jadual Bulanan
-                    const monthRes = await fetch(`https://api.aladhan.com/v1/calendar?latitude=${latitude}&longitude=${longitude}&method=11`);
+                    // Jadual Bulanan
+                    const monthRes = await fetch(`${baseUrl}/calendar?${config}`);
                     const monthData = await monthRes.json();
                     this.monthlyData = monthData.data;
 
-                    // 3. Ambil Arah Kiblat
-                    const qiblaRes = await fetch(`https://api.aladhan.com/v1/qibla/${latitude}/${longitude}`);
+                    // Arah Kiblat
+                    const qiblaRes = await fetch(`${baseUrl}/qibla/${latitude}/${longitude}`);
                     const qiblaData = await qiblaRes.json();
                     this.qiblaAngle = Math.round(qiblaData.data.direction);
                     
@@ -82,8 +88,7 @@ createApp({
                 }
                 this.loading = false;
             } catch (e) {
-                console.error(e);
-                this.error = "Gagal memuatkan data API. Sila periksa sambungan internet.";
+                this.error = "Gagal memuatkan data. Periksa sambungan internet.";
                 this.loading = false;
             }
         },
@@ -91,23 +96,20 @@ createApp({
         updateClock() {
             const now = new Date();
             this.currentTime = now.toLocaleTimeString('ms-MY', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit', 
-                hour12: false 
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false 
             });
             if (this.nextPrayerTime) this.updateCountdown();
         },
 
         calculateNextPrayer() {
             const now = new Date();
-            // Senarai waktu solat untuk dibandingkan (kecuali Syuruk untuk countdown)
+            // Senarai solat yang memerlukan Azan (Syuruk dikecualikan)
             const prayerNames = ['Subuh', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
             
             for (let name of prayerNames) {
                 const [h, m] = this.dailyTimes[name].split(':');
                 const pDate = new Date();
-                pDate.setHours(h, m, 0);
+                pDate.setHours(parseInt(h), parseInt(m), 0, 0);
                 
                 if (pDate > now) {
                     this.nextPrayerName = name;
@@ -116,51 +118,81 @@ createApp({
                 }
             }
 
-            // Jika semua sudah lepas (Isyak lepas), set ke Subuh esok
+            // Jika semua waktu hari ini sudah lepas, ambil Subuh esok
             const [h, m] = this.dailyTimes['Subuh'].split(':');
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(h, m, 0);
-            this.nextPrayerName = 'Subuh (Esok)';
+            tomorrow.setHours(parseInt(h), parseInt(m), 0, 0);
+            this.nextPrayerName = 'Subuh';
             this.nextPrayerTime = tomorrow;
         },
 
         updateCountdown() {
-            const diff = this.nextPrayerTime - new Date();
-            if (diff <= 0) {
-                this.calculateNextPrayer(); // Refresh jika countdown habis
+            const now = new Date();
+            const diff = this.nextPrayerTime - now;
+
+            // Jika tepat masuk waktu (jarak kurang 1 saat)
+            if (diff <= 0 && diff > -1500) {
+                this.playAzan();
+                // Tunggu sebentar sebelum kira waktu seterusnya
+                setTimeout(() => this.calculateNextPrayer(), 2000);
                 return;
             }
+
+            if (diff <= 0) {
+                this.calculateNextPrayer();
+                return;
+            }
+
             const hours = Math.floor(diff / 3600000);
             const minutes = Math.floor((diff % 3600000) / 60000);
             const seconds = Math.floor((diff % 60000) / 1000);
             this.countdown = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
         },
 
-        initCompass() {
-            // Logik untuk peranti yang menyokong sensor kompas
-            if (window.DeviceOrientationEvent) {
-                const handler = (e) => {
-                    let heading = e.webkitCompassHeading || e.alpha;
-                    if (heading !== undefined) {
-                        // Tolak heading semasa dari angle kiblat untuk dapatkan arah relatif
-                        const relativeAngle = this.qiblaAngle - heading;
-                        const pointer = document.getElementById('compass-pointer');
-                        if (pointer) {
-                            pointer.style.transform = `translateX(-50%) rotate(${relativeAngle}deg)`;
-                        }
-                    }
-                };
+        playAzan() {
+            if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
+                this.isAzanPlaying = true;
+                this.audio.play().catch(err => {
+                    console.warn("Autoplay block: Sila klik skrin untuk membolehkan bunyi.");
+                    // Jika gagal, set semula status supaya sistem boleh cuba lagi
+                    this.isAzanPlaying = false; 
+                });
 
-                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    // Perlu untuk iOS
-                    DeviceOrientationEvent.requestPermission().then(state => {
-                        if (state === 'granted') window.addEventListener('deviceorientation', handler);
-                    });
-                } else {
-                    window.addEventListener('deviceorientationabsolute', handler);
-                    window.addEventListener('deviceorientation', handler);
+                // Berhenti automatik selepas 4 minit
+                setTimeout(() => { this.stopAzan(); }, 240000);
+            }
+        },
+
+        stopAzan() {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+            this.isAzanPlaying = false;
+        },
+
+        initCompass() {
+            const handler = (e) => {
+                let heading = e.webkitCompassHeading || (360 - e.alpha);
+                if (heading !== undefined) {
+                    // Sudut relatif jarum (Arah Kiblat - Arah Telefon Sekarang)
+                    const relativeAngle = this.qiblaAngle - heading;
+                    const pointer = document.getElementById('compass-pointer');
+                    if (pointer) {
+                        pointer.style.transform = `translateX(-50%) rotate(${relativeAngle}deg)`;
+                    }
                 }
+            };
+
+            // Minta izin sensor (Khas untuk iOS)
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                document.body.addEventListener('click', () => {
+                    DeviceOrientationEvent.requestPermission()
+                        .then(state => {
+                            if (state === 'granted') window.addEventListener('deviceorientation', handler, true);
+                        });
+                }, { once: true });
+            } else {
+                window.addEventListener('deviceorientation', handler, true);
             }
         },
 
@@ -176,37 +208,23 @@ createApp({
             return `fas ${map[name] || 'fa-clock'}`;
         },
 
-        formatTime(t) { 
-            return t ? t.split(' ')[0] : '--:--'; 
-        },
+        formatTime(t) { return t ? t.split(' ')[0] : '--:--'; },
 
         isToday(dateStr) {
-            // Format API Aladhan: DD-MM-YYYY
             const now = new Date();
             const d = String(now.getDate()).padStart(2, '0');
             const m = String(now.getMonth() + 1).padStart(2, '0');
             const y = now.getFullYear();
-            const today = `${d}-${m}-${y}`;
-            return dateStr === today;
-        },
-
-        refreshData() { 
-            this.loading = true;
-            location.reload(); 
+            return dateStr === `${d}-${m}-${y}`;
         },
 
         handleLocationError(error) {
             this.loading = false;
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    this.error = "Sila benarkan akses lokasi untuk waktu solat yang tepat.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    this.error = "Maklumat lokasi tidak tersedia.";
-                    break;
-                default:
-                    this.error = "Ralat lokasi berlaku.";
-            }
+            this.error = "Gagal akses lokasi. Sila aktifkan GPS untuk waktu solat yang tepat.";
+        },
+        
+        refreshData() {
+            this.init();
         }
     },
     mounted() {
