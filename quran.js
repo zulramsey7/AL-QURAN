@@ -52,9 +52,9 @@
      }
  
      function finalizeUI() {
-         loadingSpinner.classList.add('d-none');
-         surahContainer.classList.remove('d-none');
-         surahList.classList.remove('d-none');
+         if (loadingSpinner) loadingSpinner.classList.add('d-none');
+         if (surahContainer) surahContainer.classList.remove('d-none');
+         if (surahList) surahList.classList.remove('d-none');
      }
  }
  
@@ -65,19 +65,19 @@
      const list = document.getElementById('surah-list');
      const noSurah = document.getElementById('no-surah');
      
+     if (!list) return;
      list.innerHTML = '';
  
      if (data.length === 0) {
-         noSurah.classList.remove('d-none');
+         if (noSurah) noSurah.classList.remove('d-none');
          return;
      } else {
-         noSurah.classList.add('d-none');
+         if (noSurah) noSurah.classList.add('d-none');
      }
  
      data.forEach((s, index) => {
          // Tentukan label tempat turun surah
          const place = s.tempatTurun === 'Mekah' ? 'Makkiyah' : 'Madaniyyah';
-         const badgeClass = s.tempatTurun === 'Mekah' ? 'bg-primary-subtle text-primary' : 'bg-success-subtle text-success';
  
          const cardHTML = `
              <div class="col-md-6 col-lg-4 animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.02}s">
@@ -108,18 +108,20 @@
  /**
   * Fungsi Carian Real-time
   */
- document.getElementById('search-surah').addEventListener('input', (e) => {
-     const term = e.target.value.toLowerCase().trim();
-     
-     // Cari berdasarkan nama rumi, maksud, atau nombor surah
-     const filtered = surahData.filter(s => 
-         s.namaLatin.toLowerCase().includes(term) || 
-         s.arti.toLowerCase().includes(term) ||
-         s.nomor.toString() === term
-     );
-     
-     displaySurah(filtered);
- });
+ const searchInput = document.getElementById('search-surah');
+ if (searchInput) {
+     searchInput.addEventListener('input', (e) => {
+         const term = e.target.value.toLowerCase().trim();
+         
+         const filtered = surahData.filter(s => 
+             s.namaLatin.toLowerCase().includes(term) || 
+             s.arti.toLowerCase().includes(term) ||
+             s.nomor.toString() === term
+         );
+         
+         displaySurah(filtered);
+     });
+ }
  
  // Jalankan fungsi apabila halaman siap dimuatkan
  document.addEventListener('DOMContentLoaded', getSurahList);
