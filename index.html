@@ -1,62 +1,39 @@
 <!DOCTYPE html>
 <html lang="ms">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <meta name="description" content="Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain">
-        <meta name="keywords" content="Quran, Tahlil, Yasin, Doa, Sirah, Waktu Solat">
-        <meta name="author" content="ABDUL AZIZ BIN KAMSI">
-        
-        <meta property="og:title" content="QuranDigital2025 - Aplikasi Islamik">
-        <meta property="og:description" content="Bacaan Tahlil, Yasin & Doa Harian di hujung jari anda.">
-        <meta property="og:image" content="assets/masjid-hero.jpg">
-        <meta property="og:type" content="website">
-        
-        <meta name="theme-color" content="#2c3e50">
-        </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <title>QuranDigital2025 - Tahlil, Yasin, Doa Harian</title>
+    
+    <meta name="description" content="Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain">
+    <meta name="keywords" content="Quran, Tahlil, Yasin, Doa, Sirah, Waktu Solat">
+    <meta name="author" content="ABDUL AZIZ BIN KAMSI">
+    
+    <meta property="og:title" content="QuranDigital2025 - Aplikasi Islamik">
+    <meta property="og:description" content="Bacaan Tahlil, Yasin & Doa Harian di hujung jari anda.">
+    <meta property="og:image" content="assets/masjid-hero.jpg">
+    <meta property="og:type" content="website">
+    
+    <meta name="theme-color" content="#2c3e50">
+
     <link rel="manifest" href="manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    
-    <title>QuranDigital2025 - Tahlil, Yasin, Doa Harian</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icon-192x192.png" type="image/png">
 
     <style>
-        /* CSS Tambahan untuk Skeleton Loading */
-        .initial-loading {
-            overflow: hidden !important;
-        }
-        .initial-loading body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; /* Warna background loading */
-            z-index: 9999;
-        }
-        .initial-loading .card, .initial-loading .hero-section {
-            position: relative;
-            background: #eeeeee !important; /* Warna skeleton */
-            border: none !important;
-        }
-        .initial-loading .card *, .initial-loading .hero-section * {
-            visibility: hidden !important;
-        }
-        .initial-loading .card::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
+        /* Skeleton Loading CSS anda di sini */
+        .initial-loading { overflow: hidden !important; }
+        /* ... sambungan style anda ... */
     </style>
+
+    <script>
+        document.documentElement.classList.add('initial-loading');
+    </script>
 </head>
 <script>
     // Menambah class loading sebelum halaman render
@@ -321,4 +298,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-
