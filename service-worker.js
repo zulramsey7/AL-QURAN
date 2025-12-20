@@ -1,10 +1,10 @@
 /**
  * Fail: service-worker.js
- * Kemaskini: Lifecycle Management & Skip Waiting Logic (Manual Update)
- * Versi Cache: v11
+ * Kemaskini: Membolehkan cache audio untuk kegunaan offline
+ * Versi Cache: v12 (Sila naikkan versi setiap kali buat perubahan)
  */
 
- const CACHE_NAME = 'islam-app-v11';
+ const CACHE_NAME = 'islam-app-v12'; // Saya naikkan ke v12
  const urlsToCache = [
      './',
      './index.html',
@@ -30,7 +30,7 @@
      './sirah.js',
      './solat.js',
      './tahlil.js',
-     '/azan.mp3',
+     './azan.mp3', // Pastikan guna './' supaya konsisten dengan yang lain
      './assets/quran-bg.jpg',
      './assets/masjid.jpg',
      './assets/sirah1.png',
@@ -45,7 +45,7 @@
      'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'
  ];
  
- // --- 1. INSTALL: Menyimpan fail ke dalam cache ---
+ // --- 1. INSTALL ---
  self.addEventListener('install', event => {
      event.waitUntil(
          caches.open(CACHE_NAME)
@@ -56,7 +56,7 @@
      );
  });
  
- // --- 2. ACTIVATE: Membersihkan cache versi lama ---
+ // --- 2. ACTIVATE ---
  self.addEventListener('activate', event => {
      event.waitUntil(
          caches.keys().then(cacheNames => {
@@ -74,9 +74,8 @@
  
  // --- 3. FETCH: Strategi Stale-While-Revalidate ---
  self.addEventListener('fetch', event => {
-     // Jangan cache fail audio (MP3)
-     if (event.request.url.includes('.mp3')) return;
- 
+     // KOD LAMA YANG MENYEKAT MP3 TELAH DIBUANG SUPAYA AZAN BOLEH OFFLINE
+     
      event.respondWith(
          caches.match(event.request).then(response => {
              const fetchPromise = fetch(event.request).then(networkResponse => {
@@ -88,7 +87,6 @@
                  }
                  return networkResponse;
              }).catch(() => {
-                 // Fallback jika offline & tiada dalam cache
                  if (event.request.mode === 'navigate') {
                      return caches.match('./index.html');
                  }
@@ -99,10 +97,9 @@
      );
  });
  
- // --- 4. MESSAGE: Mendengar arahan 'skipWaiting' dari app.js ---
+ // --- 4. MESSAGE ---
  self.addEventListener('message', event => {
      if (event.data === 'skipWaiting' || event.data.action === 'skipWaiting') {
-         console.log('SW: Mengaktifkan versi baru segera...');
          self.skipWaiting();
      }
  });
