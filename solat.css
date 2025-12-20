@@ -7,6 +7,7 @@
   --dark-text: #2c3e50;
   --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
   --shadow-md: 0 8px 25px rgba(0,0,0,0.1);
+  --glass: rgba(255, 255, 255, 0.15);
 }
 
 [v-cloak] { display: none; }
@@ -16,6 +17,7 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--dark-text);
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 /* Navbar */
@@ -25,7 +27,7 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Hero Section */
+/* Hero Section dengan Animasi Gradient Mengalir */
 .prayer-hero {
   background: linear-gradient(-45deg, #146c43, #198754, #20c997, #157347);
   background-size: 400% 400%;
@@ -44,8 +46,9 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+/* Location Badge - Glassmorphism style */
 .location-badge {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--glass);
   padding: 10px 24px;
   border-radius: 50px;
   display: inline-block;
@@ -119,7 +122,7 @@ body {
   z-index: 2;
 }
 
-/* Prayer Cards */
+/* Prayer Cards List */
 .prayer-list {
   display: grid;
   gap: 15px;
@@ -132,9 +135,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0,0,0,0.04);
   box-shadow: var(--shadow-sm);
+}
+
+.prayer-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .prayer-card.active-now {
@@ -160,15 +168,22 @@ body {
   color: white;
 }
 
-/* Jadual Bulanan - Pembetulan Skrol & Teks */
+/* Jadual Bulanan - Card & Table Styling */
 .card-rounded {
   border-radius: 25px !important;
   border: none !important;
   box-shadow: var(--shadow-sm) !important;
+  background: white;
+  overflow: hidden;
+}
+
+.table-responsive {
+  border-radius: 0 0 25px 25px;
 }
 
 .table {
-  min-width: 500px; /* Memastikan jadual tidak mengecil keterlaluan */
+  min-width: 500px;
+  margin-bottom: 0;
 }
 
 .table thead th {
@@ -176,21 +191,27 @@ body {
   color: #868e96;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   letter-spacing: 0.5px;
-  padding: 15px 10px;
+  padding: 18px 10px;
   border: none;
 }
 
 .table tbody td {
-  padding: 12px 10px;
+  padding: 15px 10px;
   vertical-align: middle;
   border-color: #f1f3f5;
+}
+
+.table-success {
+  background-color: var(--soft-green) !important;
+  color: var(--dark-green) !important;
 }
 
 /* Animasi Volume */
 .fa-volume-up.text-success {
   animation: pulse-audio 1.2s infinite;
+  display: inline-block;
 }
 
 @keyframes pulse-audio {
@@ -199,14 +220,14 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* Responsive */
+/* Responsive Styling */
 @media (max-width: 768px) {
   .prayer-hero {
     padding: 50px 0 90px 0;
     border-radius: 0 0 40px 40px;
   }
   
-  .display-3 { font-size: 2.5rem; }
+  .display-3 { font-size: 2.8rem; }
   
   .prayer-card {
     padding: 15px 18px;
@@ -217,5 +238,6 @@ body {
     min-width: unset;
     padding: 10px 15px;
     bottom: 20px;
+    font-size: 0.9rem;
   }
 }
