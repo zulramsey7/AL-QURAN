@@ -1,3 +1,4 @@
+/* Fail: solat.js */
 const { createApp } = Vue;
 
 createApp({
@@ -11,7 +12,7 @@ createApp({
             nextPrayerName: '',
             nextPrayerTime: null,
             dailyTimes: { Subuh: '--:--', Syuruk: '--:--', Zohor: '--:--', Asar: '--:--', Maghrib: '--:--', Isyak: '--:--' },
-            monthlyData: [], // Akan diisi dari data bulanan JAKIM
+            monthlyData: [], 
             qiblaAngle: 0,
             error: null,
             isAzanPlaying: false,
@@ -19,6 +20,16 @@ createApp({
             azanSettings: JSON.parse(localStorage.getItem('azanSettings')) || { 
                 Subuh: true, Zohor: true, Asar: true, Maghrib: true, Isyak: true 
             }
+        }
+    },
+    computed: {
+        // MEMASTIKAN SUSUNAN MENGIKUT WAKTU, BUKAN ABJAD
+        orderedPrayers() {
+            const order = ['Subuh', 'Syuruk', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
+            return order.map(name => ({
+                name: name,
+                time: this.dailyTimes[name] || '--:--'
+            }));
         }
     },
     watch: {
@@ -37,7 +48,6 @@ createApp({
                 this.clockInterval = setInterval(this.updateClock, 1000);
             }
 
-            // AKTIFKAN GPS
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (pos) => this.fetchAllData(pos.coords.latitude, pos.coords.longitude),
@@ -54,26 +64,24 @@ createApp({
 
         async fetchAllData(lat, lon) {
             try {
-                // 1. AMBIL DATA DARI API JAKIM (MPT)
-                // Filter 'month' digunakan untuk mendapatkan jadual sebulan penuh
                 const res = await fetch(`https://mpt.i906.my/api/prayer/${lat},${lon}?filter=month`);
                 const result = await res.json();
 
                 if (result.data) {
                     const today = new Date();
-                    const dayIndex = today.getDate() - 1; // Index 0 untuk 1 hb
+                    const dayIndex = today.getDate() - 1; 
                     
-                    // A. Data Harian
                     const times = result.data.times[dayIndex]; 
-                    const names = ['Imsak', 'Subuh', 'Syuruk', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
-                    
-                    let tempTimes = {};
-                    names.forEach((name, index) => {
-                        tempTimes[name] = this.tsToTime(times[index]);
-                    });
-                    this.dailyTimes = tempTimes;
+                    // Index: 0=Imsak, 1=Subuh, 2=Syuruk, 3=Zohor, 4=Asar, 5=Maghrib, 6=Isyak
+                    this.dailyTimes = {
+                        Subuh: this.tsToTime(times[1]),
+                        Syuruk: this.tsToTime(times[2]),
+                        Zohor: this.tsToTime(times[3]),
+                        Asar: this.tsToTime(times[4]),
+                        Maghrib: this.tsToTime(times[5]),
+                        Isyak: this.tsToTime(times[6])
+                    };
 
-                    // B. Data Bulanan (Untuk Jadual)
                     this.monthlyData = result.data.times.map((dayTimes, idx) => {
                         return {
                             day: idx + 1,
@@ -86,11 +94,9 @@ createApp({
                         };
                     });
 
-                    // C. Tarikh Hijri (Dari JAKIM)
                     this.hijriDate = result.data.hijri;
                     this.locationName = result.data.place;
 
-                    // D. Kiblat (API Aladhan kekal digunakan hanya untuk Kiblat kerana JAKIM tiada API Kiblat terbuka)
                     const qRes = await fetch(`https://api.aladhan.com/v1/qibla/${lat}/${lon}`);
                     const qData = await qRes.json();
                     this.qiblaAngle = Math.round(qData.data.direction);
@@ -98,7 +104,7 @@ createApp({
                     this.calculateNextPrayer();
                 }
             } catch (e) {
-                this.error = "Gagal memuatkan data JAKIM. Sila refresh.";
+                this.error = "Gagal memuatkan data. Sila periksa sambungan internet.";
                 console.error(e);
             } finally {
                 this.loading = false;
@@ -132,7 +138,7 @@ createApp({
                     return;
                 }
             }
-            // Subuh esok
+            // Jika dah lepas Isyak, tunjuk Subuh esok
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const [sh, sm] = this.dailyTimes['Subuh'].split(':');
@@ -157,7 +163,7 @@ createApp({
         playAzan() {
             if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
                 this.isAzanPlaying = true;
-                this.audio.play().catch(e => console.warn("Autoplay ditahan pelayar. Sila klik skrin."));
+                this.audio.play().catch(e => console.warn("Autoplay ditahan pelayar."));
             }
         },
 
