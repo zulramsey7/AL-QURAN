@@ -19,7 +19,8 @@ createApp({
             azanSettings: JSON.parse(localStorage.getItem('azanSettings')) || { 
                 Subuh: true, Zohor: true, Asar: true, Maghrib: true, Isyak: true 
             },
-            coords: { lat: 3.1390, lon: 101.6869 } 
+            coords: { lat: 3.1390, lon: 101.6869 },
+            dataSource: 'JAKIM' // Menjejak sumber data yang digunakan
         }
     },
     computed: {
@@ -45,7 +46,7 @@ createApp({
                         this.detectZone(pos.coords.latitude, pos.coords.longitude);
                     },
                     (err) => {
-                        this.error = "GPS disekat. Sila benarkan akses lokasi di pelayar anda.";
+                        console.warn("GPS Access Denied");
                         this.detectZone(3.1390, 101.6869); // Fallback KL
                     },
                     { enableHighAccuracy: true, timeout: 10000 }
@@ -57,46 +58,76 @@ createApp({
 
         async detectZone(lat, lon) {
             try {
-                // Gunakan API MuslimSalat (lebih stabil untuk tukar koordinat ke Zon)
-                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://muslimsalat.com/filter:address/daily.json?key=4f69766063630737f7e91d643d46324d&lat=' + lat + '&long=' + lon)}`);
+                // Gunakan mpt.i906.my untuk dapatkan kod zon JAKIM & Nama Tempat
+                const res = await fetch(`https://mpt.i906.my/api/prayer/${lat},${lon}`);
                 const data = await res.json();
-                const content = JSON.parse(data.contents);
                 
-                // Ambil nama negeri/bandar untuk cari kod zon
-                const city = content.city || "Kuala Lumpur";
-                this.locationName = content.address || city;
-                
-                // Dapatkan kod zon JAKIM berdasarkan koordinat secara terus dari API alternatif
-                const zoneRes = await fetch(`https://mpt.i906.my/api/prayer/${lat},${lon}`);
-                const zoneData = await zoneRes.json();
-                
-                let zoneCode = zoneData.data.code;
+                let zoneCode = data.data.code;
+                this.locationName = data.data.place;
 
-                // FIX: Jika API bagi kod 'ext', paksa guna WLY01 (KL) untuk elak Error 400
-                if (zoneCode.startsWith('ext')) {
+                if (!zoneCode || zoneCode.startsWith('ext')) {
                     zoneCode = 'WLY01';
                 }
 
                 await Promise.all([
-                    this.fetchPrayerTimes(zoneCode),
+                    this.fetchPrayerTimes(zoneCode, lat, lon),
                     this.fetchQibla(lat, lon)
                 ]);
             } catch (e) {
                 console.error("Detect Zone Error:", e);
-                this.fetchPrayerTimes('WLY01'); // Kecemasan guna KL
+                this.fetchPrayerTimes('WLY01', lat, lon); 
             }
         },
 
-        async fetchPrayerTimes(zone) {
+        async fetchPrayerTimes(zone, lat, lon) {
+            this.loading = true;
             try {
                 const targetUrl = `https://www.e-solat.gov.my/index.php?r=Api/getTimes&zone=${zone}&filter=month`;
-                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
-                const proxyData = await res.json();
-                
-                if (!proxyData.contents) throw new Error("Proxy Return Empty");
-                const result = JSON.parse(proxyData.contents);
-                
-                if (result.prayerTime) {
+                let result = null;
+
+                // TRY 1: JAKIM via Corsproxy.io
+                try {
+                    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+                    if (res.ok) {
+                        result = await res.json();
+                        this.dataSource = 'JAKIM (Primary)';
+                    }
+                } catch (e) { console.warn("Primary proxy failed."); }
+
+                // TRY 2: JAKIM via AllOrigins (Backup Proxy)
+                if (!result || !result.prayerTime) {
+                    try {
+                        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
+                        const proxyData = await res.json();
+                        if (proxyData.contents) {
+                            result = JSON.parse(proxyData.contents);
+                            this.dataSource = 'JAKIM (Backup)';
+                        }
+                    } catch (e) { console.warn("Secondary proxy failed."); }
+                }
+
+                // TRY 3: ALADHAN API (Global Fallback) - Jika JAKIM disekat 100%
+                if (!result || !result.prayerTime) {
+                    console.warn("JAKIM APIs failed. Switching to Aladhan API.");
+                    const res = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=${lat}&longitude=${lon}&method=11`);
+                    const aladhan = await res.json();
+                    
+                    if (aladhan.data) {
+                        const t = aladhan.data.timings;
+                        this.dailyTimes = {
+                            Subuh: t.Fajr, Syuruk: t.Sunrise, Zohor: t.Dhuhr,
+                            Asar: t.Asr, Maghrib: t.Maghrib, Isyak: t.Isha
+                        };
+                        this.hijriDate = `${aladhan.data.date.hijri.day} ${aladhan.data.date.hijri.month.en} ${aladhan.data.date.hijri.year}`;
+                        this.dataSource = 'Aladhan (Global Data)';
+                        this.calculateNextPrayer();
+                        this.loading = false;
+                        return;
+                    }
+                }
+
+                // Jika data JAKIM berjaya didapati
+                if (result && result.prayerTime) {
                     const today = new Date();
                     const d = String(today.getDate()).padStart(2, '0');
                     const monthMap = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -106,31 +137,26 @@ createApp({
                     const format = (t) => t.substring(0, 5); 
 
                     this.dailyTimes = {
-                        Subuh: format(todayData.fajr),
-                        Syuruk: format(todayData.syuruk),
-                        Zohor: format(todayData.dhuhr),
-                        Asar: format(todayData.asr),
-                        Maghrib: format(todayData.maghrib),
-                        Isyak: format(todayData.isha)
+                        Subuh: format(todayData.fajr), Syuruk: format(todayData.syuruk),
+                        Zohor: format(todayData.dhuhr), Asar: format(todayData.asr),
+                        Maghrib: format(todayData.maghrib), Isyak: format(todayData.isha)
                     };
 
                     this.monthlyData = result.prayerTime.map(p => ({
-                        day: p.day,
-                        fajr: format(p.fajr),
-                        syuruk: format(p.syuruk),
-                        dhuhr: format(p.dhuhr),
-                        asr: format(p.asr),
-                        maghrib: format(p.maghrib),
-                        isha: format(p.isha),
+                        day: p.day, fajr: format(p.fajr), syuruk: format(p.syuruk),
+                        dhuhr: format(p.dhuhr), asr: format(p.asr),
+                        maghrib: format(p.maghrib), isha: format(p.isha),
                         fullDate: p.date
                     }));
 
                     this.hijriDate = result.hijri;
                     this.calculateNextPrayer();
-                    this.loading = false;
+                    this.error = null;
                 }
             } catch (e) {
-                this.error = "Server JAKIM sedang sibuk. Sila refresh semula.";
+                console.error("Critical Fetch Error:", e);
+                this.error = "Gagal memuatkan data. Sila refresh halaman.";
+            } finally {
                 this.loading = false;
             }
         },
@@ -155,7 +181,7 @@ createApp({
                 const diff = this.nextPrayerTime - now;
                 if (diff <= 0) {
                     this.playAzan();
-                    this.calculateNextPrayer();
+                    setTimeout(() => this.calculateNextPrayer(), 60000);
                 } else {
                     this.updateCountdown(diff);
                 }
@@ -174,8 +200,8 @@ createApp({
             const prayerOrder = ['Subuh', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
             
             for (let name of prayerOrder) {
+                if (!this.dailyTimes[name] || this.dailyTimes[name] === '--:--') continue;
                 const [h, m] = this.dailyTimes[name].split(':');
-                if (h === '--') continue;
                 const pDate = new Date();
                 pDate.setHours(parseInt(h), parseInt(m), 0, 0);
                 
@@ -196,7 +222,7 @@ createApp({
         playAzan() {
             if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
                 this.isAzanPlaying = true;
-                this.audio.play().catch(e => console.log("Audio blocked"));
+                this.audio.play().catch(e => console.warn("Audio blocked"));
             }
         },
 
