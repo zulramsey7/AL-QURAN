@@ -1,243 +1,183 @@
 /* Fail: solat.css */
 :root {
   --primary-green: #198754;
-  --dark-green: #146c43;
+  --dark-green: #0d5c3a;
   --soft-green: #eafaf1;
   --gold: #ffc107;
-  --dark-text: #2c3e50;
+  --dark-text: #1a1a1a;
+  --muted-text: #6c757d;
   --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-md: 0 8px 25px rgba(0,0,0,0.1);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
   --glass: rgba(255, 255, 255, 0.15);
+  --radius-lg: 24px;
+  --radius-md: 16px;
 }
 
 [v-cloak] { display: none; }
 
 body {
-  background-color: #f4f7f6;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8f9fa;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--dark-text);
-  line-height: 1.6;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Navbar */
+/* Navbar - Clean White Style */
 .navbar {
-  background: var(--primary-green) !important;
-  z-index: 1050;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: white !important;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 1rem 0;
 }
 
-/* Hero Section dengan Animasi Gradient Mengalir */
+/* Hero Section ala The Noor */
 .prayer-hero {
-  background: linear-gradient(-45deg, #146c43, #198754, #20c997, #157347);
-  background-size: 400% 400%;
-  animation: gradientBG 12s ease infinite;
+  background: linear-gradient(135deg, #146c43 0%, #198754 50%, #20c997 100%);
+  background-size: 200% 200%;
+  animation: gradientFlow 8s ease infinite;
   color: white;
-  padding: 80px 0 120px 0;
-  border-radius: 0 0 60px 60px;
-  margin-bottom: -50px;
+  padding: 60px 0 100px 0;
+  border-radius: 0 0 50px 50px;
   position: relative;
-  box-shadow: 0 10px 30px rgba(20, 108, 67, 0.2);
+  box-shadow: 0 15px 35px rgba(25, 135, 84, 0.2);
 }
 
-@keyframes gradientBG {
+@keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Location Badge - Glassmorphism style */
+/* Glassmorphism Badge */
 .location-badge {
   background: var(--glass);
-  padding: 10px 24px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 20px;
   border-radius: 50px;
-  display: inline-block;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  font-size: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Countdown Box */
+.countdown-card {
+  transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 15px;
 }
 
-.countdown-box {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 18px 35px;
-  border-radius: 24px;
-  display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  box-shadow: var(--shadow-sm);
-}
-
-/* Azan Floating Overlay */
-.stop-azan-overlay {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  background: white;
-  padding: 15px 30px;
-  border-radius: 100px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-  border: 2px solid var(--primary-green);
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  min-width: 320px;
-  justify-content: center;
-}
-
-/* Compass Styling */
-.compass-dial {
-  width: 200px;
-  height: 200px;
-  border: 10px solid #f8f9fa;
-  border-radius: 50%;
-  margin: 0 auto;
-  position: relative;
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.05), var(--shadow-md);
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.kaaba-center {
-  color: #343a40;
-  z-index: 1;
-  font-size: 2.2rem;
-}
-
-.needle {
-  width: 4px;
-  height: 80px;
-  background: linear-gradient(to bottom, #dc3545 50%, #2c3e50 50%);
-  position: absolute;
-  top: 20px;
-  left: calc(50% - 2px);
-  transform-origin: bottom center;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 10px;
-  z-index: 2;
-}
-
-/* Prayer Cards List */
-.prayer-list {
-  display: grid;
-  gap: 15px;
-}
-
-.prayer-card {
-  background: white;
-  padding: 20px 25px;
-  border-radius: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0,0,0,0.04);
-  box-shadow: var(--shadow-sm);
-}
-
-.prayer-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.prayer-card.active-now {
-  background: var(--soft-green);
-  border: 2px solid var(--primary-green);
-  transform: scale(1.02);
-}
-
-.prayer-icon-wrapper {
-  width: 50px;
-  height: 50px;
-  background: #f1f3f5;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-green);
-  font-size: 1.3rem;
-}
-
-.active-now .prayer-icon-wrapper {
-  background: var(--primary-green);
+/* Qibla Section - Premium Dark Green */
+.qibla-section {
+  background: linear-gradient(145deg, #0d5c3a, #198754);
   color: white;
-}
-
-/* Jadual Bulanan - Card & Table Styling */
-.card-rounded {
-  border-radius: 25px !important;
-  border: none !important;
-  box-shadow: var(--shadow-sm) !important;
-  background: white;
+  border-radius: var(--radius-lg);
+  position: relative;
   overflow: hidden;
 }
 
-.table-responsive {
-  border-radius: 0 0 25px 25px;
+.compass-dial {
+  width: 180px;
+  height: 180px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  margin: 0 auto;
+  position: relative;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.table {
-  min-width: 500px;
-  margin-bottom: 0;
+.needle {
+  width: 3px;
+  height: 70px;
+  background: linear-gradient(to bottom, #ff4757 50%, rgba(255,255,255,0.5) 50%);
+  position: absolute;
+  top: 20px;
+  left: calc(50% - 1.5px);
+  transform-origin: bottom center;
+  transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 4px;
+  z-index: 2;
 }
 
+/* Prayer Cards ala App Interface */
+.prayer-card {
+  border: 1px solid rgba(0,0,0,0.03);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.prayer-card:active {
+  transform: scale(0.98);
+}
+
+.prayer-card.active-now {
+  background: white !important;
+  border: 2px solid var(--primary-green) !important;
+  box-shadow: 0 8px 20px rgba(25, 135, 84, 0.1) !important;
+}
+
+.prayer-icon-wrapper {
+  transition: all 0.3s ease;
+}
+
+/* Table Bulanan */
 .table thead th {
-  background-color: #f8f9fa;
-  color: #868e96;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 0.5px;
-  padding: 18px 10px;
-  border: none;
-}
-
-.table tbody td {
-  padding: 15px 10px;
-  vertical-align: middle;
-  border-color: #f1f3f5;
+  background: #fdfdfd;
+  font-size: 0.75rem;
+  color: var(--muted-text);
+  border-bottom: 1px solid #eee;
 }
 
 .table-success {
   background-color: var(--soft-green) !important;
-  color: var(--dark-green) !important;
+  border-left: 4px solid var(--primary-green);
 }
 
-/* Animasi Volume */
-.fa-volume-up.text-success {
-  animation: pulse-audio 1.2s infinite;
-  display: inline-block;
+/* Azan Overlay - Full Width Mobile Style */
+.stop-azan-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-@keyframes pulse-audio {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Responsive Styling */
+/* PWA Optimization */
 @media (max-width: 768px) {
   .prayer-hero {
-    padding: 50px 0 90px 0;
-    border-radius: 0 0 40px 40px;
+    padding: 40px 0 80px 0;
+    border-radius: 0 0 35px 35px;
   }
   
-  .display-3 { font-size: 2.8rem; }
-  
-  .prayer-card {
-    padding: 15px 18px;
+  .display-1 {
+    font-size: 4rem;
   }
 
-  .stop-azan-overlay {
-    width: 90%;
-    min-width: unset;
-    padding: 10px 15px;
-    bottom: 20px;
-    font-size: 0.9rem;
+  .prayer-card {
+    margin-bottom: 4px;
   }
+
+  /* Elak 'pull-to-refresh' browser mengganggu app */
+  body {
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* Custom Scrollbar for Jadual Bulanan */
+.table-responsive::-webkit-scrollbar {
+  height: 4px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
 }
