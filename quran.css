@@ -4,7 +4,7 @@
 /* 2. Definisi Font Lokal (WAJIB ADA) */
 @font-face {
   font-family: 'Uthman-Taha';
-  src: url('./assets/fonts/Uthman-Taha.ttf') format('truetype');
+  src: url('/assets/fonts/Uthman-Taha.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -140,3 +140,4 @@ body.dark-mode .arabic-name {
         font-size: 1.8rem !important;
     }
 }
+
