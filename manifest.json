@@ -5,26 +5,26 @@
   "description": "Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain dengan sokongan audio.",
   "lang": "ms",
   "dir": "ltr",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#2c3e50",
   "theme_color": "#2c3e50",
   "categories": ["education", "lifestyle", "utilities"],
-  "scope": "/",
+  "scope": "./",
   "shortcuts": [
     {
       "name": "Baca Yasin",
       "short_name": "Yasin",
       "description": "Terus ke surah Yasin",
-      "url": "/yasin.html",
+      "url": "./yasin.html",
       "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Doa Harian",
       "short_name": "Doa",
       "description": "Lihat koleksi doa harian",
-      "url": "/doa.html",
+      "url": "./doa.html",
       "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
     }
   ],
@@ -35,7 +35,7 @@
       "type": "image/png",
       "purpose": "any"
     },
-     {
+    {
       "src": "icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
@@ -53,15 +53,15 @@
       "src": "screenshot1.png",
       "type": "image/png",
       "sizes": "1080x1920",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Paparan Utama Aplikasi"
     },
     {
       "src": "screenshot2.png",
       "type": "image/png",
       "sizes": "1920x1080",
-      "form_factor": "wide"
+      "form_factor": "wide",
+      "label": "Paparan Desktop Aplikasi"
     }
   ]
 }
-
-
