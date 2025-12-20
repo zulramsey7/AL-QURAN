@@ -1,4 +1,4 @@
-const CACHE_NAME = 'islam-app-v8'; // Setiap kali update, tukar nombor v9, v10, v11...
+const CACHE_NAME = 'islam-app-v9'; // Setiap kali update, tukar nombor v9, v10, v11...
 const urlsToCache = [
     './',
     './index.html',
@@ -100,3 +100,4 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
