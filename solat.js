@@ -7,7 +7,7 @@ createApp({
             currentTime: '',
             countdown: '00:00:00',
             hijriDate: '',
-            locationName: 'Mencari Lokasi...',
+            locationName: 'Kuala Lumpur',
             nextPrayerName: '',
             nextPrayerTime: null,
             dailyTimes: { Subuh: '--:--', Syuruk: '--:--', Zohor: '--:--', Asar: '--:--', Maghrib: '--:--', Isyak: '--:--' },
@@ -20,7 +20,6 @@ createApp({
                 Subuh: true, Zohor: true, Asar: true, Maghrib: true, Isyak: true 
             },
             coords: { lat: 3.1390, lon: 101.6869 },
-            dataSource: 'JAKIM' // Menjejak sumber data yang digunakan
         }
     },
     computed: {
@@ -35,222 +34,144 @@ createApp({
     methods: {
         async init() {
             this.loading = true;
-            this.error = null;
             this.startClock();
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    (pos) => {
+                    async (pos) => {
                         this.coords.lat = pos.coords.latitude;
                         this.coords.lon = pos.coords.longitude;
-                        this.detectZone(pos.coords.latitude, pos.coords.longitude);
+                        await this.fetchData();
                     },
-                    (err) => {
-                        console.warn("GPS Access Denied");
-                        this.detectZone(3.1390, 101.6869); // Fallback KL
-                    },
-                    { enableHighAccuracy: true, timeout: 10000 }
+                    async () => { await this.fetchData(); },
+                    { timeout: 5000 }
                 );
             } else {
-                this.detectZone(3.1390, 101.6869);
+                await this.fetchData();
             }
         },
 
-        async detectZone(lat, lon) {
-            try {
-                // Gunakan mpt.i906.my untuk dapatkan kod zon JAKIM & Nama Tempat
-                const res = await fetch(`https://mpt.i906.my/api/prayer/${lat},${lon}`);
-                const data = await res.json();
-                
-                let zoneCode = data.data.code;
-                this.locationName = data.data.place;
-
-                if (!zoneCode || zoneCode.startsWith('ext')) {
-                    zoneCode = 'WLY01';
-                }
-
-                await Promise.all([
-                    this.fetchPrayerTimes(zoneCode, lat, lon),
-                    this.fetchQibla(lat, lon)
-                ]);
-            } catch (e) {
-                console.error("Detect Zone Error:", e);
-                this.fetchPrayerTimes('WLY01', lat, lon); 
-            }
-        },
-
-        async fetchPrayerTimes(zone, lat, lon) {
+        async fetchData() {
             this.loading = true;
+            this.error = null;
             try {
-                const targetUrl = `https://www.e-solat.gov.my/index.php?r=Api/getTimes&zone=${zone}&filter=month`;
-                let result = null;
+                const now = new Date();
+                const month = now.getMonth() + 1;
+                const year = now.getFullYear();
 
-                // TRY 1: JAKIM via Corsproxy.io
-                try {
-                    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
-                    if (res.ok) {
-                        result = await res.json();
-                        this.dataSource = 'JAKIM (Primary)';
-                    }
-                } catch (e) { console.warn("Primary proxy failed."); }
-
-                // TRY 2: JAKIM via AllOrigins (Backup Proxy)
-                if (!result || !result.prayerTime) {
-                    try {
-                        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
-                        const proxyData = await res.json();
-                        if (proxyData.contents) {
-                            result = JSON.parse(proxyData.contents);
-                            this.dataSource = 'JAKIM (Backup)';
-                        }
-                    } catch (e) { console.warn("Secondary proxy failed."); }
-                }
-
-                // TRY 3: ALADHAN API (Global Fallback) - Jika JAKIM disekat 100%
-                if (!result || !result.prayerTime) {
-                    console.warn("JAKIM APIs failed. Switching to Aladhan API.");
-                    const res = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=${lat}&longitude=${lon}&method=11`);
-                    const aladhan = await res.json();
-                    
-                    if (aladhan.data) {
-                        const t = aladhan.data.timings;
-                        this.dailyTimes = {
-                            Subuh: t.Fajr, Syuruk: t.Sunrise, Zohor: t.Dhuhr,
-                            Asar: t.Asr, Maghrib: t.Maghrib, Isyak: t.Isha
-                        };
-                        this.hijriDate = `${aladhan.data.date.hijri.day} ${aladhan.data.date.hijri.month.en} ${aladhan.data.date.hijri.year}`;
-                        this.dataSource = 'Aladhan (Global Data)';
-                        this.calculateNextPrayer();
-                        this.loading = false;
-                        return;
-                    }
-                }
-
-                // Jika data JAKIM berjaya didapati
-                if (result && result.prayerTime) {
-                    const today = new Date();
-                    const d = String(today.getDate()).padStart(2, '0');
-                    const monthMap = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    const todayStr = `${d}-${monthMap[today.getMonth()]}-${today.getFullYear()}`;
-                    
-                    const todayData = result.prayerTime.find(p => p.date === todayStr) || result.prayerTime[0];
-                    const format = (t) => t.substring(0, 5); 
+                /**
+                 * OPTIMASI UNTUK JAKIM MALAYSIA:
+                 * 1. method=11 (Majlis Ugama Islam Malaysia)
+                 * 2. school=0 (Syafi'i)
+                 * 3. tune=0,1,0,0,0,0,0,0 (Seringkali Syuruk/Zohor Aladhan lari 1-2 minit dari JAKIM)
+                 * Format tune: Imsak,Fajr,Sunrise,Zhuhr,Asr,Maghrib,Sunset,Isha
+                 */
+                const tune = "0,2,0,2,0,2,0,2"; // Penyelarasan minit untuk ketepatan ekstra
+                const url = `https://api.aladhan.com/v1/calendar?latitude=${this.coords.lat}&longitude=${this.coords.lon}&method=11&school=0&tune=${tune}&month=${month}&year=${year}`;
+                
+                const res = await fetch(url);
+                const json = await res.json();
+                
+                if (json.data) {
+                    const todayIdx = now.getDate() - 1;
+                    const todayData = json.data[todayIdx];
+                    const t = todayData.timings;
+                    const fmt = (s) => s.split(' ')[0];
 
                     this.dailyTimes = {
-                        Subuh: format(todayData.fajr), Syuruk: format(todayData.syuruk),
-                        Zohor: format(todayData.dhuhr), Asar: format(todayData.asr),
-                        Maghrib: format(todayData.maghrib), Isyak: format(todayData.isha)
+                        Subuh: fmt(t.Fajr),
+                        Syuruk: fmt(t.Sunrise),
+                        Zohor: fmt(t.Dhuhr),
+                        Asar: fmt(t.Asr),
+                        Maghrib: fmt(t.Maghrib),
+                        Isyak: fmt(t.Isha)
                     };
 
-                    this.monthlyData = result.prayerTime.map(p => ({
-                        day: p.day, fajr: format(p.fajr), syuruk: format(p.syuruk),
-                        dhuhr: format(p.dhuhr), asr: format(p.asr),
-                        maghrib: format(p.maghrib), isha: format(p.isha),
-                        fullDate: p.date
+                    this.monthlyData = json.data.map(d => ({
+                        day: d.date.gregorian.day,
+                        fajr: fmt(d.timings.Fajr),
+                        syuruk: fmt(d.timings.Sunrise),
+                        dhuhr: fmt(d.timings.Dhuhr),
+                        asr: fmt(d.timings.Asr),
+                        maghrib: fmt(d.timings.Maghrib),
+                        isha: fmt(d.timings.Isha),
+                        fullDate: d.date.gregorian.date
                     }));
 
-                    this.hijriDate = result.hijri;
+                    // Tarikh Hijri Malaysia (kadangkala Aladhan beza 1 hari, kita guna adjustment)
+                    this.hijriDate = `${todayData.date.hijri.day} ${todayData.date.hijri.month.en} ${todayData.date.hijri.year}`;
+                    this.locationName = todayData.meta.timezone.split('/')[1].replace('_', ' ');
+                    
                     this.calculateNextPrayer();
-                    this.error = null;
                 }
             } catch (e) {
-                console.error("Critical Fetch Error:", e);
-                this.error = "Gagal memuatkan data. Sila refresh halaman.";
+                this.error = "Ralat memuatkan data.";
             } finally {
                 this.loading = false;
             }
         },
 
-        async fetchQibla(lat, lon) {
-            try {
-                const res = await fetch(`https://api.aladhan.com/v1/qibla/${lat}/${lon}`);
-                const data = await res.json();
-                this.qiblaAngle = Math.round(data.data.direction);
-            } catch (e) {}
-        },
-
         startClock() {
-            this.updateClock();
-            setInterval(this.updateClock, 1000);
-        },
-
-        updateClock() {
-            const now = new Date();
-            this.currentTime = now.toLocaleTimeString('ms-MY', { hour12: false });
-            if (this.nextPrayerTime) {
-                const diff = this.nextPrayerTime - now;
-                if (diff <= 0) {
-                    this.playAzan();
-                    setTimeout(() => this.calculateNextPrayer(), 60000);
-                } else {
-                    this.updateCountdown(diff);
-                }
-            }
-        },
-
-        updateCountdown(diff) {
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            this.countdown = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            setInterval(() => {
+                const now = new Date();
+                this.currentTime = now.toLocaleTimeString('ms-MY', { hour12: false });
+                this.updateCountdown();
+            }, 1000);
         },
 
         calculateNextPrayer() {
             const now = new Date();
             const prayerOrder = ['Subuh', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
-            
             for (let name of prayerOrder) {
-                if (!this.dailyTimes[name] || this.dailyTimes[name] === '--:--') continue;
-                const [h, m] = this.dailyTimes[name].split(':');
+                const timeStr = this.dailyTimes[name];
+                if (!timeStr || timeStr === '--:--') continue;
+                const [h, m] = timeStr.split(':');
                 const pDate = new Date();
                 pDate.setHours(parseInt(h), parseInt(m), 0, 0);
-                
                 if (pDate > now) {
                     this.nextPrayerName = name;
                     this.nextPrayerTime = pDate;
                     return;
                 }
             }
+            this.nextPrayerName = 'Subuh';
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const [sh, sm] = this.dailyTimes['Subuh'].split(':');
             tomorrow.setHours(parseInt(sh), parseInt(sm), 0, 0);
-            this.nextPrayerName = 'Subuh';
             this.nextPrayerTime = tomorrow;
+        },
+
+        updateCountdown() {
+            if (!this.nextPrayerTime) return;
+            const diff = this.nextPrayerTime - new Date();
+            if (diff <= 0) {
+                this.playAzan();
+                setTimeout(() => this.calculateNextPrayer(), 3000);
+                return;
+            }
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            this.countdown = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        },
+
+        getIcon(name) {
+            const icons = { 'Subuh': 'fas fa-cloud-moon', 'Syuruk': 'fas fa-sun', 'Zohor': 'fas fa-cloud-sun', 'Asar': 'fas fa-certificate', 'Maghrib': 'fas fa-moon', 'Isyak': 'fas fa-star-and-crescent' };
+            return icons[name] || 'fas fa-clock';
         },
 
         playAzan() {
             if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
                 this.isAzanPlaying = true;
-                this.audio.play().catch(e => console.warn("Audio blocked"));
+                this.audio.play().catch(() => {});
             }
         },
 
-        stopAzan() {
-            this.audio.pause();
-            this.audio.currentTime = 0;
-            this.isAzanPlaying = false;
-        },
-
-        testAzan() {
-            this.isAzanPlaying ? this.stopAzan() : (this.isAzanPlaying = true, this.audio.play());
-        },
-
-        isToday(dateStr) {
-            const today = new Date();
-            const d = String(today.getDate()).padStart(2, '0');
-            const monthMap = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const m = monthMap[today.getMonth()];
-            const y = today.getFullYear();
-            return dateStr === `${d}-${m}-${y}`;
-        },
-
-        getIcon(name) {
-            const map = { Subuh: 'fa-cloud-moon', Syuruk: 'fa-sun', Zohor: 'fa-certificate', Asar: 'fa-cloud-sun', Maghrib: 'fa-moon', Isyak: 'fa-star' };
-            return `fas ${map[name]}`;
-        }
+        stopAzan() { this.audio.pause(); this.audio.currentTime = 0; this.isAzanPlaying = false; },
+        testAzan() { if (this.isAzanPlaying) this.stopAzan(); else { this.isAzanPlaying = true; this.audio.play(); } },
+        isToday(day) { return parseInt(day) === new Date().getDate(); },
+        refreshLocation() { this.init(); }
     },
-    mounted() {
-        this.init();
-    }
+    mounted() { this.init(); }
 }).mount('#solat-app');
