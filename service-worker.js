@@ -1,4 +1,4 @@
-const CACHE_NAME = 'islam-app-v7'; 
+const CACHE_NAME = 'islam-app-v8'; // Setiap kali update, tukar nombor v9, v10, v11...
 const urlsToCache = [
     './',
     './index.html',
@@ -9,7 +9,7 @@ const urlsToCache = [
     './doa.html',
     './sirah.html',
     './solat.html',
-    './tahlil.html', )
+    './tahlil.html',
     './style.css',
     './yasin.css',
     './quran.css',
@@ -26,10 +26,11 @@ const urlsToCache = [
     './tahlil.js',
     './assets/quran-bg.jpg',
     './assets/masjid.jpg',
-    './assets/sirah1.jpg',
-    './assets/sirah2.jpg',
-    './assets/sirah3.jpg',
-    './assets/sirah4.jpg',
+    './assets/sirah1.png',
+    './assets/sirah2.png',
+    './assets/sirah3.png',
+    './assets/sirah4.png',
+    './assets/masjid-hero.jpg',
     './manifest.json',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
@@ -37,7 +38,6 @@ const urlsToCache = [
     'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'
 ];
 
-// ... kod install, activate, fetch dikekalkan ...
 // 1. INSTALL: Simpan semua fail statik
 self.addEventListener('install', event => {
     event.waitUntil(
@@ -46,7 +46,7 @@ self.addEventListener('install', event => {
                 console.log('Cache PWA Islam dibuka');
                 return cache.addAll(urlsToCache);
             })
-            .then(() => self.skipWaiting())
+            .then(() => self.skipWaiting()) // Memaksa SW baru aktif
     );
 });
 
@@ -62,30 +62,28 @@ self.addEventListener('activate', event => {
                     }
                 })
             );
-        }).then(() => self.clients.claim())
+        }).then(() => self.clients.claim()) // Terus kawal client tanpa refresh manual
     );
 });
 
 // 3. FETCH: Strategi Cache
 self.addEventListener('fetch', event => {
     if (event.request.url.includes('.mp3')) {
-        return;
+        return; // Jangan cache audio supaya jimat storage
     }
 
     event.respondWith(
         caches.match(event.request)
             .then(response => {
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request).then(networkResponse => {
-                    if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-                        return networkResponse;
+                // Jika ada dalam cache, guna cache. Jika tiada, cari di internet.
+                return response || fetch(event.request).then(networkResponse => {
+                    // Simpan fail baru yang dijumpai ke dalam cache secara dinamik
+                    if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                        const responseToCache = networkResponse.clone();
+                        caches.open(CACHE_NAME).then(cache => {
+                            cache.put(event.request, responseToCache);
+                        });
                     }
-                    const responseToCache = networkResponse.clone();
-                    caches.open(CACHE_NAME).then(cache => {
-                        cache.put(event.request, responseToCache);
-                    });
                     return networkResponse;
                 });
             }).catch(() => {
@@ -94,4 +92,11 @@ self.addEventListener('fetch', event => {
                 }
             })
     );
+});
+
+// TAMBAHAN: Dengar arahan untuk kemaskini segera
+self.addEventListener('message', (event) => {
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });
