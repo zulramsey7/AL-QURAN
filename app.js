@@ -72,20 +72,19 @@ function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 6. PWA SERVICE WORKER REGISTRATION (DIKEMASKINI DENGAN UPDATE LOGIC)
+// 6. PWA SERVICE WORKER REGISTRATION (DIKEMASKINI)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js')
             .then(reg => {
                 console.log('SW Registered');
                 
-                // Mula mengesan kemaskini versi baru
                 reg.addEventListener('updatefound', () => {
                     const newWorker = reg.installing;
                     newWorker.addEventListener('statechange', () => {
+                        // Jika status adalah 'installed', bermakna fail baru dah siap download
                         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            // Panggil fungsi banner jika ada fail baru dikesan
-                            showUpdateNotification();
+                            showUpdateNotification(newWorker); // Hantar newWorker ke fungsi notification
                         }
                     });
                 });
@@ -179,8 +178,7 @@ window.addEventListener('online', () => {
 });
 
 // 12. FUNGSI TAMBAHAN: UPDATE NOTIFICATION UI
-function showUpdateNotification() {
-    // Bina elemen banner secara dinamik
+function showUpdateNotification(worker) {
     const updateDiv = document.createElement('div');
     updateDiv.style = "position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#2c3e50; color:white; padding:15px 25px; border-radius:50px; box-shadow:0 10px 30px rgba(0,0,0,0.5); z-index:10000; display:flex; align-items:center; gap:15px; border:2px solid #f39c12;";
     updateDiv.className = "animate__animated animate__fadeInUp";
@@ -191,6 +189,10 @@ function showUpdateNotification() {
     document.body.appendChild(updateDiv);
 
     document.getElementById('btn-update-now').addEventListener('click', () => {
+        // Beritahu SW baru untuk terus aktif tanpa menunggu
+        worker.postMessage('skipWaiting'); 
+        
+        // Reload halaman untuk melihat perubahan
         window.location.reload();
     });
 }
