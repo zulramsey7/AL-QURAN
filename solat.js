@@ -7,7 +7,7 @@ createApp({
             currentTime: '',
             countdown: '00:00:00',
             hijriDate: '',
-            locationName: 'Memuatkan...',
+            locationName: 'Mendapatkan Lokasi GPS...',
             nextPrayerName: '',
             nextPrayerTime: null,
             dailyTimes: { Subuh: '--:--', Syuruk: '--:--', Zohor: '--:--', Asar: '--:--', Maghrib: '--:--', Isyak: '--:--' },
@@ -27,8 +27,7 @@ createApp({
             } else {
                 this.isAzanPlaying = true;
                 this.audio.play().catch(err => {
-                    console.error("Audio Error:", err);
-                    alert("Gagal memainkan azan.mp3. Pastikan fail ada dalam folder dan anda telah klik skrin.");
+                    alert("Sila klik skrin untuk aktifkan bunyi.");
                     this.isAzanPlaying = false;
                 });
             }
@@ -39,21 +38,34 @@ createApp({
             this.updateClock();
             setInterval(this.updateClock, 1000);
 
-            // Cuba dapatkan lokasi, jika gagal (disekat) guna Kuala Lumpur
-            if (navigator.geolocation) {
+            // Logik GPS yang lebih agresif untuk Handphone
+            if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
-                    (pos) => this.fetchData(pos.coords.latitude, pos.coords.longitude),
-                    () => this.fetchData(3.1390, 101.6869), // Fallback KL
-                    { timeout: 8000 }
+                    (pos) => {
+                        this.error = null;
+                        this.fetchData(pos.coords.latitude, pos.coords.longitude);
+                    },
+                    (err) => {
+                        console.error("GPS Error:", err);
+                        // Jika user tolak permission atau timeout, guna KL sebagai fallback
+                        this.error = "GPS disekat/lemah. Menggunakan lokasi default (KL).";
+                        this.fetchData(3.1390, 101.6869);
+                    },
+                    { 
+                        enableHighAccuracy: true, // Wajib untuk handphone dapatkan koordinat tepat
+                        timeout: 10000, 
+                        maximumAge: 0 
+                    }
                 );
             } else {
+                this.error = "Peranti anda tidak menyokong GPS.";
                 this.fetchData(3.1390, 101.6869);
             }
         },
 
         async fetchData(lat, lon) {
             try {
-                // Ambil Waktu Solat JAKIM (MPT API)
+                // 1. Data JAKIM (MPT API)
                 const res = await fetch(`https://mpt.i906.my/api/prayer/${lat},${lon}`);
                 const result = await res.json();
 
@@ -69,21 +81,25 @@ createApp({
                     });
 
                     this.dailyTimes = tempTimes;
-                    this.locationName = result.data.place || "Kuala Lumpur";
+                    this.locationName = result.data.place || "Lokasi Anda";
 
-                    // Ambil Hijri & Kiblat
-                    const hRes = await fetch(`https://api.aladhan.com/v1/gToH`);
+                    // 2. Data Hijri & Kiblat (Aladhan API)
+                    const [hRes, qRes] = await Promise.all([
+                        fetch(`https://api.aladhan.com/v1/gToH`),
+                        fetch(`https://api.aladhan.com/v1/qibla/${lat}/${lon}`)
+                    ]);
+                    
                     const hData = await hRes.json();
-                    this.hijriDate = `${hData.data.hijri.day} ${hData.data.hijri.month.en} ${hData.data.hijri.year}H`;
-
-                    const qRes = await fetch(`https://api.aladhan.com/v1/qibla/${lat}/${lon}`);
                     const qData = await qRes.json();
+
+                    this.hijriDate = `${hData.data.hijri.day} ${hData.data.hijri.month.en} ${hData.data.hijri.year}H`;
                     this.qiblaAngle = Math.round(qData.data.direction);
 
                     this.calculateNextPrayer();
                 }
             } catch (e) {
-                this.error = "Gagal memuatkan data solat.";
+                console.error("Fetch Error:", e);
+                this.error = "Ralat talian. Gagal memuatkan jadual solat.";
             } finally {
                 this.loading = false;
             }
@@ -111,7 +127,7 @@ createApp({
                     return;
                 }
             }
-            // Jika dah Isyak, ambil Subuh esok
+            // Subuh Esok
             const [sh, sm] = this.dailyTimes['Subuh'].split(':');
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
@@ -127,9 +143,7 @@ createApp({
                 this.calculateNextPrayer();
                 return;
             }
-            if (diff < -5000) {
-                this.calculateNextPrayer();
-            }
+            if (diff < -5000) this.calculateNextPrayer();
 
             const h = Math.floor(diff / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
@@ -141,7 +155,7 @@ createApp({
             if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
                 this.isAzanPlaying = true;
                 this.audio.play().catch(() => { this.isAzanPlaying = false; });
-                setTimeout(() => { this.stopAzan(); }, 300000); // Stop selepas 5 minit
+                setTimeout(() => { this.stopAzan(); }, 300000);
             }
         },
 
@@ -158,7 +172,7 @@ createApp({
     },
     mounted() {
         this.init();
-        // Trik unlock audio mobile
+        // Unlock audio untuk mobile browser
         document.addEventListener('click', () => {
             this.audio.play().then(() => {
                 this.audio.pause();
