@@ -25,7 +25,7 @@ async function getSurahDetail() {
 
         data.ayat.forEach(ayat => {
             container.innerHTML += `
-                <div class="card verse-card border-0 shadow-sm animate__animated animate__fadeInUp">
+                <div class="card verse-card border-0 shadow-sm animate__animated animate__fadeInUp mb-3">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="verse-number">${ayat.nomorAyat}</div>
@@ -38,7 +38,9 @@ async function getSurahDetail() {
                                 </button>
                             </div>
                         </div>
-                        <p class="arabic-text text-end mb-4">${ayat.teksArab}</p>
+                        
+                        <p class="quran-text text-end mb-4">${ayat.ar}</p>
+                        
                         <p class="text-success small fw-bold">${ayat.teksLatin}</p>
                         <hr>
                         <p class="text-muted mb-0 small">${ayat.teksIndonesia}</p>
@@ -48,16 +50,16 @@ async function getSurahDetail() {
         });
 
     } catch (error) {
+        console.error(error);
         alert("Gagal memuatkan surah.");
     }
 }
 
 function playAyat(url, btn) {
-    stopAyat(); // Berhenti audio sebelumnya jika ada
+    stopAyat();
     currentAudio = new Audio(url);
     currentAudio.play();
 
-    // Tunjuk butang stop
     const stopBtn = btn.parentElement.querySelector('.stop-btn');
     stopBtn.classList.remove('d-none');
     btn.classList.add('d-none');
@@ -72,7 +74,6 @@ function stopAyat() {
     if(currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
-        // Reset semua butang
         document.querySelectorAll('.stop-btn').forEach(b => b.classList.add('d-none'));
         document.querySelectorAll('.btn-outline-success').forEach(b => b.classList.remove('d-none'));
     }
