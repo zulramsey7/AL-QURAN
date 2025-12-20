@@ -1,9 +1,10 @@
 /**
  * Fail: service-worker.js
- * Kemaskini: Cache Management, Dynamic Caching, & Skip Waiting Logic
+ * Kemaskini: Lifecycle Management & Skip Waiting Logic (Manual Update)
+ * Versi Cache: v11
  */
 
- const CACHE_NAME = 'islam-app-v10'; // Tukar v10, v11 setiap kali ada perubahan fail
+ const CACHE_NAME = 'islam-app-v11';
  const urlsToCache = [
      './',
      './index.html',
@@ -29,6 +30,7 @@
      './sirah.js',
      './solat.js',
      './tahlil.js',
+     '/azan.mp3',
      './assets/quran-bg.jpg',
      './assets/masjid.jpg',
      './assets/sirah1.png',
@@ -43,25 +45,25 @@
      'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'
  ];
  
- // 1. INSTALL: Simpan semua fail statik
+ // --- 1. INSTALL: Menyimpan fail ke dalam cache ---
  self.addEventListener('install', event => {
      event.waitUntil(
          caches.open(CACHE_NAME)
              .then(cache => {
-                 console.log('Cache PWA Islam dibuka');
+                 console.log('SW: Cache sedang dicipta...');
                  return cache.addAll(urlsToCache);
              })
      );
  });
  
- // 2. ACTIVATE: Bersihkan cache lama
+ // --- 2. ACTIVATE: Membersihkan cache versi lama ---
  self.addEventListener('activate', event => {
      event.waitUntil(
          caches.keys().then(cacheNames => {
              return Promise.all(
                  cacheNames.map(cacheName => {
                      if (cacheName !== CACHE_NAME) {
-                         console.log('Memadam cache lama:', cacheName);
+                         console.log('SW: Memadam cache lama:', cacheName);
                          return caches.delete(cacheName);
                      }
                  })
@@ -70,39 +72,37 @@
      );
  });
  
- // 3. FETCH: Strategi Stale-While-Revalidate (Lebih Laju)
+ // --- 3. FETCH: Strategi Stale-While-Revalidate ---
  self.addEventListener('fetch', event => {
-     // Jangan cache fail audio/mp3
+     // Jangan cache fail audio (MP3)
      if (event.request.url.includes('.mp3')) return;
  
      event.respondWith(
-         caches.match(event.request)
-             .then(response => {
-                 // Return cache jika ada, tapi tetap update dari network di belakang tabir
-                 const fetchPromise = fetch(event.request).then(networkResponse => {
-                     if (networkResponse && networkResponse.status === 200) {
-                         const responseToCache = networkResponse.clone();
-                         caches.open(CACHE_NAME).then(cache => {
-                             cache.put(event.request, responseToCache);
-                         });
-                     }
-                     return networkResponse;
-                 }).catch(() => {
-                     // Jika offline dan tiada dalam cache, return index.html untuk navigasi
-                     if (event.request.mode === 'navigate') {
-                         return caches.match('./index.html');
-                     }
-                 });
+         caches.match(event.request).then(response => {
+             const fetchPromise = fetch(event.request).then(networkResponse => {
+                 if (networkResponse && networkResponse.status === 200) {
+                     const responseToCache = networkResponse.clone();
+                     caches.open(CACHE_NAME).then(cache => {
+                         cache.put(event.request, responseToCache);
+                     });
+                 }
+                 return networkResponse;
+             }).catch(() => {
+                 // Fallback jika offline & tiada dalam cache
+                 if (event.request.mode === 'navigate') {
+                     return caches.match('./index.html');
+                 }
+             });
  
-                 return response || fetchPromise;
-             })
+             return response || fetchPromise;
+         })
      );
  });
  
- // 4. MESSAGE: Mendengar arahan dari app.js
- self.addEventListener('message', (event) => {
-     // Memastikan ia menerima objek { action: 'skipWaiting' } atau string 'skipWaiting'
+ // --- 4. MESSAGE: Mendengar arahan 'skipWaiting' dari app.js ---
+ self.addEventListener('message', event => {
      if (event.data === 'skipWaiting' || event.data.action === 'skipWaiting') {
+         console.log('SW: Mengaktifkan versi baru segera...');
          self.skipWaiting();
      }
  });
