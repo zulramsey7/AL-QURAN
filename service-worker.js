@@ -4,7 +4,7 @@
  * Versi Cache: v12 (Sila naikkan versi setiap kali buat perubahan)
  */
 
- const CACHE_NAME = 'islam-app-v14'; // Saya naikkan ke v12
+ const CACHE_NAME = 'islam-app-v15'; // Saya naikkan ke v12
  const urlsToCache = [
      './',
      './index.html',
@@ -103,5 +103,6 @@
          self.skipWaiting();
      }
  });
+
 
 
