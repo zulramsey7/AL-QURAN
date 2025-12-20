@@ -11,6 +11,7 @@ createApp({
             locationName: 'Mencari Lokasi...',
             nextPrayerName: '',
             nextPrayerTime: null,
+            // Struktur data default
             dailyTimes: { Subuh: '--:--', Syuruk: '--:--', Zohor: '--:--', Asar: '--:--', Maghrib: '--:--', Isyak: '--:--' },
             monthlyData: [], 
             qiblaAngle: 0,
@@ -23,7 +24,7 @@ createApp({
         }
     },
     computed: {
-        // MEMASTIKAN SUSUNAN MENGIKUT WAKTU, BUKAN ABJAD
+        // Memastikan susunan paparan sentiasa betul mengikut kronologi solat
         orderedPrayers() {
             const order = ['Subuh', 'Syuruk', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
             return order.map(name => ({
@@ -64,15 +65,18 @@ createApp({
 
         async fetchAllData(lat, lon) {
             try {
+                // Fetch data bulanan dari API MPT (JAKIM)
                 const res = await fetch(`https://mpt.i906.my/api/prayer/${lat},${lon}?filter=month`);
                 const result = await res.json();
 
                 if (result.data) {
                     const today = new Date();
                     const dayIndex = today.getDate() - 1; 
+                    const allMonthTimes = result.data.times;
+                    const times = allMonthTimes[dayIndex]; 
                     
-                    const times = result.data.times[dayIndex]; 
-                    // Index: 0=Imsak, 1=Subuh, 2=Syuruk, 3=Zohor, 4=Asar, 5=Maghrib, 6=Isyak
+                    // PEMBETULAN INDEX API JAKIM:
+                    // 0:Imsak, 1:Subuh, 2:Syuruk, 3:Zohor, 4:Asar, 5:Maghrib, 6:Isyak
                     this.dailyTimes = {
                         Subuh: this.tsToTime(times[1]),
                         Syuruk: this.tsToTime(times[2]),
@@ -82,10 +86,12 @@ createApp({
                         Isyak: this.tsToTime(times[6])
                     };
 
-                    this.monthlyData = result.data.times.map((dayTimes, idx) => {
+                    // Petakan data bulanan supaya Syuruk tidak hilang dalam jadual
+                    this.monthlyData = allMonthTimes.map((dayTimes, idx) => {
                         return {
                             day: idx + 1,
                             fajr: this.tsToTime(dayTimes[1]),
+                            syuruk: this.tsToTime(dayTimes[2]),
                             dhuhr: this.tsToTime(dayTimes[3]),
                             asr: this.tsToTime(dayTimes[4]),
                             maghrib: this.tsToTime(dayTimes[5]),
@@ -97,6 +103,7 @@ createApp({
                     this.hijriDate = result.data.hijri;
                     this.locationName = result.data.place;
 
+                    // Ambil data Kiblat
                     const qRes = await fetch(`https://api.aladhan.com/v1/qibla/${lat}/${lon}`);
                     const qData = await qRes.json();
                     this.qiblaAngle = Math.round(qData.data.direction);
@@ -104,7 +111,7 @@ createApp({
                     this.calculateNextPrayer();
                 }
             } catch (e) {
-                this.error = "Gagal memuatkan data. Sila periksa sambungan internet.";
+                this.error = "Gagal memuatkan data JAKIM.";
                 console.error(e);
             } finally {
                 this.loading = false;
@@ -112,6 +119,7 @@ createApp({
         },
 
         tsToTime(ts) {
+            if (!ts) return '--:--';
             const d = new Date(ts * 1000);
             return d.getHours().toString().padStart(2, '0') + ':' + 
                    d.getMinutes().toString().padStart(2, '0');
@@ -125,10 +133,14 @@ createApp({
 
         calculateNextPrayer() {
             const now = new Date();
+            // Hanya solat fardu yang ada Azan (Syuruk dikecualikan)
             const prayerOrder = ['Subuh', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
             
             for (let name of prayerOrder) {
-                const [h, m] = this.dailyTimes[name].split(':');
+                const timeStr = this.dailyTimes[name];
+                if (!timeStr || timeStr === '--:--') continue;
+
+                const [h, m] = timeStr.split(':');
                 const pDate = new Date();
                 pDate.setHours(parseInt(h), parseInt(m), 0, 0);
                 
@@ -138,7 +150,7 @@ createApp({
                     return;
                 }
             }
-            // Jika dah lepas Isyak, tunjuk Subuh esok
+            // Jika Isyak sudah lepas, ambil Subuh esok
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const [sh, sm] = this.dailyTimes['Subuh'].split(':');
@@ -148,12 +160,16 @@ createApp({
         },
 
         updateCountdown() {
-            const diff = this.nextPrayerTime - new Date();
+            const now = new Date();
+            const diff = this.nextPrayerTime - now;
+
+            // Jika tepat masuk waktu solat
             if (diff <= 0 && diff > -3000) {
                 this.playAzan();
                 this.calculateNextPrayer();
                 return;
             }
+
             const h = Math.floor(diff / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
             const s = Math.floor((diff % 60000) / 1000);
@@ -163,7 +179,7 @@ createApp({
         playAzan() {
             if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
                 this.isAzanPlaying = true;
-                this.audio.play().catch(e => console.warn("Autoplay ditahan pelayar."));
+                this.audio.play().catch(e => console.warn("Autoplay ditahan oleh pelayar. Klik mana-mana untuk aktifkan audio."));
             }
         },
 
@@ -197,6 +213,7 @@ createApp({
     },
     mounted() {
         this.init();
+        // Unlock audio untuk mobile browser
         const unlock = () => {
             this.audio.play().then(() => { this.audio.pause(); this.audio.currentTime = 0; });
             document.removeEventListener('click', unlock);
