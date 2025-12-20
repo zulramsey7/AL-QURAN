@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="ms">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <meta name="description" content="Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain">
-    <meta name="keywords" content="Quran, Tahlil, Yasin, Doa, Sirah, Waktu Solat">
-    <meta name="author" content="ABDUL AZIZ BIN KAMSI">
-    <meta property="og:title" content="QuranDigital2025 - Aplikasi Islamik">
-    <meta property="og:description" content="Bacaan Tahlil, Yasin & Doa Harian di hujung jari anda.">
-    <meta property="og:image" content="https://picsum.photos/seed/mosque/600/315">
-    <meta name="theme-color" content="#2c3e50">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain">
+        <meta name="keywords" content="Quran, Tahlil, Yasin, Doa, Sirah, Waktu Solat">
+        <meta name="author" content="ABDUL AZIZ BIN KAMSI">
+        
+        <meta property="og:title" content="QuranDigital2025 - Aplikasi Islamik">
+        <meta property="og:description" content="Bacaan Tahlil, Yasin & Doa Harian di hujung jari anda.">
+        <meta property="og:image" content="assets/masjid-hero.jpg">
+        <meta property="og:type" content="website">
+        
+        <meta name="theme-color" content="#2c3e50">
+        </head>
     
     <link rel="manifest" href="manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -303,33 +307,17 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
+        // HANYA UNTUK LOADING & SW TRIGGER
         document.addEventListener('DOMContentLoaded', () => {
-            // Logik Attendance (Original)
-            const today = new Date().toLocaleDateString();
-            let lastVisit = localStorage.getItem('lastVisit');
-            let attendance = parseInt(localStorage.getItem('attendanceCount') || '0');
-
-            if (lastVisit !== today) {
-                attendance = (attendance >= 30) ? 1 : attendance + 1;
-                localStorage.setItem('attendanceCount', attendance);
-                localStorage.setItem('lastVisit', today);
-            }
-
-            const progressPercent = (attendance / 30) * 100;
-            document.getElementById('attendance-text').innerText = `${attendance}/30 hari`;
-            document.getElementById('attendance-bar').style.width = `${progressPercent}%`;
-
-            document.getElementById('count-doa').innerText = localStorage.getItem('count_doa') || '1,234';
-            document.getElementById('count-yasin').innerText = localStorage.getItem('count_yasin') || '987';
-            document.getElementById('count-tahlil').innerText = localStorage.getItem('count_tahlil') || '856';
-
-            // Mematikan Skeleton Loading selepas data siap
+            // Matikan Skeleton Loading selepas 0.6 saat
             setTimeout(() => {
                 document.documentElement.classList.remove('initial-loading');
-            }, 600); // 0.6 saat loading
+            }, 600);
         });
     </script>
+
     <script src="app.js"></script>
 </body>
 </html>
