@@ -1,233 +1,204 @@
-const { createApp } = Vue;
+/* Fail: solat.css */
+:root {
+  --primary-green: #198754;
+  --dark-green: #146c43;
+  --soft-green: #eafaf1;
+  --gold: #ffc107;
+  --dark-text: #2c3e50;
+}
 
-createApp({
-    data() {
-        return {
-            loading: false,
-            currentTime: '',
-            countdown: '00:00:00',
-            hijriDate: '',
-            locationName: 'Mencari lokasi...',
-            nextPrayerName: '',
-            nextPrayerTime: null,
-            dailyTimes: {},
-            monthlyData: [],
-            qiblaAngle: 0,
-            error: null,
-            isAzanPlaying: false,
-            // Menggunakan audio azan yang stabil
-            audio: new Audio('azan.mp3'),
-            // Tetapan azan disimpan dalam LocalStorage
-            azanSettings: JSON.parse(localStorage.getItem('azanSettings')) || { 
-                Subuh: true, Zohor: true, Asar: true, Maghrib: true, Isyak: true 
-            }
-        }
-    },
-    watch: {
-        azanSettings: {
-            handler(val) {
-                localStorage.setItem('azanSettings', JSON.stringify(val));
-            },
-            deep: true
-        }
-    },
-    methods: {
-        async init() {
-            this.loading = true;
-            this.updateClock();
-            setInterval(this.updateClock, 1000);
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(this.handleLocation, this.handleLocationError, {
-                    enableHighAccuracy: true,
-                    timeout: 8000,
-                    maximumAge: 0
-                });
-            } else {
-                this.error = "Geolocation tidak disokong oleh peranti anda.";
-                this.loading = false;
-            }
-        },
+[v-cloak] { display: none; }
 
-        async handleLocation(position) {
-            const { latitude, longitude } = position.coords;
-            try {
-                // Method 3: Muslim World League (Sesuai untuk Malaysia/JAKIM)
-                const baseUrl = `https://api.aladhan.com/v1`;
-                const config = `latitude=${latitude}&longitude=${longitude}&method=3`;
+body {
+  background-color: #f8f9fa;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--dark-text);
+}
 
-                const res = await fetch(`${baseUrl}/timings?${config}`);
-                const data = await res.json();
-                
-                if (data.code === 200) {
-                    const t = data.data.timings;
-                    this.dailyTimes = {
-                        'Subuh': t.Fajr,
-                        'Syuruk': t.Sunrise,
-                        'Zohor': t.Dhuhr,
-                        'Asar': t.Asr,
-                        'Maghrib': t.Maghrib,
-                        'Isyak': t.Isha
-                    };
-                    
-                    this.hijriDate = `${data.data.date.hijri.day} ${data.data.date.hijri.month.en} ${data.data.date.hijri.year}H`;
-                    this.locationName = data.data.meta.timezone.split('/').pop().replace('_', ' ');
+/* Navbar Consistency */
+.navbar {
+  background: var(--primary-green) !important;
+  z-index: 1050;
+}
 
-                    // Jadual Bulanan
-                    const monthRes = await fetch(`${baseUrl}/calendar?${config}`);
-                    const monthData = await monthRes.json();
-                    this.monthlyData = monthData.data;
+/* Hero Section dengan Animasi Gradient Hijau */
+.prayer-hero {
+  background: linear-gradient(-45deg, #146c43, #198754, #20c997, #157347);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: white;
+  padding: 80px 0 120px 0;
+  border-radius: 0 0 50px 50px;
+  margin-bottom: -40px;
+  position: relative;
+}
 
-                    // Arah Kiblat
-                    const qiblaRes = await fetch(`${baseUrl}/qibla/${latitude}/${longitude}`);
-                    const qiblaData = await qiblaRes.json();
-                    this.qiblaAngle = Math.round(qiblaData.data.direction);
-                    
-                    this.calculateNextPrayer();
-                    this.initCompass();
-                }
-                this.loading = false;
-            } catch (e) {
-                this.error = "Gagal memuatkan data. Periksa sambungan internet.";
-                this.loading = false;
-            }
-        },
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-        updateClock() {
-            const now = new Date();
-            this.currentTime = now.toLocaleTimeString('ms-MY', { 
-                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false 
-            });
-            if (this.nextPrayerTime) this.updateCountdown();
-        },
+.location-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 20px;
+  border-radius: 50px;
+  display: inline-block;
+  backdrop-filter: blur(10px);
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
 
-        calculateNextPrayer() {
-            const now = new Date();
-            // Senarai solat yang memerlukan Azan (Syuruk dikecualikan)
-            const prayerNames = ['Subuh', 'Zohor', 'Asar', 'Maghrib', 'Isyak'];
-            
-            for (let name of prayerNames) {
-                const [h, m] = this.dailyTimes[name].split(':');
-                const pDate = new Date();
-                pDate.setHours(parseInt(h), parseInt(m), 0, 0);
-                
-                if (pDate > now) {
-                    this.nextPrayerName = name;
-                    this.nextPrayerTime = pDate;
-                    return;
-                }
-            }
+.countdown-box {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 15px 30px;
+  border-radius: 20px;
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
 
-            // Jika semua waktu hari ini sudah lepas, ambil Subuh esok
-            const [h, m] = this.dailyTimes['Subuh'].split(':');
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(parseInt(h), parseInt(m), 0, 0);
-            this.nextPrayerName = 'Subuh';
-            this.nextPrayerTime = tomorrow;
-        },
+/* --- Azan Floating Controller --- */
+.stop-azan-overlay {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: white;
+  padding: 15px 25px;
+  border-radius: 100px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  border: 2px solid var(--primary-green);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 300px;
+  justify-content: center;
+}
 
-        updateCountdown() {
-            const now = new Date();
-            const diff = this.nextPrayerTime - now;
+/* --- Compass Logic --- */
+.compass-dial {
+  width: 200px;
+  height: 200px;
+  border: 10px solid #ffffff;
+  border-radius: 50%;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  background: #ffffff;
+}
 
-            // Jika tepat masuk waktu (jarak kurang 1 saat)
-            if (diff <= 0 && diff > -1500) {
-                this.playAzan();
-                // Tunggu sebentar sebelum kira waktu seterusnya
-                setTimeout(() => this.calculateNextPrayer(), 2000);
-                return;
-            }
+.kaaba-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dark-text);
+  z-index: 1;
+}
 
-            if (diff <= 0) {
-                this.calculateNextPrayer();
-                return;
-            }
+.needle {
+  width: 4px;
+  height: 80px;
+  background: #dc3545; /* Jarum Merah */
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform-origin: bottom center;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 2px;
+  z-index: 2;
+}
 
-            const hours = Math.floor(diff / 3600000);
-            const minutes = Math.floor((diff % 3600000) / 60000);
-            const seconds = Math.floor((diff % 60000) / 1000);
-            this.countdown = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-        },
+/* --- Prayer Cards --- */
+.prayer-list {
+  display: grid;
+  gap: 15px;
+}
 
-        playAzan() {
-            if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
-                this.isAzanPlaying = true;
-                this.audio.play().catch(err => {
-                    console.warn("Autoplay block: Sila klik skrin untuk membolehkan bunyi.");
-                    // Jika gagal, set semula status supaya sistem boleh cuba lagi
-                    this.isAzanPlaying = false; 
-                });
+.prayer-card {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.03);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
 
-                // Berhenti automatik selepas 4 minit
-                setTimeout(() => { this.stopAzan(); }, 240000);
-            }
-        },
+/* Highlight Waktu Solat Semasa */
+.prayer-card.active-now {
+  background: var(--soft-green);
+  border: 1px solid var(--primary-green);
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(25, 135, 84, 0.1);
+}
 
-        stopAzan() {
-            this.audio.pause();
-            this.audio.currentTime = 0;
-            this.isAzanPlaying = false;
-        },
+/* Icon Animation when Azan is playing */
+.fa-volume-up.text-success {
+  animation: pulse-audio 1.5s infinite;
+}
 
-        initCompass() {
-            const handler = (e) => {
-                let heading = e.webkitCompassHeading || (360 - e.alpha);
-                if (heading !== undefined) {
-                    // Sudut relatif jarum (Arah Kiblat - Arah Telefon Sekarang)
-                    const relativeAngle = this.qiblaAngle - heading;
-                    const pointer = document.getElementById('compass-pointer');
-                    if (pointer) {
-                        pointer.style.transform = `translateX(-50%) rotate(${relativeAngle}deg)`;
-                    }
-                }
-            };
+@keyframes pulse-audio {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
 
-            // Minta izin sensor (Khas untuk iOS)
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                document.body.addEventListener('click', () => {
-                    DeviceOrientationEvent.requestPermission()
-                        .then(state => {
-                            if (state === 'granted') window.addEventListener('deviceorientation', handler, true);
-                        });
-                }, { once: true });
-            } else {
-                window.addEventListener('deviceorientation', handler, true);
-            }
-        },
+.prayer-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  background: #f8f9fa;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-green);
+  font-size: 1.4rem;
+}
 
-        getIcon(name) {
-            const map = { 
-                Subuh: 'fa-cloud-moon', 
-                Syuruk: 'fa-sun', 
-                Zohor: 'fa-certificate', 
-                Asar: 'fa-cloud-sun', 
-                Maghrib: 'fa-moon', 
-                Isyak: 'fa-star' 
-            };
-            return `fas ${map[name] || 'fa-clock'}`;
-        },
+.active-now .prayer-icon-wrapper {
+  background: var(--primary-green);
+  color: white;
+}
 
-        formatTime(t) { return t ? t.split(' ')[0] : '--:--'; },
+/* --- Table & UI --- */
+.card-rounded {
+  border-radius: 25px !important;
+  overflow: hidden;
+}
 
-        isToday(dateStr) {
-            const now = new Date();
-            const d = String(now.getDate()).padStart(2, '0');
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const y = now.getFullYear();
-            return dateStr === `${d}-${m}-${y}`;
-        },
+.table thead th {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 15px;
+}
 
-        handleLocationError(error) {
-            this.loading = false;
-            this.error = "Gagal akses lokasi. Sila aktifkan GPS untuk waktu solat yang tepat.";
-        },
-        
-        refreshData() {
-            this.init();
-        }
-    },
-    mounted() {
-        this.init();
-    }
-}).mount('#solat-app');
+.table-success {
+  --bs-table-bg: var(--soft-green);
+  --bs-table-border-color: var(--primary-green);
+  font-weight: bold;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .prayer-hero {
+    padding: 60px 0 100px 0;
+    border-radius: 0 0 40px 40px;
+  }
+  
+  .display-3 { font-size: 2.5rem; }
+  
+  .stop-azan-overlay {
+    width: 90%;
+    bottom: 20px;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+  }
+}
