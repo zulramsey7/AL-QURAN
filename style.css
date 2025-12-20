@@ -1,4 +1,12 @@
 /* 1. VARIABLE DEFINITIONS */
+@font-face {
+  font-family: 'Uthman-Taha';
+  src: url('./assets/fonts/Uthman-Taha.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --primary-color: #2c3e50;
   --secondary-color: #3498db;
@@ -23,6 +31,22 @@ body {
   padding: 0;
   color: var(--primary-color);
   transition: background-color 0.3s ease;
+}
+
+/* KHAS UNTUK TEKS ARAB */
+.arabic-name {
+  font-family: 'Uthman-Taha', serif !important;
+  font-size: 1.6rem !important;
+  direction: rtl;
+}
+
+.quran-text {
+  font-family: 'Uthman-Taha', serif !important;
+  direction: rtl;
+  font-size: 2.5rem !important;
+  line-height: 2.5 !important;
+  text-align: right;
+  display: block;
 }
 
 /* 3. NAVIGATION */
@@ -66,7 +90,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Indicator Garisan Bawah Desktop */
 @media (min-width: 992px) {
   .navbar-nav .nav-link::after {
       content: '';
@@ -156,7 +179,6 @@ body {
   box-shadow: 0 25px 50px rgba(0,0,0,0.15) !important;
 }
 
-/* Sirah Card Decoration */
 .card-bg-decoration {
   position: absolute;
   bottom: -20px;
@@ -207,14 +229,6 @@ body {
   transform: scale(1.05) translateY(-2px);
   box-shadow: 0 8px 15px rgba(0,0,0,0.2);
   filter: brightness(1.1);
-}
-
-.btn-primary i {
-  transition: transform 0.3s ease;
-}
-
-.btn-primary:hover i {
-  transform: translateX(5px);
 }
 
 /* 8. TRENDING & POPULAR SECTION */
@@ -277,7 +291,6 @@ footer {
   background: var(--warning-color) !important;
 }
 
-/* SISTEM MOD GELAP GLOBAL */
 body.dark-mode {
   background-color: #121212 !important;
   color: #e0e0e0 !important;
@@ -302,8 +315,10 @@ body.dark-mode .bg-light {
   border-color: #333 !important;
 }
 
-body.dark-mode .text-muted {
-  color: #b0b0b0 !important;
+/* Penyesuaian teks Arab dalam Mod Gelap */
+body.dark-mode .arabic-name,
+body.dark-mode .quran-text {
+  color: #ffffff !important;
 }
 
 /* 12. RESPONSIVE */
@@ -313,21 +328,13 @@ body.dark-mode .text-muted {
       margin-top: 15px;
       padding: 15px;
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .navbar-nav .nav-link {
-      padding: 12px 20px !important;
-      margin-bottom: 5px;
   }
 }
 
 @media (max-width: 768px) {
-  .hero-section { padding: 4rem 0; border-radius: 0 0 1.5rem 1.5rem; }
-  .feature-card:hover { transform: translateY(-8px); }
+  .quran-text { font-size: 1.8rem !important; }
 }
 
-/* Gaya Banner Kemaskini PWA */
 .update-banner {
   position: fixed;
   bottom: 20px;
@@ -339,31 +346,4 @@ body.dark-mode .text-muted {
   border-radius: 50px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.update-content {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-#refreshApp {
-  border-radius: 20px !important;
-  padding: 5px 15px !important;
-  font-size: 0.8rem !important;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-@media (max-width: 576px) {
-  .update-banner {
-      width: 90%;
-      bottom: 10px;
-      padding: 12px 20px;
-  }
 }
