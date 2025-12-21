@@ -8,10 +8,12 @@
  const urlsToCache = [
      './',
      './index.html',
+     './Logo2.png',
      './icon-192x192.png',
      './yasin.html',
      './quran.html',
      './surah.html',
+     './kiblat.html',
      './doa.html',
      './sirah.html',
      './solat.html',

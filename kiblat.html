@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiblat - QuranDigital</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa; /* Sama dengan index */
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container Kompas supaya sentiasa di tengah */
+        .qibla-main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            height: calc(100vh - 100px);
+            padding: 20px;
+            margin-top: 60px;
+        }
+
+        /* Bulatan Kompas Minimalis */
+        .compass-circle {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 8px solid #fff;
+        }
+
+        .compass-dial {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.1s linear;
+        }
+
+        .dir {
+            position: absolute;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #adb5bd;
+        }
+        .n { top: 15px; left: 50%; transform: translateX(-50%); color: #e74c3c; }
+        .s { bottom: 15px; left: 50%; transform: translateX(-50%); }
+        .e { right: 15px; top: 50%; transform: translateY(-50%); }
+        .w { left: 15px; top: 50%; transform: translateY(-50%); }
+
+        /* Jarum Tajam */
+        .qibla-pointer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            transition: transform 0.1s linear;
+            display: flex;
+            justify-content: center;
+        }
+
+        .needle {
+            width: 3px;
+            height: 45%;
+            background: #2d6a4f;
+            margin-top: 15px;
+            position: relative;
+            border-radius: 2px;
+        }
+
+        .needle::after {
+            content: '🕋';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 22px;
+        }
+
+        /* Status Badge */
+        .status-pill {
+            background: white;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot-blink {
+            width: 8px;
+            height: 8px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .degree-box h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #2d6a4f;
+            margin: 0;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <div class="top-bar-container">
+            <div class="top-bar-pill">
+                <a href="index.html" class="text-decoration-none text-dark me-2">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h6 class="mb-0 fw-bold" style="color: var(--tn-green-dark); font-size: 0.85rem;">Arah Kiblat</h6>
+            </div>
+        </div>
+
+        <div class="qibla-main-container animate__animated animate__fadeIn">
+            
+            <div class="text-center">
+                <div class="status-pill mb-2">
+                    <div id="status-dot" class="dot-blink"></div>
+                    <span id="status-text">Mencari GPS...</span>
+                </div>
+            </div>
+
+            <div class="compass-circle">
+                <div class="compass-dial" id="dial">
+                    <span class="dir n">U</span>
+                    <span class="dir e">T</span>
+                    <span class="dir s">S</span>
+                    <span class="dir w">B</span>
+                </div>
+                <div class="qibla-pointer" id="pointer">
+                    <div class="needle"></div>
+                </div>
+            </div>
+
+            <div class="text-center w-100 px-4">
+                <div class="degree-box mb-3">
+                    <h1 id="deg-val">--°</h1>
+                    <p class="text-muted small fw-bold">DARI ARAH UTARA</p>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 p-3 mb-3 bg-white">
+                    <p class="mb-0 text-muted" style="font-size: 0.7rem;">
+                        Letakkan telefon di permukaan rata untuk hasil yang lebih tepat.
+                    </p>
+                </div>
+
+                <button onclick="initCompass()" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm w-100 py-2">
+                    <i class="fas fa-compass me-2"></i>Mula Kalibrasi
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const dial = document.getElementById('dial');
+        const pointer = document.getElementById('pointer');
+        const degVal = document.getElementById('deg-val');
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.getElementById('status-dot');
+        
+        let qiblaAngle = 0;
+
+        // Ambil GPS
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const { latitude, longitude } = pos.coords;
+                qiblaAngle = (Math.atan2(
+                    Math.sin((39.8262 - longitude) * Math.PI / 180),
+                    Math.cos(latitude * Math.PI / 180) * Math.tan(21.4225 * Math.PI / 180) - 
+                    Math.sin(latitude * Math.PI / 180) * Math.cos((39.8262 - longitude) * Math.PI / 180)
+                ) * 180 / Math.PI + 360) % 360;
+
+                degVal.innerText = Math.round(qiblaAngle) + "°";
+                statusText.innerText = "GPS Sedia";
+                statusDot.style.background = "#2ed573";
+                statusDot.style.animation = "none";
+            });
+        }
+
+        function handleMove(event) {
+            const heading = event.webkitCompassHeading || (360 - event.alpha);
+            if (heading) {
+                dial.style.transform = `rotate(${-heading}deg)`;
+                pointer.style.transform = `rotate(${qiblaAngle - heading}deg)`;
+            }
+        }
+
+        function initCompass() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(s => {
+                    if(s === 'granted') window.addEventListener('deviceorientation', handleMove);
+                });
+            } else {
+                window.addEventListener('deviceorientation', handleMove);
+            }
+        }
+    </script>
+</body>
+</html>

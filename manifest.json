@@ -8,8 +8,8 @@
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#2c3e50",
-  "theme_color": "#2c3e50",
+  "background_color": "#1b4332",
+  "theme_color": "#2d6a4f",
   "categories": ["education", "lifestyle", "utilities"],
   "scope": "./",
   "shortcuts": [
@@ -42,7 +42,7 @@
       "purpose": "any"
     },
     {
-      "src": "512x512.png",
+      "src": "icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
