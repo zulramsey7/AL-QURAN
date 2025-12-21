@@ -1,8 +1,8 @@
-/* 1. VARIABLE DEFINITIONS */
+/* 1. VARIABLE DEFINITIONS & FONTS */
 @font-face {
   font-family: 'Uthman-Taha';
-  /* Menggunakan path relatif yang paling selamat untuk Netlify */
-  src: url(/assets/fonts/Uthman-Taha.ttf') format('truetype');
+  /* PEMBETULAN: Memastikan path betul dan pembuka petik sepadan */
+  src: url('/assets/fonts/Uthman-Taha.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -37,21 +37,22 @@ body {
 /* KHAS UNTUK TEKS ARAB (Ditingkatkan saiz dan ketetapan font) */
 .arabic-name {
   font-family: 'Uthman-Taha', serif !important;
-  font-size: 2.2rem !important; /* Saiz lebih besar supaya rupa font jelas */
+  font-size: 2.2rem !important; 
   direction: rtl;
   font-weight: normal !important;
+  line-height: 1.5;
 }
 
 .quran-text {
   font-family: 'Uthman-Taha', serif !important;
   direction: rtl;
-  font-size: 3rem !important; /* Sangat besar untuk paparan ayat */
-  line-height: 2.2 !important;
+  /* DIBESARKAN: Supaya jelas seperti aplikasi The Noor */
+  font-size: 3.5rem !important; 
+  line-height: 2.5 !important; 
   text-align: right;
   display: block;
+  word-wrap: break-word;
 }
-
-/* Seterusnya kekalkan kod NAVIGATION, HERO, dan lain-lain milik anda... */
 
 /* 3. NAVIGATION */
 .navbar {
@@ -336,7 +337,14 @@ body.dark-mode .quran-text {
 }
 
 @media (max-width: 768px) {
-  .quran-text { font-size: 1.8rem !important; }
+  /* DIBESARKAN: Supaya teks Arab tetap selesa dibaca di telefon */
+  .quran-text { 
+      font-size: 2.5rem !important; 
+      line-height: 2.2 !important;
+  }
+  .arabic-name {
+      font-size: 1.8rem !important;
+  }
 }
 
 .update-banner {
