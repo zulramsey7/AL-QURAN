@@ -1,6 +1,6 @@
 /**
  * Fail: surah.js
- * Deskripsi: Memaparkan detail surah dengan gaya visual "The Noor"
+ * Deskripsi: Memaparkan detail surah dengan saiz standard handphone
  * Font: Uthman-Taha | API: equran.id v2
  */
 
@@ -9,8 +9,11 @@ const noSurat = urlParams.get('no');
 let currentAudio = null;
 
 async function getSurahDetail() {
-    // Kembali ke senarai surah jika parameter 'no' tiada
-    if(!noSurat) { window.location.href = 'quran.html'; return; }
+    // Kembali ke senarai jika no surah tiada
+    if(!noSurat) { 
+        window.location.href = 'quran.html'; 
+        return; 
+    }
 
     const container = document.getElementById('verse-container');
     const loading = document.getElementById('loading-ayat');
@@ -20,7 +23,7 @@ async function getSurahDetail() {
         const result = await response.json();
         const data = result.data;
 
-        // 1. KEMASKINI HEADER (Navigasi & Tajuk)
+        // 1. KEMASKINI HEADER SURAH
         if(document.getElementById('nav-surah-name')) 
             document.getElementById('nav-surah-name').innerText = data.namaLatin;
         
@@ -30,11 +33,11 @@ async function getSurahDetail() {
         if(document.getElementById('surah-info')) 
             document.getElementById('surah-info').innerText = `${data.namaLatin} (${data.arti}) - ${data.jumlahAyat} Ayat`;
         
-        // 2. SETUP AUDIO FULL (Main Player)
+        // 2. SETUP AUDIO PENUH
         const mainAudio = document.getElementById('main-audio');
         const audioSrc = document.getElementById('audio-src');
         if(mainAudio && audioSrc) {
-            audioSrc.src = data.audioFull["05"]; // Qari Misyari Rasyid
+            audioSrc.src = data.audioFull["05"]; 
             mainAudio.load();
         }
 
@@ -43,47 +46,41 @@ async function getSurahDetail() {
         container.innerHTML = '';
 
         data.ayat.forEach((ayat, index) => {
-            const teksArab = ayat.teksArab; 
-            const teksLatin = ayat.teksLatin;
-            const teksIndo = ayat.teksIndonesia;
-            const noAyat = ayat.nomorAyat;
-            const audioAyat = ayat.audio["05"];
-
             container.innerHTML += `
-                <div class="card verse-card border-0 animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.05}s">
-                    <div class="card-body p-4">
+                <div class="card verse-card border-0 animate__animated animate__fadeInUp" style="background-color: #383f45 !important; border-bottom: 1px solid #4a545c !important; border-radius: 0; margin-bottom: 0;">
+                    <div class="card-body p-3">
                         <div class="d-flex">
                             <div class="me-3">
-                                <div class="verse-number" style="background-color: #d81b60 !important; color: white; min-width: 32px; height: 32px; font-size: 0.75rem; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                                    ${noAyat}
+                                <div class="verse-number" style="background-color: #d81b60 !important; color: white; min-width: 28px; height: 28px; font-size: 0.7rem; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                    ${ayat.nomorAyat}
                                 </div>
                             </div>
                             
                             <div class="flex-grow-1">
-                                <div class="quran-text mb-3" style="font-family: 'Uthman-Taha', serif !important; font-size: 2.8rem !important; line-height: 2.2 !important; color: #ffffff !important; text-align: right; direction: rtl;">
-                                    ${teksArab}
+                                <div class="quran-text mb-2" style="font-family: 'Uthman-Taha', serif !important; font-size: 2.0rem !important; line-height: 1.8 !important; color: #ffffff !important; text-align: right; direction: rtl; font-weight: normal;">
+                                    ${ayat.teksArab}
                                 </div>
                                 
-                                <div class="text-latin mb-2" style="color: #cddc39 !important; font-size: 1.1rem; font-style: normal;">
-                                    ${teksLatin}
+                                <div class="text-latin mb-1" style="color: #cddc39 !important; font-size: 0.95rem; font-weight: 400; font-family: 'Roboto', sans-serif;">
+                                    ${ayat.teksLatin}
                                 </div>
                                 
-                                <div class="text-translation" style="color: #ffffff !important; font-size: 1rem; line-height: 1.6; opacity: 0.9;">
-                                    ${teksIndo}
+                                <div class="text-translation" style="color: #ffffff !important; font-size: 0.9rem; line-height: 1.5; opacity: 0.85; font-family: 'Roboto', sans-serif;">
+                                    ${ayat.teksIndonesia}
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="d-flex justify-content-end align-items-center mt-3 pt-2">
+                        <div class="d-flex justify-content-end align-items-center mt-3">
                             <div class="audio-controls">
-                                <button onclick="playAyat('${audioAyat}', this)" class="btn text-white p-0 me-4 play-btn" style="font-size: 1.2rem; background: none; border: none;">
+                                <button onclick="playAyat('${ayat.audio["05"]}', this)" class="btn text-white p-0 me-4 play-btn" style="font-size: 1.1rem; background: none; border: none; outline: none;">
                                     <i class="fas fa-play"></i>
                                 </button>
-                                <button onclick="stopAyat()" class="btn text-danger p-0 me-4 d-none stop-btn" style="font-size: 1.2rem; background: none; border: none;">
+                                <button onclick="stopAyat()" class="btn text-danger p-0 me-4 d-none stop-btn" style="font-size: 1.1rem; background: none; border: none; outline: none;">
                                     <i class="fas fa-stop"></i>
                                 </button>
                             </div>
-                            <i class="fas fa-ellipsis-h text-white opacity-50" style="font-size: 1.2rem; cursor: pointer;"></i>
+                            <i class="fas fa-ellipsis-h text-white opacity-40" style="font-size: 1.1rem; cursor: pointer;"></i>
                         </div>
                     </div>
                 </div>
@@ -91,22 +88,21 @@ async function getSurahDetail() {
         });
 
     } catch (error) {
-        console.error("Ralat memuatkan surah:", error);
-        if(container) container.innerHTML = `<div class="alert alert-danger mx-3 mt-3">Gagal memuatkan ayat. Sila periksa sambungan internet.</div>`;
+        console.error("Ralat memuatkan data:", error);
+        if(container) container.innerHTML = `<div class="text-center p-5 text-white">Gagal memuatkan ayat. Sila periksa internet anda.</div>`;
     } finally {
         if(loading) loading.classList.add('d-none');
     }
 }
 
 /**
- * Fungsi Mainkan Audio per Ayat
+ * Fungsi Mainkan Audio Ayat
  */
 function playAyat(url, btn) {
-    stopAyat(); // Berhenti sebarang audio yang sedang dimainkan
+    stopAyat(); // Berhenti audio sebelumnya
     currentAudio = new Audio(url);
     currentAudio.play();
 
-    // Tukar ikon butang
     const parent = btn.parentElement;
     const stopBtn = parent.querySelector('.stop-btn');
     
@@ -121,7 +117,7 @@ function playAyat(url, btn) {
 }
 
 /**
- * Fungsi Hentikan Audio
+ * Fungsi Berhenti Audio
  */
 function stopAyat() {
     if(currentAudio) {
@@ -129,10 +125,10 @@ function stopAyat() {
         currentAudio.currentTime = 0;
         currentAudio = null;
     }
-    // Reset semua butang ke keadaan asal
+    // Set semula semua butang
     document.querySelectorAll('.stop-btn').forEach(b => b.classList.add('d-none'));
     document.querySelectorAll('.play-btn').forEach(b => b.classList.remove('d-none'));
 }
 
-// Jalankan fungsi setelah DOM siap dimuatkan
+// Jalankan fungsi apabila halaman dimuatkan
 document.addEventListener('DOMContentLoaded', getSurahDetail);
