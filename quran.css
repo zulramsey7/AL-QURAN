@@ -1,148 +1,171 @@
-/* 1. Import Fonts (Backup) */
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap');
-
-/* 2. Definisi Font Lokal (WAJIB ADA) */
-@font-face {
-  font-family: 'Uthman-Taha';
-  /* PEMBETULAN: Menambah pembuka petik yang hilang */
-  src: url('/assets/fonts/Uthman-Taha.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+/* --- QURAN CSS - SIRAH & DOA UNIFIED STYLE --- */
 
 :root {
-    --primary-color: #2c3e50;
-    --success-color: #198754;
-    --light-bg: #f8f9fa;
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    --purple-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --quran-emerald: #2d6a4f;
+    --quran-dark: #1b4332;
+    --quran-light: #f8fbf9;
+    --shadow-soft: 0 4px 12px rgba(0,0,0,0.03);
+    --shadow-overlap: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-body {
-    background-color: var(--light-bg);
-    font-family: 'Roboto', sans-serif;
-    color: #333;
-    transition: background-color 0.3s ease, color 0.3s ease;
+body { 
+    background-color: var(--quran-light); 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
 }
 
-/* Navbar */
-.navbar {
-    background-color: var(--success-color) !important;
-    border-bottom: 3px solid rgba(0,0,0,0.1);
-}
-
-/* Hero Quran Section */
+/* 1. HEADER STYLE (Sama seperti Sirah/Doa - Teks Putih Bersih) */
 .hero-quran {
-    background: linear-gradient(rgba(25, 135, 84, 0.9), rgba(44, 62, 80, 0.9)), 
-                url('https://images.unsplash.com/photo-1609599006353-e629aaabfeae?q=80&w=1920&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 4rem 0;
-    border-radius: 0 0 2.5rem 2.5rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%);
+    padding: 100px 20px 50px; /* Padding diselaraskan untuk Top Bar */
+    text-align: center;
+    border-radius: 0 0 40px 40px;
+    color: white !important; /* Memastikan semua teks di dalam hero berwarna putih */
+    position: relative;
 }
 
-/* Arabic Name Styling (Untuk Senarai Surah) */
-.arabic-name {
-    font-family: 'Uthman-Taha', 'Amiri', serif !important;
-    /* SAIZ STANDARD: Selesa untuk paparan kad senarai */
-    font-size: 1.8rem !important; 
-    color: var(--success-color);
-    line-height: 1.5;
-    direction: rtl;
+/* Memastikan tajuk Arab (القرآن الكريم) dan tajuk Rumi sentiasa putih */
+.hero-quran h1, 
+.hero-quran h2, 
+.hero-quran h3, 
+.hero-quran p,
+.hero-quran .arabic-header {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Tambah sedikit shadow supaya teks lebih jelas */
 }
 
-/* Quran Text Styling (Untuk Halaman Surah/Detail Ayat) */
-.quran-text {
-    font-family: 'Uthman-Taha', 'Amiri', serif !important;
-    /* SAIZ STANDARD HANDPHONE: 2.0rem - 2.2rem adalah yang terbaik */
-    font-size: 2.2rem !important;
-    line-height: 2.0 !important;
-    direction: rtl;
-    text-align: right;
+/* 2. SEARCH CONTAINER OVERLAP */
+.search-container { 
+    margin-top: -30px; 
+    padding: 0 15px; 
+    z-index: 10; 
+    position: relative; 
 }
 
-/* Search Box Styling */
-.search-box {
-    max-width: 500px;
-    margin: 0 auto;
+.search-bar { 
+    border-radius: 50px !important; 
+    border: none; 
+    box-shadow: var(--shadow-overlap); 
+    padding: 14px 25px !important; 
+    background-color: white !important;
 }
 
-.search-box .form-control {
-    border-radius: 50px;
-    padding: 12px 25px;
-    border: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-/* Surah Card Styling */
+/* 3. SURAH CARD STYLING (Gaya Diamond) */
 .surah-card {
-    border: 1px solid rgba(0,0,0,0.05);
-    border-radius: 1.25rem;
-    background: #ffffff;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0,0,0,0.03);
+    border-radius: 20px;
+    background: white;
+    padding: 16px;
+    transition: all 0.3s ease;
     text-decoration: none !important;
     color: inherit;
-    display: block;
-    height: 100%;
-    box-shadow: var(--card-shadow);
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 8px;
 }
 
-.surah-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-    border-color: var(--success-color);
+.surah-card:active {
+    transform: scale(0.97);
+    background-color: #f1f8f4;
 }
 
+/* Diamond Number (Sama seperti Doa/Quran asal) */
 .surah-no {
-    width: 45px;
-    height: 45px;
-    background: var(--purple-gradient);
+    width: 38px;
+    height: 38px;
+    background: var(--quran-emerald);
     color: white;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
+    font-size: 0.85rem;
     flex-shrink: 0;
+    transform: rotate(45deg); 
+    margin-right: 22px;
+    margin-left: 8px;
 }
 
-.type-badge {
+.surah-no span {
+    transform: rotate(-45deg);
+}
+
+/* Surah Info */
+.surah-info {
+    flex-grow: 1;
+}
+
+.surah-name-latin {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--quran-dark);
+    margin-bottom: 2px;
+    display: block;
+}
+
+.surah-meta {
     font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 4px 10px;
-    border-radius: 50px;
-    background: #f1f3f5;
     color: #6c757d;
-    font-weight: 600;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* Dark Mode Support */
-body.dark-mode {
-    background-color: #121212 !important;
-    color: #e0e0e0;
+/* Nama Arab (Guna Font Uthmanic) */
+.arabic-name {
+    font-family: 'Uthman-Taha', 'Amiri', serif !important;
+    font-size: 1.4rem !important;
+    color: var(--quran-emerald);
+    direction: rtl;
+    text-align: right;
 }
 
-body.dark-mode .surah-card {
-    background: #1e1e1e;
-    border-color: #333;
+/* 4. TYPE BADGE (Meccan/Medinan) */
+.type-badge {
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #e9f5ee;
+    color: var(--quran-emerald);
+    font-weight: 700;
+    margin-top: 4px;
+    display: inline-block;
 }
 
-body.dark-mode .arabic-name {
-    color: #52c41a !important;
+/* 5. READING VIEW (Untuk quran-detail) */
+.quran-ayah-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-bottom: 3px solid #eee;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .arabic-name {
-        font-size: 1.6rem !important;
-    }
-    .quran-text {
-        font-size: 2.0rem !important; /* Mengecil sedikit di mobile supaya tidak sesak */
-        line-height: 1.8 !important;
-    }
+.arabic-text {
+    font-family: 'Uthman-Taha', 'Amiri', serif !important;
+    font-size: 1.8rem;
+    line-height: 2.5;
+    color: var(--quran-dark);
+    direction: rtl;
+    text-align: right;
+}
+
+/* 6. DARK MODE ADJUSTMENTS */
+body.dark-mode { background-color: #121212; }
+
+body.dark-mode .surah-card, 
+body.dark-mode .quran-ayah-card {
+    background: #1e2b24;
+    border-color: #2d3e35;
+    color: white;
+}
+
+body.dark-mode .surah-name-latin,
+body.dark-mode .arabic-text {
+    color: white;
+}
+
+body.dark-mode .surah-meta {
+    color: #adb5bd;
 }

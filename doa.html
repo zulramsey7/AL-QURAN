@@ -2,103 +2,97 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doa-Doa Harian - Aplikasi Islam</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#198754">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Doa-Doa Harian - QuranDigital2025</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="doa.css">
 </head>
-<body class="bg-light">
+<body>
 
-    <nav class="navbar navbar-dark bg-success sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft" href="index.html">
-                <i class="fas fa-arrow-left me-3"></i>
-                <span class="fw-bold">Doa Harian</span>
-            </a>
-            <div class="d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-light me-2" onclick="adjustFont(-1)" title="Kecilkan Saiz">A-</button>
-                <button class="btn btn-sm btn-outline-light" onclick="adjustFont(1)" title="Besarkan Saiz">A+</button>
-            </div>
-        </div>
-    </nav>
-
-    <header class="hero-doa text-center shadow-lg">
-        <div class="container animate__animated animate__fadeInDown">
-            <h1 class="display-3 fw-bold mb-2">Pintu Doa</h1>
-            <p class="lead opacity-75">Himpunan doa-doa harian & mustajab</p>
-            
-            <div class="search-container mx-auto mt-4">
-                <div class="input-group shadow-lg rounded-pill overflow-hidden">
-                    <span class="input-group-text bg-white border-0 ps-4">
-                        <i class="fas fa-search text-success"></i>
-                    </span>
-                    <input type="text" id="search-doa" class="form-control border-0 p-3" placeholder="Cari doa (contoh: makan, tidur, dhuha)...">
+    <div class="app-wrapper">
+        
+        <div class="top-bar-container">
+            <div class="top-bar-pill shadow-sm">
+                <a href="index.html" class="text-decoration-none text-dark me-auto">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h6 class="mb-0 fw-bold mx-auto" style="color: #1b4332;">Pintu Doa</h6>
+                <div class="ms-auto d-flex gap-2">
+                    <button onclick="adjustFont(-1)" class="btn btn-sm p-0 text-success"><i class="fas fa-minus-circle"></i></button>
+                    <button onclick="adjustFont(1)" class="btn btn-sm p-0 text-success"><i class="fas fa-plus-circle"></i></button>
                 </div>
             </div>
         </div>
-    </header>
 
-    <div class="container py-4">
-        <div id="loading-spinner" class="text-center py-5">
-            <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-            <p class="text-muted fw-bold">Menyusun senarai doa...</p>
-        </div>
+        <header class="sirah-header-v2">
+            <div class="container mt-2">
+                <h1 class="fw-bold animate__animated animate__fadeInDown">Himpunan Doa</h1>
+                <p class="opacity-75 small">Senjata & perisai umat Mukmin</p>
+            </div>
+        </header>
 
-        <div id="doa-content" class="d-none">
-            <div id="doa-list" class="row g-4">
-                </div>
-            
-            <div id="no-results" class="text-center py-5 d-none">
-                <i class="fas fa-search-minus fa-3x text-muted mb-3"></i>
-                <p class="text-muted">Maaf, doa yang anda cari tidak ditemui.</p>
+        <div class="container search-container mb-5">
+            <div class="input-group">
+                <input type="text" id="search-doa" class="form-control search-bar" placeholder="Cari doa (cth: makan, tidur, dhuha)...">
             </div>
         </div>
+
+        <div class="container mb-4">
+            <ul class="nav nav-pills justify-content-center" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-harian" type="button">Doa Harian</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pilihan" type="button">Doa Pilihan</button>
+                </li>
+            </ul>
+        </div>
+
+        <main class="container mb-5">
+            <div id="loading-spinner" class="text-center py-5">
+                <div class="spinner-border text-success mb-3" role="status"></div>
+                <p class="text-muted small fw-bold">Menyusun senarai doa...</p>
+            </div>
+
+            <div class="tab-content d-none" id="doa-content">
+                <div class="tab-pane fade show active" id="tab-harian">
+                    <div class="row g-3" id="doa-list">
+                        </div>
+                </div>
+                <div class="tab-pane fade" id="tab-pilihan">
+                    <div class="row g-3" id="doa-pilihan-container">
+                        <div class="col-12 text-center py-5">
+                            <p class="text-muted italic">Akan dikemaskini segera...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="no-results" class="text-center py-5 d-none animate__animated animate__fadeIn">
+                <i class="fas fa-search-minus fa-3x text-muted mb-3 opacity-25"></i>
+                <h4 class="text-secondary">Doa tidak dijumpai.</h4>
+            </div>
+        </main>
+
+        <footer class="text-center py-5 text-muted">
+            <hr class="opacity-10 mb-4 mx-5">
+            <p class="mb-0" style="font-size: 0.7rem;">© 2025 QuranDigital2025</p>
+            <p class="fw-bold text-uppercase mb-0" style="font-size: 0.65rem;">Himpunan Doa & Amalan</p>
+            <button class="btn btn-sm btn-outline-success rounded-pill px-4 mt-3 shadow-sm" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <i class="fas fa-chevron-up me-1"></i> Kembali ke Atas
+            </button>
+        </footer>
+
     </div>
 
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-success rounded-circle shadow-lg" id="backToTop" style="position: fixed; bottom: 30px; right: 30px; display: none; width: 50px; height: 50px; z-index: 1000;">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <footer class="text-center py-5 text-muted small bg-white border-top mt-5">
-        <div class="container">
-            <hr class="w-25 mx-auto mb-4">
-            <p class="mb-0">04/12/2025 Aplikasi Islam. QuranDigital2025</p>
-            <p class="fw-bold text-uppercase">Abdul Aziz Bin Kamsi</p>
-            <p class="x-small">Sumber Data: Islamic-API / Open Source Quran</p>
-        </div>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="app.js"></script> <script src="doa.js"></script>
-    
-    <script>
-        // Logik Butang Back to Top
-        window.onscroll = function() {
-            let btn = document.getElementById("backToTop");
-            if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
-                btn.style.display = "block";
-            } else {
-                btn.style.display = "none";
-            }
-        };
-
-        // PWA Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log("SW Registered for Doa"))
-                    .catch(err => console.log("SW Fail"));
-            });
-        }
-    </script>
+    <script src="app.js"></script>
+    <script src="doa.js"></script>
 </body>
 </html>

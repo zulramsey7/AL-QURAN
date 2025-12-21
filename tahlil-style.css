@@ -1,130 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef&display=swap');
+/* --- TAHLIL CSS - UNIFIED WITH YASIN STYLE --- */
 
 :root {
-    --tahlil-primary: #198754;
-    --tahlil-bg-light: #f8f9fa;
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --arabic-color: #2c3e50;
+    --tahlil-emerald: #2d6a4f;
+    --tahlil-dark: #1b4332;
+    --tahlil-gold: #d4a373;
+    --tahlil-card-bg: #ffffff;
+    --tahlil-bg-soft: #f8fbf9;
 }
 
-/* Base Body */
 body {
-    transition: background-color 0.3s ease, color 0.3s ease;
-    overflow-x: hidden;
+    background-color: var(--tahlil-bg-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Tulisan Arab - Dioptimumkan untuk pembacaan */
+/* --- 1. TAHLIL ITEM CONTAINER (Identikal dengan Ayat Card Yasin) --- */
+.tahlil-item {
+    background: var(--tahlil-card-bg);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Badge Nombor/Urutan (Gaya Diamond seperti Quran/Yasin) */
+.tahlil-no {
+    width: 35px;
+    height: 35px;
+    background: var(--tahlil-emerald);
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transform: rotate(45deg);
+    margin-bottom: 25px;
+    margin-left: 8px; /* Ruang untuk rotasi */
+}
+
+.tahlil-no span {
+    transform: rotate(-45deg);
+}
+
+/* --- 2. TULISAN ARAB (Gaya Yasin) --- */
 .arabic-text {
-    font-family: 'Amiri', serif;
-    /* Font size dikawal oleh JS (currentFontSize), ini adalah fallback */
-    font-size: 2.2rem; 
+    font-family: 'Uthman-Taha', 'Amiri', serif !important;
+    font-size: 2rem;
     line-height: 2.5;
     direction: rtl;
     text-align: right;
+    color: var(--tahlil-dark);
     margin-bottom: 20px;
-    color: var(--arabic-color);
-    word-spacing: 4px;
-    /* Mengelakkan pemotongan baris yang pelik */
-    overflow-wrap: break-word; 
+    word-wrap: break-word;
 }
 
-/* Tulisan Latin - Rumi */
+/* --- 3. TULISAN LATIN (Rumi) --- */
 .latin-text {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-style: italic;
-    color: #157347; /* Hijau yang lebih pekat sedikit untuk kontras */
+    color: var(--tahlil-emerald);
     margin-bottom: 12px;
-    font-size: 1.05rem;
-    font-weight: 500;
-    line-height: 1.5;
-    border-left: 3px solid var(--tahlil-primary);
-    padding-left: 15px;
-}
-
-/* Terjemahan */
-.translation-text {
-    color: #5a6268;
-    font-size: 0.95rem;
-    padding-left: 18px;
+    font-size: 0.9rem;
     line-height: 1.6;
-    text-align: justify;
+    border-left: 3px solid var(--tahlil-gold);
+    padding-left: 15px;
+    display: block;
 }
 
-/* Kotak Kandungan Tahlil */
-.tahlil-item {
-    background: #ffffff;
-    border-radius: 18px;
-    padding: 25px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.tahlil-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-}
-
-/* Lencana Nombor/Tajuk */
-.badge.bg-success {
+/* --- 4. TERJEMAHAN (Gaya Yasin) --- */
+.translation-text {
+    color: #5c636a;
     font-size: 0.85rem;
-    padding: 10px 16px;
-    font-weight: 600;
-    border-radius: 12px;
-    background-color: var(--tahlil-primary) !important;
+    line-height: 1.6;
+    text-align: left;
+    padding-top: 12px;
+    border-top: 1px solid #f1f1f1;
 }
 
-/* --- Support Dark Mode --- */
-body.dark-mode {
-    background-color: #121212 !important;
-    color: #e0e0e0;
+/* --- 5. TAJUK BAHAGIAN (Badge Kategori) --- */
+.tahlil-badge {
+    font-size: 0.65rem;
+    padding: 4px 12px;
+    font-weight: 800;
+    border-radius: 6px;
+    background-color: #e9f5ee;
+    color: var(--tahlil-emerald);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    display: inline-block;
+    letter-spacing: 0.5px;
 }
 
+/* --- 6. DARK MODE SUPPORT --- */
 body.dark-mode .tahlil-item {
-    background: #1e1e1e;
-    border-color: #2c2c2c;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    background: #1e2b24;
+    border-color: #2d3e35;
 }
 
 body.dark-mode .arabic-text {
-    color: #f8f9fa;
-}
-
-body.dark-mode .latin-text {
-    color: #52c41a; /* Hijau cerah sikit supaya senang baca dalam gelap */
-    border-left-color: #52c41a;
+    color: #ffffff;
 }
 
 body.dark-mode .translation-text {
-    color: #b0b0b0;
+    border-color: rgba(255,255,255,0.1);
+    color: #adb5bd;
 }
 
-body.dark-mode .navbar {
-    background-color: #0b4a2d !important;
+body.dark-mode .tahlil-badge {
+    background-color: rgba(45, 106, 79, 0.2);
 }
 
-body.dark-mode .bg-white {
-    background-color: #1e1e1e !important;
-}
-
-/* Animasi semasa loading */
-#loader {
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Responsive adjustment untuk skrin kecil (Handphone) */
+/* --- 7. RESPONSIVE --- */
 @media (max-width: 576px) {
-    .tahlil-item {
-        padding: 18px;
-        margin-bottom: 15px;
+    .arabic-text {
+        font-size: 1.75rem;
+        line-height: 2.3;
     }
     
-    .arabic-text {
-        font-size: 1.8rem; /* Lebih kecil sikit di phone supaya tak terlalu panjang */
+    .tahlil-item {
+        padding: 20px;
     }
 }

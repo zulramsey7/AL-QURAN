@@ -2,299 +2,168 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QuranDigital2025</title>
     
-    <title>QuranDigital2025 - Tahlil, Yasin, Doa Harian</title>
-    
-    <meta name="description" content="Aplikasi PWA untuk Tahlil, Yasin, Doa Harian dan Fungsi Lain">
-    <meta name="keywords" content="Quran, Tahlil, Yasin, Doa, Sirah, Waktu Solat">
-    <meta name="author" content="ABDUL AZIZ BIN KAMSI">
-    
-    <meta property="og:title" content="QuranDigital2025 - Aplikasi Islamik">
-    <meta property="og:description" content="Bacaan Tahlil, Yasin & Doa Harian di hujung jari anda.">
-    <meta property="og:image" content="assets/masjid-hero.jpg">
-    <meta property="og:type" content="website">
-    
-    <meta name="theme-color" content="#2c3e50">
-
-    <link rel="manifest" href="manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="icon-192x192.png" type="image/png">
-
-    <style>
-        /* Skeleton Loading CSS anda di sini */
-        .initial-loading { overflow: hidden !important; }
-        /* ... sambungan style anda ... */
-    </style>
-
-    <script>
-        document.documentElement.classList.add('initial-loading');
-    </script>
 </head>
-<script>
-    // Menambah class loading sebelum halaman render
-    document.documentElement.classList.add('initial-loading');
-</script>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-mosque me-2"></i>
-                <span class="fw-bold">QuranDigital2025</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.html">
-                            <i class="fas fa-home-alt"></i> <span>Utama</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="tahlil.html">
-                            <i class="fas fa-hands-praying"></i> <span>Tahlil</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="yasin.html">
-                            <i class="fas fa-book-open"></i> <span>Surah Yasin</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="doa.html">
-                            <i class="fas fa-heart"></i> <span>Doa Harian</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quran.html">
-                            <i class="fas fa-quran"></i> <span>Al-Quran</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="sirah.html">
-                            <i class="fas fa-history"></i> <span>Sirah Nabi</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="nav-link btn-settings" href="tetapan.html">
-                            <i class="fas fa-cog"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div> 
-    </nav> 
-    
-    <section class="hero-section py-5" style="background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), url('./assets/masjid-hero.jpg'); background-size: cover; background-position: center;">
-        <div class="container text-center text-white">
-            <div class="animate__animated animate__fadeIn">
-                <i class="fas fa-mosque fa-6x mb-4"></i>
-                <h1 class="display-4 fw-bold mb-3">Aplikasi Islam</h1>
-                <p class="lead text-white-50">Temukan kebaikan dalam doa harian anda</p>
-                
-                <div class="daily-progress mb-4 mx-auto" style="max-width: 300px;">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Kehadiran Harian</span>
-                        <span id="attendance-text">0/30 hari</span>
-                    </div>
-                    <div class="progress" style="height: 10px;">
-                        <div id="attendance-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
-                    </div>
-                </div>
-                
-                <div class="mt-4">
-                    <button id="install-button" class="btn btn-light btn-lg me-2" style="display: none;">
-                        <i class="fas fa-download me-2"></i> Pasang
-                    </button>
-                    
-                    <button class="btn btn-outline-light btn-lg" onclick="shareApp()">
-                        <i class="fas fa-share me-2"></i> Kongsi
-                    </button>
-                </div>
-            </div>
+
+    <div id="splash-screen">
+    <div class="splash-content animate__animated animate__fadeIn">
+        <div class="logo-wrapper">
+            <img src="Logo2.png" alt="Logo" class="splash-logo">
+            <div class="logo-ring"></div>
         </div>
-    </section>
-
-    <div class="container py-5">
-        <div class="row g-4 mb-5">
-            <div class="col-12">
-                <h2 class="text-center mb-4 fw-bold">
-                    <i class="fas fa-th-large text-primary me-2"></i>Pilih Fungsi
-                </h2>
-            </div>
-            
-            <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp">
-                <div class="card feature-card h-100 border-0 shadow-lg position-relative overflow-hidden">
-                    <span class="badge bg-success position-absolute top-0 end-0 m-3">Popular</span>
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                            <i class="fas fa-pray text-primary fa-3x"></i>
-                        </div>
-                        <h3 class="card-title fw-bold">Tahlil</h3>
-                        <p class="card-text text-muted">Bacaan tahlil lengkap dengan audio</p>
-                    </div>
-                    <div class="card-footer bg-white border-0 p-3">
-                        <a href="tahlil.html" class="btn btn-primary w-100 rounded-pill">Mula Tahlil</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                <div class="card feature-card h-100 border-0 shadow-lg position-relative overflow-hidden">
-                    <span class="badge bg-info position-absolute top-0 end-0 m-3">Baru</span>
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                            <i class="fas fa-book text-success fa-3x"></i>
-                        </div>
-                        <h3 class="card-title fw-bold">Surah Yasin</h3>
-                        <p class="card-text text-muted">Bacaan Surah Yasin lengkap</p>
-                    </div>
-                    <div class="card-footer bg-white border-0 p-3">
-                        <a href="yasin.html" class="btn btn-success w-100 rounded-pill">Baca Yasin</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                <div class="card feature-card h-100 border-0 shadow-lg position-relative overflow-hidden">
-                    <span class="badge bg-warning position-absolute top-0 end-0 m-3 text-dark">Trending</span>
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                            <i class="fas fa-moon text-info fa-3x"></i>
-                        </div>
-                        <h3 class="card-title fw-bold">Doa Harian</h3>
-                        <p class="card-text text-muted">Koleksi doa pagi dan malam</p>
-                    </div>
-                    <div class="card-footer bg-white border-0 p-3">
-                        <a href="doa.html" class="btn btn-info w-100 rounded-pill text-white">Lihat Doa</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                <div class="card feature-card h-100 border-0 shadow-lg position-relative overflow-hidden">
-                    <span class="badge bg-danger position-absolute top-0 end-0 m-3">Premium</span>
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                            <i class="fas fa-quran text-warning fa-3x"></i>
-                        </div>
-                        <h3 class="card-title fw-bold">Al-Quran</h3>
-                        <p class="card-text text-muted">Al-Quran Digital Lengkap</p>
-                    </div>
-                    <div class="card-footer bg-white border-0 p-3">
-                        <a href="quran.html" class="btn btn-warning w-100 rounded-pill">Baca Al-Quran</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-                <div class="card feature-card h-100 border-0 shadow-lg position-relative overflow-hidden">
-                    <span class="badge position-absolute top-0 end-0 m-3 shadow-sm" style="background: var(--purple-gradient); font-size: 0.7rem;">
-                          <i class="fas fa-star me-1"></i> KOLEKSI SIRAH
-                    </span>
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 90px; height: 90px; background: rgba(102, 126, 234, 0.1); border: 2px dashed #667eea; border-radius: 50% !important;">
-                            <i class="fas fa-book-open text-primary fa-3x animate__animated animate__pulse animate__infinite" style="--animate-duration: 3s;"></i>
-                        </div>
-                        <h3 class="card-title fw-bold mb-2" style="color: var(--primary-color);">Sirah Nabi</h3>
-                        <p class="card-text text-muted px-3">Terokai kisah perjuangan Rasulullah SAW.</p>
-                        <div class="d-flex justify-content-center gap-3 mt-3">
-                            <span class="badge bg-light text-dark border"><i class="fas fa-scroll me-1 text-warning"></i> 25 Kisah</span>
-                            <span class="badge bg-light text-dark border"><i class="fas fa-clock me-1 text-info"></i> 5 min bacaan</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white border-0 p-4 pt-0">
-                        <a href="sirah.html" class="btn btn-primary w-100 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2 py-3">
-                            <span>Mula Membaca</span>
-                            <i class="fas fa-arrow-right-long animate__animated animate__headShake animate__infinite"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
-                <div class="card feature-card h-100 border-0 shadow-lg position-relative overflow-hidden">
-                    <span class="badge bg-danger position-absolute top-0 end-0 m-3 animate__animated animate__pulse animate__infinite">Live</span>
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                            <i class="fas fa-clock text-success fa-3x"></i>
-                        </div>
-                        <h3 class="card-title fw-bold">Waktu Solat</h3>
-                        <p class="card-text text-muted mb-0">Lokasi & Kiblat</p>
-                        <div class="small fw-bold text-success mt-2" id="current-prayer-status">Sila Semak</div>
-                    </div>
-                    <div class="card-footer bg-white border-0 p-3">
-                        <a href="solat.html" class="btn btn-success w-100 rounded-pill shadow-sm fw-bold">Semak Jadual</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                    <div class="card-body p-4 p-md-5">
-                        <h2 class="text-center mb-5 fw-bold"><i class="fas fa-fire text-danger me-2"></i>Popular Hari Ini</h2>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <div class="p-3 rounded-4 bg-light border border-danger border-opacity-25 h-100">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="fas fa-star text-warning fa-2x me-3"></i>
-                                        <div><h6 class="mb-0 fw-bold">Doa Pagi</h6><small class="text-muted"><span id="count-doa">0</span> kali</small></div>
-                                    </div>
-                                    <p class="small text-muted mb-0">Doa paling popular hari ini.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="p-3 rounded-4 bg-light border border-success border-opacity-25 h-100">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="fas fa-heart text-danger fa-2x me-3"></i>
-                                        <div><h6 class="mb-0 fw-bold">Surah Yasin</h6><small class="text-muted"><span id="count-yasin">0</span> kali</small></div>
-                                    </div>
-                                    <p class="small text-muted mb-0">Dibaca untuk keberkatan.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="p-3 rounded-4 bg-light border border-info border-opacity-25 h-100">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="fas fa-pray text-primary fa-2x me-3"></i>
-                                        <div><h6 class="mb-0 fw-bold">Tahlil</h6><small class="text-muted"><span id="count-tahlil">0</span> kali</small></div>
-                                    </div>
-                                    <p class="small text-muted mb-0">Tahlil untuk ketenangan.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h2 class="fw-bold">QuranDigital2025</h2>
+        <p>ABDUL AZIZ BIN KAMSI</p>
     </div>
-
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-0 opacity-75 small">© 04/12/2025 Aplikasi Islam. QuranDigital2025.</p>
-            <small class="text-white-50">ABDUL AZIZ BIN KAMSI</small>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // HANYA UNTUK LOADING & SW TRIGGER
-        document.addEventListener('DOMContentLoaded', () => {
-            // Matikan Skeleton Loading selepas 0.6 saat
-            setTimeout(() => {
-                document.documentElement.classList.remove('initial-loading');
-            }, 600);
-        });
-    </script>
+</div>
 
     <script src="app.js"></script>
+
+    <div class="app-wrapper">
+        
+        <div class="top-bar-container">
+            <div class="top-bar-pill">
+                <img src="icon-192x192.png" alt="Logo" width="25" class="me-2 rounded-circle shadow-sm">
+                <h6 class="mb-0 fw-bold" style="color: var(--tn-green-dark); font-size: 0.85rem;">QuranDigital</h6>
+            </div>
+        </div>
+
+        <div class="prayer-card animate__animated animate__fadeIn">
+            <div class="row align-items-center">
+                <div class="col-7">
+                    <p class="mb-1 opacity-75 small"><i class="fas fa-location-dot me-1"></i> Kuala Lumpur</p>
+                    <h2 class="fw-bold mb-0" id="next-prayer-time">05:52</h2>
+                    <p class="mb-0 fw-medium" style="color: var(--tn-green-light);" id="current-prayer-status">Menuju Subuh</p>
+                </div>
+                <div class="col-5 text-end">
+                    <div class="bg-white bg-opacity-10 p-2 rounded-4 text-center border border-white border-opacity-10">
+                        <small class="d-block mb-0 opacity-75" style="font-size: 0.6rem;">KEHADIRAN</small>
+                        <span class="fw-bold fs-5" id="attendance-text">0/30</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress mt-3">
+                <div class="progress-bar" role="progressbar" style="width: 15%"></div>
+            </div>
+        </div>
+
+        <div class="feature-grid animate__animated animate__fadeInUp">
+            <a href="quran.html" class="feature-item">
+                <div class="icon-box"><i class="fas fa-book-quran"></i></div>
+                <span>Quran</span>
+            </a>
+            <a href="solat.html" class="feature-item">
+                <div class="icon-box"><i class="fas fa-clock"></i></div>
+                <span>Solat</span>
+            </a>
+            <a href="yasin.html" class="feature-item">
+                <div class="icon-box"><i class="fas fa-leaf"></i></div>
+                <span>Yasin</span>
+            </a>
+            <a href="doa.html" class="feature-item">
+                <div class="icon-box"><i class="fas fa-hands-praying"></i></div>
+                <span>Doa</span>
+            </a>
+            <a href="tahlil.html" class="feature-item">
+                <div class="icon-box"><i class="fas fa-mosque"></i></div>
+                <span>Tahlil</span>
+            </a>
+            <a href="sirah.html" class="feature-item">
+                <div class="icon-box"><i class="fas fa-history"></i></div>
+                <span>Sirah</span>
+            </a>
+            <a href="#" class="feature-item">
+                <div class="icon-box"><i class="fas fa-compass"></i></div>
+                <span>Kiblat</span>
+            </a>
+            <a href="#" class="feature-item" onclick="shareApp()">
+                <div class="icon-box"><i class="fas fa-share-nodes"></i></div>
+                <span>Kongsi</span>
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-3">
+                <h6 class="fw-bold mb-2 small" style="color: var(--tn-green-dark);">Popular Hari Ini</h6>
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-2 me-3 text-success"><i class="fas fa-star fa-sm"></i></div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0 small fw-bold">Surah Al-Waqiah</h6>
+                        <small class="text-muted" style="font-size: 0.65rem;">Sangat digalakkan baca waktu pagi.</small>
+                    </div>
+                    <i class="fas fa-chevron-right fa-xs text-muted"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="install-banner">
+            <img src="icon-192x192.png" width="35" class="rounded-3 shadow-sm">
+            <div class="flex-grow-1">
+                <h6 class="mb-0 fw-bold" style="font-size: 0.75rem;">Pasang Aplikasi</h6>
+                <p class="mb-0 text-muted" style="font-size: 0.65rem;">Klik untuk akses pantas.</p>
+            </div>
+            <button id="install-button" class="btn btn-sm btn-success rounded-pill px-3 fw-bold" style="font-size: 0.7rem;">PASANG</button>
+            <button class="btn btn-sm text-muted" onclick="this.parentElement.style.display='none'"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="nav-container">
+            <div class="bottom-nav-pill">
+                <a href="index.html" class="nav-item-custom active">
+                    <i class="fas fa-home"></i>
+                    <span>Utama</span>
+                </a>
+                <a href="quran.html" class="nav-item-custom">
+                    <i class="fas fa-book-open"></i>
+                    <span>Quran</span>
+                </a>
+                <a href="solat.html" class="nav-item-custom">
+                    <i class="fas fa-clock"></i>
+                    <span>Solat</span>
+                </a>
+                <a href="tetapan.html" class="nav-item-custom">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    function shareApp() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'QuranDigital 2025',
+                text: 'Jom gunakan aplikasi QuranDigital untuk ketenangan jiwa.',
+                url: window.location.href
+            });
+        } else {
+            alert("Sila salin pautan: " + window.location.href);
+        }
+    }
+
+    // Gunakan 'var' atau semak dahulu untuk mengelakkan ralat SyntaxError
+    if (typeof window.deferredPrompt === 'undefined') {
+        window.deferredPrompt = null;
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPrompt = e;
+        const installBanner = document.getElementById('install-banner');
+        if (!window.matchMedia('(display-mode: standalone)').matches && installBanner) {
+            installBanner.style.display = 'flex';
+        }
+    });
+</script>
 </body>
 </html>

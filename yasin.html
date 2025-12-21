@@ -2,90 +2,75 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacaan Surah Yasin - Aplikasi Islam</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#198754">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Surah Yasin - QuranDigital2025</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="yasin.css">
 </head>
-<body class="bg-light">
+<body>
 
-    <nav class="navbar navbar-dark bg-success sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft" href="index.html">
-                <i class="fas fa-arrow-left me-3"></i>
-                <span class="fw-bold">Surah Yasin</span>
-            </a>
-            <div class="d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-light me-2" onclick="adjustFont(-1)">A-</button>
-                <button class="btn btn-sm btn-outline-light" onclick="adjustFont(1)">A+</button>
-            </div>
-        </div>
-    </nav>
-
-    <header class="hero-yasin text-center shadow-lg">
-        <div class="container animate__animated animate__fadeInDown">
-            <h1 class="display-2 fw-bold mb-0">سورة يس</h1>
-            <p class="lead opacity-75 mt-2">Yasin (83 Ayat)</p>
-            
-            <div class="audio-player-glass mx-auto mt-4">
-                <p class="small fw-bold mb-3 text-white">
-                    <i class="fas fa-headphones-alt me-2"></i>Dengar Bacaan Syeikh Mishary Rashid
-                </p>
-                <audio id="full-audio" controls class="w-100">
-                    <source src="https://server8.mp3quran.net/afs/036.mp3" type="audio/mpeg">
-                    Browser anda tidak menyokong audio.
-                </audio>
-            </div>
-        </div>
-    </header>
-
-    <div class="container py-4">
-        <div id="loading-spinner" class="text-center py-5">
-            <div class="spinner-grow text-success mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-            <p class="text-muted fw-bold">Memuatkan Kalam Ilahi...</p>
-        </div>
-
-        <div id="yasin-content" class="d-none">
-            <div id="verses-list" class="mx-auto" style="max-width: 900px;">
+    <div class="app-wrapper">
+        
+        <div class="top-bar-container">
+            <div class="top-bar-pill">
+                <a href="index.html" class="text-decoration-none text-dark me-auto">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h6 class="mb-0 fw-bold mx-auto" style="color: #0a4229;">Surah Yasin</h6>
+                <div class="ms-auto">
+                    <button class="btn btn-sm p-0 me-2" onclick="window.adjustFont(-1)"><i class="fas fa-minus-circle text-muted"></i></button>
+                    <button class="btn btn-sm p-0" onclick="window.adjustFont(1)"><i class="fas fa-plus-circle text-muted"></i></button>
                 </div>
+            </div>
         </div>
+
+        <div class="yasin-header animate__animated animate__fadeIn">
+            <h1>سُورَةُ يسٓ</h1>
+            <p>83 Ayat • Makkiyah</p>
+        </div>
+
+        <div class="text-center mb-4 px-3">
+            <div class="d-flex align-items-center justify-content-center mb-3">
+                <span class="badge rounded-pill bg-light text-success border px-3 py-2 shadow-sm">
+                    <i class="fas fa-volume-up me-2"></i>Mishary Rashid Al-Afasy
+                </span>
+            </div>
+            <audio id="full-audio" controls class="w-100 shadow-sm" style="height: 40px; border-radius: 50px;">
+                <source src="https://server8.mp3quran.net/afs/036.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div id="yasin-content" class="px-2">
+            <div class="text-center py-5" id="loader">
+                <div class="spinner-border text-success" role="status"></div>
+                <p class="mt-3 text-muted small fw-bold">Menyusun ayat surah...</p>
+            </div>
+
+            <div id="verses-list"></div>
+        </div>
+
+        <footer class="text-center py-5 text-muted">
+            <div class="container">
+                <hr class="opacity-10 mb-4">
+                <p class="mb-0" style="font-size: 0.75rem;">21/12/2025 Aplikasi Islam</p>
+                <p class="fw-bold text-uppercase mb-3" style="font-size: 0.7rem; color: var(--tahlil-emerald);">QuranDigital2025</p>
+                <button class="btn btn-sm btn-outline-success rounded-pill px-4 shadow-sm" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <i class="fas fa-chevron-up me-1"></i> Kembali ke Atas
+                </button>
+            </div>
+        </footer>
+
     </div>
 
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-success rounded-circle shadow-lg fab-top" id="backToTop" style="position: fixed; bottom: 30px; right: 30px; display: none; width: 50px; height: 50px; z-index: 1000;">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <footer class="text-center py-5 text-muted small bg-white border-top mt-5">
-        <div class="container">
-            <hr class="w-25 mx-auto mb-4">
-            <p class="mb-0">04/12/2025 Aplikasi Islam. QuranDigital2025</p>
-            <p class="fw-bold">ABDUL AZIZ BIN KAMSI</p>
-            <p class="x-small text-uppercase" style="font-size: 0.65rem;">Sumber Data: EQuran API</p>
-        </div>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="app.js"></script> <script src="yasin.js"></script>
-    
-    <script>
-        // Logik Butang Back to Top
-        window.onscroll = function() {
-            let btn = document.getElementById("backToTop");
-            if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
-                btn.style.display = "block";
-            } else {
-                btn.style.display = "none";
-            }
-        };
-    </script>
+    <script src="app.js"></script> 
+    <script src="yasin.js"></script>
+
 </body>
 </html>

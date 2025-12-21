@@ -1,27 +1,23 @@
 /**
  * Fail: yasin.js
- * Deskripsi: Menguruskan pengambilan data Surah Yasin (36) dari API equran.id v2
+ * Deskripsi: Menguruskan data Surah Yasin (Guna 100% gaya tahlil.css)
  */
 
-// Pembolehubah global untuk mengawal audio
 let currentAyatAudio = null;
 let currentActiveButton = null;
+let currentFontSize = 2.2; 
 
-/**
- * Fungsi utama untuk memuatkan data Surah Yasin
- */
 async function loadYasin() {
     const yasinContainer = document.getElementById('verses-list');
-    const loadingSpinner = document.getElementById('loading-spinner');
+    const loader = document.getElementById('loader');
     const contentDiv = document.getElementById('yasin-content');
     const fullAudio = document.getElementById('full-audio');
 
-    // 1. SEMAK DATA DALAM STORAN (OFFLINE FIRST)
+    // Semak Cache (Offline First)
     const cachedData = localStorage.getItem('surah_yasin_36');
 
     if (cachedData) {
-        const data = JSON.parse(cachedData);
-        displayData(data);
+        displayData(JSON.parse(cachedData));
     } else {
         try {
             const response = await fetch('https://equran.id/api/v2/surat/36');
@@ -29,19 +25,16 @@ async function loadYasin() {
             
             const result = await response.json();
             const data = result.data;
-            
             localStorage.setItem('surah_yasin_36', JSON.stringify(data));
             displayData(data);
         } catch (error) {
             console.error("Ralat:", error);
             yasinContainer.innerHTML = `
-                <div class="alert alert-danger text-center shadow-sm border-0 rounded-4 p-4 animate__animated animate__shakeX">
-                    <i class="fas fa-wifi-slash mb-3 fa-3x"></i><br>
-                    <h5 class="fw-bold">Sambungan Gagal</h5>
-                    <p class="small mb-0">Sila pastikan internet anda aktif untuk muat turun pertama kali.</p>
-                    <button onclick="location.reload()" class="btn btn-sm btn-danger mt-3 rounded-pill px-4">Cuba Lagi</button>
+                <div class="text-center p-4">
+                    <p class="small text-muted">Gagal memuatkan data. Sila periksa internet anda.</p>
+                    <button onclick="location.reload()" class="btn btn-sm btn-success rounded-pill px-4">Cuba Lagi</button>
                 </div>`;
-            loadingSpinner.classList.add('d-none');
+            if(loader) loader.classList.add('d-none');
         }
     }
 
@@ -56,47 +49,45 @@ async function loadYasin() {
 
         yasinContainer.innerHTML = '';
         
-        data.ayat.forEach((item, index) => {
+        data.ayat.forEach((item) => {
             const verseHTML = `
-                <div class="card verse-card border-0 animate__animated animate__fadeInUp" id="verse-${item.nomorAyat}" style="animation-delay: ${index * 0.05}s">
-                    <div class="card-body p-4 p-md-5">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div class="verse-number shadow-sm">${item.nomorAyat}</div>
-                            <div class="arabic-text text-end mb-0 w-100">
-                                ${item.teksArab}
-                            </div>
-                        </div>
-                        <div class="content-box">
-                            <p class="latin-text mb-2">${item.teksLatin}</p>
-                            <div class="translation-box">
-                                <p class="meaning-text mb-4">
-                                    ${item.teksIndonesia}
-                                </p>
-                            </div>
-                            
-                            <button class="btn btn-sm btn-outline-success rounded-pill px-4 shadow-sm fw-bold play-btn" 
-                                    onclick="handleAyatAudio('${item.audio['05']}', this, ${item.nomorAyat})">
-                                <i class="fas fa-play me-2"></i> Dengar Ayat
-                            </button>
-                        </div>
+                <div class="tahlil-item animate__animated animate__fadeInUp" id="verse-${item.nomorAyat}">
+                    <div class="tahlil-badge">AYAT ${item.nomorAyat}</div>
+                    
+                    <div class="arabic-text" style="font-size: ${currentFontSize}rem;">
+                        ${item.teksArab}
+                    </div>
+                    
+                    <div class="latin-text">
+                        ${item.teksLatin}
+                    </div>
+                    
+                    <div class="translation-text">
+                        ${item.teksIndonesia}
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-outline-success rounded-pill px-3 play-btn" 
+                                onclick="handleAyatAudio('${item.audio['05']}', this, ${item.nomorAyat})">
+                            <i class="fas fa-play me-1"></i> Dengar
+                        </button>
                     </div>
                 </div>
             `;
             yasinContainer.innerHTML += verseHTML;
         });
 
-        loadingSpinner.classList.add('d-none');
-        contentDiv.classList.remove('d-none');
+        if(loader) loader.classList.add('d-none');
+        if(contentDiv) contentDiv.classList.remove('d-none');
     }
 }
 
 /**
- * Mengendalikan audio bagi setiap ayat & highlight
+ * Mengendalikan audio bagi setiap ayat
  */
 function handleAyatAudio(url, btn, verseId) {
     const fullAudio = document.getElementById('full-audio');
     const currentCard = document.getElementById(`verse-${verseId}`);
-    const isDarkMode = document.body.classList.contains('dark-mode');
 
     if (currentActiveButton === btn && currentAyatAudio) {
         stopAnyCurrentAyat();
@@ -104,38 +95,25 @@ function handleAyatAudio(url, btn, verseId) {
     }
 
     stopAnyCurrentAyat();
-
-    if (!fullAudio.paused) {
-        fullAudio.pause();
-    }
+    if (!fullAudio.paused) fullAudio.pause();
 
     currentActiveButton = btn;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>';
-    btn.classList.replace('btn-outline-success', 'btn-warning');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
-    // Highlight Kad (Warna mengikut mod)
-    currentCard.style.transition = "all 0.4s ease";
-    currentCard.style.backgroundColor = isDarkMode ? "#2d3748" : "#f0fff4";
-    currentCard.style.borderLeft = "5px solid #198754"; 
-    currentCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Highlight Card
+    currentCard.style.borderLeft = "4px solid #d4a373"; 
+    currentCard.style.backgroundColor = "#fdfbf7";
 
     currentAyatAudio = new Audio(url);
-    
     currentAyatAudio.onplaying = () => {
-        btn.innerHTML = '<i class="fas fa-stop me-2"></i> Berhenti';
-        btn.classList.replace('btn-warning', 'btn-danger');
+        btn.innerHTML = '<i class="fas fa-stop me-1"></i> Berhenti';
+        btn.classList.replace('btn-outline-success', 'btn-danger');
     };
 
-    currentAyatAudio.play().catch(e => {
-        resetButton(btn);
-        removeHighlight(currentCard);
-    });
+    currentAyatAudio.play().catch(e => stopAnyCurrentAyat());
 
     currentAyatAudio.onended = () => {
-        resetButton(btn);
-        removeHighlight(currentCard);
-        currentAyatAudio = null;
-        currentActiveButton = null;
+        stopAnyCurrentAyat();
     };
 }
 
@@ -144,24 +122,30 @@ function stopAnyCurrentAyat() {
         currentAyatAudio.pause();
         currentAyatAudio = null;
     }
-    document.querySelectorAll('.verse-card').forEach(card => removeHighlight(card));
-    
+    document.querySelectorAll('.tahlil-item').forEach(card => {
+        card.style.borderLeft = "none";
+        card.style.backgroundColor = "#ffffff";
+    });
     if (currentActiveButton) {
-        resetButton(currentActiveButton);
+        currentActiveButton.innerHTML = '<i class="fas fa-play me-1"></i> Dengar';
+        currentActiveButton.className = 'btn btn-sm btn-outline-success rounded-pill px-3 play-btn';
         currentActiveButton = null;
     }
 }
 
-function removeHighlight(card) {
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    card.style.backgroundColor = isDarkMode ? "#1e1e1e" : "#ffffff";
-    card.style.borderLeft = "none";
-}
+/**
+ * Fungsi tukar saiz font (Hanya untuk tulisan Arab)
+ */
+window.adjustFont = function(step) {
+    let change = (step > 0) ? 0.2 : -0.2;
+    currentFontSize += change;
+    
+    if (currentFontSize < 1.5) currentFontSize = 1.5;
+    if (currentFontSize > 3.5) currentFontSize = 3.5;
+    
+    document.querySelectorAll('.arabic-text').forEach(el => {
+        el.style.fontSize = currentFontSize + 'rem';
+    });
+};
 
-function resetButton(btn) {
-    btn.innerHTML = '<i class="fas fa-play me-2"></i> Dengar Ayat';
-    btn.className = 'btn btn-sm btn-outline-success rounded-pill px-4 shadow-sm fw-bold play-btn';
-}
-
-// Jalankan fungsi apabila DOM sedia
 document.addEventListener('DOMContentLoaded', loadYasin);

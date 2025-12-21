@@ -1,143 +1,148 @@
-/* Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef&family=Roboto:wght@300;400;500;700&display=swap');
+/* Fail: yasin.css 
+   Tema: 100% Identikal dengan Tahlil & Quran (Header Putih + Sarikata Rapi)
+*/
 
 :root {
-    --primary-color: #2c3e50;
-    --success-color: #198754;
-    --light-bg: #f8f9fa;
-    --purple-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    --tahlil-emerald: #2d6a4f;
+    --tahlil-gold: #d4a373;
+    --tahlil-card-bg: #ffffff;
+    --tahlil-arabic-color: #1b4332;
+    --section-spacing: 35px;
 }
 
-body {
-    background-color: var(--light-bg);
-    font-family: 'Roboto', sans-serif;
-    color: #333;
-    transition: background-color 0.3s ease, color 0.3s ease;
+/* --- 1. HEADER SECTION (Tajuk Surah Putih) --- */
+.yasin-header {
+    background: linear-gradient(135deg, var(--tahlil-emerald), #40916c);
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 0 0 35px 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 20px rgba(45, 106, 79, 0.1);
 }
 
-/* Hero Section */
-.hero-yasin {
-    background: linear-gradient(rgba(25, 135, 84, 0.9), rgba(44, 62, 80, 0.9)), 
-                url('https://images.unsplash.com/photo-1584281723351-95ad975779fc?q=80&w=1920&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 3.5rem 0;
-    border-radius: 0 0 2.5rem 2.5rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    margin-bottom: 2rem;
+.yasin-header h1 {
+    font-family: 'Amiri', serif !important;
+    color: #ffffff !important; /* Tulisan Putih */
+    font-size: 3.2rem;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Arabic Typography */
+.yasin-header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+/* --- 2. KAD AYAT (Tahlil Style) --- */
+.tahlil-item {
+    background: var(--tahlil-card-bg);
+    border-radius: 24px; 
+    padding: 30px;
+    margin-bottom: var(--section-spacing);
+    border: 1px solid rgba(45, 106, 79, 0.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.tahlil-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(45, 106, 79, 0.08);
+}
+
+/* Badge Ayat */
+.tahlil-badge {
+    display: inline-flex;
+    font-size: 0.7rem;
+    padding: 5px 15px;
+    font-weight: 800;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--tahlil-emerald), #40916c);
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- 3. TEKS DISPLAY --- */
 .arabic-text {
-    font-family: 'Amiri', serif;
-    font-size: 2.5rem;
-    line-height: 2.5;
+    font-family: 'Amiri', serif !important;
+    font-size: 2.3rem; 
+    line-height: 2.8;
     direction: rtl;
     text-align: right;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
+    margin-bottom: 25px;
+    color: var(--tahlil-arabic-color);
     word-spacing: 6px;
 }
 
-/* Verse Card Style */
-.verse-card {
-    background: #ffffff;
-    border-radius: 1.5rem;
-    padding: 2rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: var(--card-shadow);
-    transition: all 0.3s ease;
-}
-
-.verse-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-    border-color: var(--success-color);
-}
-
-/* Verse Numbering (Drop Shape) */
-.verse-number {
-    width: 45px;
-    height: 45px;
-    background: var(--purple-gradient);
-    color: white;
-    border-radius: 50% 50% 50% 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    margin-bottom: 1.2rem;
-    box-shadow: 2px 4px 10px rgba(118, 75, 162, 0.2);
-}
-
-/* Latin & Translation */
+/* Sarikata Latin (Kekal Kecil) */
 .latin-text {
-    color: var(--success-color);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-style: italic;
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 0.8rem;
-    border-left: 3px solid var(--success-color);
-    padding-left: 15px;
-}
-
-.translation-box {
-    color: #6c757d;
-    font-size: 1rem;
-    padding-left: 18px;
+    color: var(--tahlil-emerald);
+    margin-bottom: 15px;
+    font-size: 0.88rem !important;
+    font-weight: 600;
     line-height: 1.6;
+    border-left: 3.5px solid var(--tahlil-gold); 
+    padding-left: 18px;
 }
 
-/* --- Support Dark Mode --- */
-body.dark-mode {
-    background-color: #121212 !important;
-    color: #e0e0e0;
+/* Sarikata Terjemahan (Kekal Kecil) */
+.translation-text {
+    color: #4a4e51;
+    font-size: 0.85rem !important;
+    padding: 15px 20px;
+    line-height: 1.7;
+    text-align: left;
+    background-color: #f9fbf9; 
+    border-radius: 14px;
+    border: 1px solid rgba(45, 106, 79, 0.03);
 }
 
-body.dark-mode .hero-yasin {
-    background: linear-gradient(rgba(10, 50, 30, 0.95), rgba(20, 20, 20, 0.95));
+/* --- 4. BUTTONS & ACCENTS --- */
+.play-btn {
+    transition: all 0.3s ease;
+    border-width: 1.5px !important;
+    font-size: 0.75rem;
+    font-weight: 600;
 }
 
-body.dark-mode .verse-card {
-    background: #1e1e1e;
-    border-color: #333;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+.tahlil-item::after {
+    content: "❦";
+    position: absolute;
+    bottom: 10px;
+    right: 25px;
+    font-size: 1.2rem;
+    color: rgba(212, 163, 115, 0.15);
 }
 
-body.dark-mode .arabic-text {
-    color: #f8f9fa;
-}
-
-body.dark-mode .latin-text {
-    color: #52c41a;
-    border-left-color: #52c41a;
-}
-
-body.dark-mode .translation-box {
-    color: #b0b0b0;
-}
-
-body.dark-mode .bg-white {
-    background-color: #1e1e1e !important;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-yasin {
-        padding: 2.5rem 0;
-        border-radius: 0 0 1.5rem 1.5rem;
+/* --- 5. RESPONSIVE (Mobile) --- */
+@media (max-width: 480px) {
+    .yasin-header {
+        padding: 30px 15px;
     }
-
+    .yasin-header h1 {
+        font-size: 2.5rem;
+    }
+    .tahlil-item {
+        padding: 22px;
+        margin-bottom: 25px;
+    }
     .arabic-text {
-        font-size: 2rem;
-        line-height: 2.2;
+        font-size: 1.95rem;
+        line-height: 2.4;
     }
-
-    .verse-card {
-        padding: 1.5rem;
-        margin: 0 10px 1.5rem 10px;
+    .latin-text {
+        font-size: 0.85rem !important;
+    }
+    .translation-text {
+        font-size: 0.8rem !important;
     }
 }
