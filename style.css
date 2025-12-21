@@ -2,7 +2,7 @@
 @font-face {
   font-family: 'Uthman-Taha';
   /* Menggunakan path relatif yang paling selamat untuk Netlify */
-  src: url('/assets/fonts/Uthman-Taha.ttf') format('truetype');
+  src: url(/assets/fonts/Uthman-Taha.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -43,12 +43,13 @@ body {
 }
 
 .quran-text {
-  font-family: 'Uthman-Taha', serif !important;
-  direction: rtl;
-  font-size: 3rem !important; /* Sangat besar untuk paparan ayat */
-  line-height: 2.2 !important;
-  text-align: right;
-  display: block;
+    font-family: 'Uthman-Taha', serif !important;
+    direction: rtl;
+    font-size: 3.5rem !important; /* Dibesarkan dari 2.8rem/3rem */
+    line-height: 2.8 !important; /* Ditambah ruang supaya baris tidak rapat */
+    text-align: right;
+    display: block;
+    word-spacing: 5px; /* Tambah jarak antara perkataan supaya lebih jelas */
 }
 
 /* Seterusnya kekalkan kod NAVIGATION, HERO, dan lain-lain milik anda... */
@@ -350,4 +351,16 @@ body.dark-mode .quran-text {
   border-radius: 50px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   z-index: 9999;
+}
+
+/* Khusus untuk telefon bimbit */
+@media (max-width: 768px) {
+    .quran-text {
+        font-size: 2.5rem !important; /* Saiz yang selesa untuk skrin telefon */
+        line-height: 2.5 !important;
+    }
+    
+    .verse-card {
+        padding: 10px !important; /* Kurangkan padding tepi supaya ruang teks lebih luas */
+    }
 }

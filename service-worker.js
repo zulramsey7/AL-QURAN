@@ -4,7 +4,7 @@
  * Versi Cache: v12 (Sila naikkan versi setiap kali buat perubahan)
  */
 
- const CACHE_NAME = 'islam-app-v31'; // Saya naikkan ke v12
+ const CACHE_NAME = 'islam-app-v34'; // Saya naikkan ke v12
  const urlsToCache = [
      './',
      './index.html',
@@ -38,6 +38,7 @@
      './assets/sirah3.png',
      './assets/sirah4.png',
      './assets/masjid-hero.jpg',
+     './assets/fonts/Uthman-Taha.ttf',
      './manifest.json',
      'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
      'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
