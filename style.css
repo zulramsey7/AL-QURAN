@@ -1,7 +1,6 @@
 /* 1. VARIABLE DEFINITIONS & FONTS */
 @font-face {
   font-family: 'Uthman-Taha';
-  /* PEMBETULAN: Memastikan path betul dan pembuka petik sepadan */
   src: url('/assets/fonts/Uthman-Taha.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
@@ -34,10 +33,10 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* KHAS UNTUK TEKS ARAB (Ditingkatkan saiz dan ketetapan font) */
+/* KHAS UNTUK TEKS ARAB (Saiz Standard yang Selesa) */
 .arabic-name {
   font-family: 'Uthman-Taha', serif !important;
-  font-size: 2.2rem !important; 
+  font-size: 1.8rem !important; /* Saiz standard untuk senarai surah */
   direction: rtl;
   font-weight: normal !important;
   line-height: 1.5;
@@ -46,9 +45,8 @@ body {
 .quran-text {
   font-family: 'Uthman-Taha', serif !important;
   direction: rtl;
-  /* DIBESARKAN: Supaya jelas seperti aplikasi The Noor */
-  font-size: 3.5rem !important; 
-  line-height: 2.5 !important; 
+  font-size: 2.2rem !important; /* Saiz standard selesa untuk bacaan panjang */
+  line-height: 2.0 !important; 
   text-align: right;
   display: block;
   word-wrap: break-word;
@@ -337,13 +335,13 @@ body.dark-mode .quran-text {
 }
 
 @media (max-width: 768px) {
-  /* DIBESARKAN: Supaya teks Arab tetap selesa dibaca di telefon */
+  /* SAIZ STANDARD HANDPHONE */
   .quran-text { 
-      font-size: 2.5rem !important; 
-      line-height: 2.2 !important;
+      font-size: 2.0rem !important; 
+      line-height: 1.8 !important;
   }
   .arabic-name {
-      font-size: 1.8rem !important;
+      font-size: 1.6rem !important;
   }
 }
 
