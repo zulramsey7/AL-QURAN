@@ -4,7 +4,7 @@
  * Versi Cache: v35
  */
 
-const CACHE_NAME = 'islam-app-v37';
+const CACHE_NAME = 'islam-app-v38';
 const urlsToCache = [
     './',
     './index.html',
