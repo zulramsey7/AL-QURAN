@@ -4,13 +4,16 @@
  * Versi Cache: v12 (Sila naikkan versi setiap kali buat perubahan)
  */
 
- const CACHE_NAME = 'islam-app-v33'; // Saya naikkan ke v12
+ const CACHE_NAME = 'islam-app-v34'; // Saya naikkan ke v12
  const urlsToCache = [
      './',
      './index.html',
      './Logo2.png',
      './Logo3.png',
      './icon-192x192.png',
+     './icon-512x512.png',
+     './screenshot1.png',
+     './screenshot2.png',
      './yasin.html',
      './quran.html',
      './surah.html',
