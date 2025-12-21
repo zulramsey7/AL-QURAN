@@ -4,7 +4,8 @@
 /* 2. Definisi Font Lokal (WAJIB ADA) */
 @font-face {
   font-family: 'Uthman-Taha';
-  src: url(/assets/fonts/Uthman-Taha.ttf') format('truetype');
+  /* PEMBETULAN: Menambah pembuka petik yang hilang */
+  src: url('/assets/fonts/Uthman-Taha.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -44,21 +45,22 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Arabic Name Styling (KEMASKINI DI SINI) */
+/* Arabic Name Styling (Untuk Senarai Surah) */
 .arabic-name {
-    /* Menggunakan font lokal Uthman-Taha, backup ke Amiri */
     font-family: 'Uthman-Taha', 'Amiri', serif !important;
-    font-size: 2rem !important; /* Sedikit lebih besar untuk font Uthman-Taha */
+    /* SAIZ STANDARD: Selesa untuk paparan kad senarai */
+    font-size: 1.8rem !important; 
     color: var(--success-color);
-    line-height: 1.4;
+    line-height: 1.5;
     direction: rtl;
 }
 
-/* Quran Text Styling (Untuk Halaman Surah) */
+/* Quran Text Styling (Untuk Halaman Surah/Detail Ayat) */
 .quran-text {
     font-family: 'Uthman-Taha', 'Amiri', serif !important;
-    font-size: 2.5rem !important;
-    line-height: 2.5 !important;
+    /* SAIZ STANDARD HANDPHONE: 2.0rem - 2.2rem adalah yang terbaik */
+    font-size: 2.2rem !important;
+    line-height: 2.0 !important;
     direction: rtl;
     text-align: right;
 }
@@ -137,7 +139,10 @@ body.dark-mode .arabic-name {
 /* Responsive */
 @media (max-width: 768px) {
     .arabic-name {
-        font-size: 1.8rem !important;
+        font-size: 1.6rem !important;
+    }
+    .quran-text {
+        font-size: 2.0rem !important; /* Mengecil sedikit di mobile supaya tidak sesak */
+        line-height: 1.8 !important;
     }
 }
-
