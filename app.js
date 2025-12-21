@@ -82,27 +82,29 @@ async function shareApp() {
     }
 }
 
-// 6. PWA SERVICE WORKER & INSTALL HANDLER
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js').then(reg => {
-            reg.addEventListener('updatefound', () => {
-                const newWorker = reg.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        showUpdateNotification(newWorker);
-                    }
-                });
-            });
-        });
-    });
-    let refreshing;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (refreshing) return;
-        window.location.reload();
-        refreshing = true;
-    });
-}
+// 6. PWA INSTALL LOGIC (VERSI BERSIH)
+window.myAppPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.myAppPrompt = e;
+    const banner = document.getElementById('install-banner');
+    if (banner) banner.style.display = 'flex';
+});
+
+// Guna fungsi ini untuk klik butang
+document.addEventListener('click', async (e) => {
+    if (e.target && e.target.id === 'install-button') {
+        if (window.myAppPrompt) {
+            window.myAppPrompt.prompt();
+            const { outcome } = await window.myAppPrompt.userChoice;
+            if (outcome === 'accepted') {
+                document.getElementById('install-banner').style.display = 'none';
+            }
+            window.myAppPrompt = null;
+        }
+    }
+});
 
 let deferredPrompt;
 const installBtn = document.getElementById('install-button');
