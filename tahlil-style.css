@@ -1,255 +1,129 @@
 /* --- TAHLIL CSS - UNIFIED WITH YASIN STYLE --- */
 
-
-
 :root {
-
     --tahlil-emerald: #2d6a4f;
-
     --tahlil-dark: #1b4332;
-
     --tahlil-gold: #d4a373;
-
     --tahlil-card-bg: #ffffff;
-
     --tahlil-bg-soft: #f8fbf9;
-
 }
-
-
 
 body {
-
     background-color: var(--tahlil-bg-soft);
-
     font-family: 'Plus Jakarta Sans', sans-serif;
-
 }
 
-
-
-/* --- 1. TAHLIL ITEM CONTAINER (Identikal dengan Ayat Card Yasin) --- */
-
+/* --- 1. TAHLIL ITEM CONTAINER --- */
 .tahlil-item {
-
     background: var(--tahlil-card-bg);
-
     border-radius: 20px;
-
     padding: 25px;
-
     margin-bottom: 20px;
-
     border: 1px solid rgba(0, 0, 0, 0.03);
-
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-
     transition: all 0.3s ease;
-
     position: relative;
-
     overflow: hidden;
-
 }
 
-
-
-/* Badge Nombor/Urutan (Gaya Diamond seperti Quran/Yasin) */
-
+/* Badge Nombor */
 .tahlil-no {
-
     width: 35px;
-
     height: 35px;
-
     background: var(--tahlil-emerald);
-
     color: white;
-
     border-radius: 10px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     font-weight: 700;
-
     font-size: 0.85rem;
-
     transform: rotate(45deg);
-
     margin-bottom: 25px;
-
-    margin-left: 8px; /* Ruang untuk rotasi */
-
+    margin-left: 8px;
 }
-
-
 
 .tahlil-no span {
-
     transform: rotate(-45deg);
-
 }
 
-
-
-/* --- 2. TULISAN ARAB (Gaya Yasin) --- */
-
+/* --- 2. TULISAN ARAB (DIBESARKAN & WARNA JELAS) --- */
 .arabic-text {
-
     font-family: 'Uthman-Taha', 'Amiri', serif !important;
-
-    font-size: 2rem;
-
-    line-height: 2.5;
-
+    font-size: 2.25rem;      /* BESAR SIKIT */
+    line-height: 2.8;        /* JARAK LEBIH SELESA */
     direction: rtl;
-
     text-align: right;
-
-    color: var(--tahlil-dark);
-
-    margin-bottom: 20px;
-
+    color: var(--tahlil-dark); /* default hitam tua untuk terang */
+    margin-bottom: 22px;
     word-wrap: break-word;
-
 }
 
-
-
-/* --- 3. TULISAN LATIN (Rumi) --- */
-
-.latin-text {
-
-    font-family: 'Plus Jakarta Sans', sans-serif;
-
-    font-style: italic;
-
-    color: var(--tahlil-emerald);
-
-    margin-bottom: 12px;
-
-    font-size: 0.9rem;
-
-    line-height: 1.6;
-
-    border-left: 3px solid var(--tahlil-gold);
-
-    padding-left: 15px;
-
-    display: block;
-
-}
-
-
-
-/* --- 4. TERJEMAHAN (Gaya Yasin) --- */
-
-.translation-text {
-
-    color: #5c636a;
-
-    font-size: 0.85rem;
-
-    line-height: 1.6;
-
-    text-align: left;
-
-    padding-top: 12px;
-
-    border-top: 1px solid #f1f1f1;
-
-}
-
-
-
-/* --- 5. TAJUK BAHAGIAN (Badge Kategori) --- */
-
-.tahlil-badge {
-
-    font-size: 0.65rem;
-
-    padding: 4px 12px;
-
-    font-weight: 800;
-
-    border-radius: 6px;
-
-    background-color: #e9f5ee;
-
-    color: var(--tahlil-emerald);
-
-    margin-bottom: 15px;
-
-    text-transform: uppercase;
-
-    display: inline-block;
-
-    letter-spacing: 0.5px;
-
-}
-
-
-
-/* --- 6. DARK MODE SUPPORT --- */
-
-body.dark-mode .tahlil-item {
-
-    background: #1e2b24;
-
-    border-color: #2d3e35;
-
-}
-
-
-
+/* WARNA KHAS UNTUK BACA 1 KALI DI DARK MODE */
 body.dark-mode .arabic-text {
-
-    color: #ffffff;
-
+    color: #ffffff; /* putih supaya jelas di dark mode */
 }
 
+/* --- 3. TULISAN LATIN --- */
+.latin-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-style: italic;
+    color: var(--tahlil-emerald);
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    border-left: 3px solid var(--tahlil-gold);
+    padding-left: 15px;
+    display: block;
+}
 
+/* --- 4. TERJEMAHAN --- */
+.translation-text {
+    color: #5c636a;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    text-align: left;
+    padding-top: 12px;
+    border-top: 1px solid #f1f1f1;
+}
+
+/* --- 5. TAJUK BAHAGIAN --- */
+.tahlil-badge {
+    font-size: 0.65rem;
+    padding: 4px 12px;
+    font-weight: 800;
+    border-radius: 6px;
+    background-color: #e9f5ee;
+    color: var(--tahlil-emerald);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+
+/* --- 6. DARK MODE --- */
+body.dark-mode .tahlil-item {
+    background: #1e2b24;
+    border-color: #2d3e35;
+}
 
 body.dark-mode .translation-text {
-
     border-color: rgba(255,255,255,0.1);
-
     color: #adb5bd;
-
 }
-
-
 
 body.dark-mode .tahlil-badge {
-
     background-color: rgba(45, 106, 79, 0.2);
-
 }
 
-
-
-/* --- 7. RESPONSIVE --- */
-
+/* --- 7. RESPONSIVE (HANDPHONE) --- */
 @media (max-width: 576px) {
-
     .arabic-text {
-
-        font-size: 1.75rem;
-
-        line-height: 2.3;
-
+        font-size: 2rem;     /* BESAR & JELAS DI PHONE */
+        line-height: 2.6;
     }
-
-   
 
     .tahlil-item {
-
         padding: 20px;
-
     }
-
 }
