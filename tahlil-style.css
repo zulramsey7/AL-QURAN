@@ -1,129 +1,152 @@
-/* --- TAHLIL CSS - UNIFIED WITH YASIN STYLE --- */
+/* --- TAHLIL & YASIN UNIFIED STYLE 2025 --- */
 
 :root {
-    --tahlil-emerald: #2d6a4f;
-    --tahlil-dark: #1b4332;
-    --tahlil-gold: #d4a373;
-    --tahlil-card-bg: #ffffff;
-    --tahlil-bg-soft: #f8fbf9;
+    --tn-emerald: #2d6a4f;
+    --tn-dark: #1b4332;
+    --tn-gold: #d4a373;
+    --tn-card-bg: #ffffff;
+    --tn-bg-soft: #f8fbf9;
+    --tn-text-main: #2b2d42;
+    --tn-text-muted: #6c757d;
 }
 
 body {
-    background-color: var(--tahlil-bg-soft);
+    background-color: var(--tn-bg-soft);
     font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--tn-text-main);
 }
 
-/* --- 1. TAHLIL ITEM CONTAINER --- */
-.tahlil-item {
-    background: var(--tahlil-card-bg);
-    border-radius: 20px;
-    padding: 25px;
+/* --- 1. HEADER & PLAYER CARD (STYLE MASJID) --- */
+.prayer-card-header {
+    background: linear-gradient(rgba(27, 67, 50, 0.8), rgba(27, 67, 50, 0.9)), 
+                url('assets/masjid.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 110px 20px 80px;
+    text-align: center;
+    border-radius: 0 0 40px 40px;
+    color: white;
+    margin-bottom: -30px; /* Bagi kad bawah overlap sikit */
+    position: relative;
+    z-index: 1;
+}
+
+/* --- 2. AYAT/PRAYER CARD ITEM (KAD TAHLIL) --- */
+.prayer-card {
+    background: var(--tn-card-bg);
+    border-radius: 24px;
+    padding: 30px;
     margin-bottom: 20px;
     border: 1px solid rgba(0, 0, 0, 0.03);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
-    overflow: hidden;
 }
 
-/* Badge Nombor */
-.tahlil-no {
-    width: 35px;
-    height: 35px;
-    background: var(--tahlil-emerald);
-    color: white;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    transform: rotate(45deg);
-    margin-bottom: 25px;
-    margin-left: 8px;
+.prayer-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
 }
 
-.tahlil-no span {
-    transform: rotate(-45deg);
-}
-
-/* --- 2. TULISAN ARAB (DIBESARKAN & WARNA JELAS) --- */
+/* --- 3. TULISAN ARAB --- */
 .arabic-text {
-    font-family: 'Uthman-Taha', 'Amiri', serif !important;
-    font-size: 2.25rem;      /* BESAR SIKIT */
-    line-height: 2.8;        /* JARAK LEBIH SELESA */
+    font-family: 'Amiri', 'Uthman-Taha', serif !important;
+    font-size: 2.2rem;
+    line-height: 2.8;
     direction: rtl;
     text-align: right;
-    color: var(--tahlil-dark); /* default hitam tua untuk terang */
-    margin-bottom: 22px;
+    color: var(--tn-dark);
+    margin-bottom: 20px;
     word-wrap: break-word;
 }
 
-/* WARNA KHAS UNTUK BACA 1 KALI DI DARK MODE */
-body.dark-mode .arabic-text {
-    color: #ffffff; /* putih supaya jelas di dark mode */
+/* --- 4. TULISAN LATIN (TRANSLITERASI) --- */
+.italic {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--tn-emerald);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    border-left: 3px solid var(--tn-gold);
+    padding-left: 15px;
+    margin-bottom: 15px;
+    display: block;
+    font-style: italic;
 }
 
-/* --- 3. TULISAN LATIN --- */
-.latin-text {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-style: italic;
-    color: var(--tahlil-emerald);
-    margin-bottom: 12px;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    border-left: 3px solid var(--tahlil-gold);
-    padding-left: 15px;
+/* --- 5. TERJEMAHAN --- */
+.small.text-dark {
+    color: var(--tn-text-muted) !important;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    text-align: left;
+    padding-top: 15px;
+    border-top: 1px solid #f1f3f5;
     display: block;
 }
 
-/* --- 4. TERJEMAHAN --- */
-.translation-text {
-    color: #5c636a;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    text-align: left;
-    padding-top: 12px;
-    border-top: 1px solid #f1f1f1;
-}
-
-/* --- 5. TAJUK BAHAGIAN --- */
-.tahlil-badge {
-    font-size: 0.65rem;
-    padding: 4px 12px;
-    font-weight: 800;
-    border-radius: 6px;
-    background-color: #e9f5ee;
-    color: var(--tahlil-emerald);
-    margin-bottom: 15px;
+/* --- 6. BADGE REPEAT & TITLE --- */
+.text-success.fw-bold {
+    font-size: 0.75rem;
     text-transform: uppercase;
-    display: inline-block;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.2px;
+    color: var(--tn-emerald) !important;
+    margin-bottom: 10px;
+    display: block;
 }
 
-/* --- 6. DARK MODE --- */
-body.dark-mode .tahlil-item {
-    background: #1e2b24;
-    border-color: #2d3e35;
+.badge.bg-success.bg-opacity-10 {
+    background-color: #e9f5ee !important;
+    color: var(--tn-emerald) !important;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
 }
 
-body.dark-mode .translation-text {
-    border-color: rgba(255,255,255,0.1);
-    color: #adb5bd;
+/* --- 7. AUDIO PLAYER CUSTOM --- */
+audio {
+    filter: sepia(20%) saturate(70%) hue-rotate(90deg); /* Biar warna audio match tema hijau */
+    height: 35px;
+    border-radius: 10px;
 }
 
-body.dark-mode .tahlil-badge {
-    background-color: rgba(45, 106, 79, 0.2);
+/* --- 8. DARK MODE --- */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
 }
 
-/* --- 7. RESPONSIVE (HANDPHONE) --- */
+body.dark-mode .prayer-card {
+    background: #1e1e1e;
+    border-color: #2d2d2d;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+body.dark-mode .arabic-text {
+    color: #ffffff;
+}
+
+body.dark-mode .small.text-dark {
+    color: #adb5bd !important;
+    border-top-color: #2d2d2d;
+}
+
+body.dark-mode .italic {
+    color: #81c784;
+}
+
+/* --- 9. RESPONSIVE --- */
 @media (max-width: 576px) {
     .arabic-text {
-        font-size: 2rem;     /* BESAR & JELAS DI PHONE */
-        line-height: 2.6;
+        font-size: 1.85rem;
+        line-height: 2.5;
+    }
+    
+    .prayer-card {
+        padding: 22px;
+        border-radius: 20px;
     }
 
-    .tahlil-item {
-        padding: 20px;
+    .prayer-card-header {
+        padding: 100px 15px 70px;
     }
 }
