@@ -1,6 +1,6 @@
 /**
  * Fail: yasin.js
- * Deskripsi: Menguruskan data Surah Yasin (Guna 100% gaya tahlil & quran)
+ * Deskripsi: Menguruskan data Surah Yasin menggunakan API Global & Terjemahan Basmeih
  */
 
 let currentAyatAudio = null;
@@ -13,24 +13,39 @@ async function loadYasin() {
     const contentDiv = document.getElementById('yasin-content');
     const fullAudio = document.getElementById('full-audio');
 
-    // Semak Cache (Offline First)
-    const cachedData = localStorage.getItem('surah_yasin_36');
+    // Semak Cache (Offline First) - Versi 4 untuk API baru
+    const cacheKey = 'surah_yasin_global_v4';
+    const cachedData = localStorage.getItem(cacheKey);
 
     if (cachedData) {
         displayData(JSON.parse(cachedData));
     } else {
         try {
-            const response = await fetch('https://equran.id/api/v2/surat/36');
-            if (!response.ok) throw new Error('Respon API gagal');
-            
-            const result = await response.json();
-            const data = result.data;
-            
+            // Mengambil 3 data serentak: Arab, Latin, dan Melayu Basmeih
+            const [resAr, resLat, resMs] = await Promise.all([
+                fetch('https://api.alquran.cloud/v1/surah/36/quran-uthmani'),
+                fetch('https://api.alquran.cloud/v1/surah/36/en.transliteration'),
+                fetch('https://api.alquran.cloud/v1/surah/36/ms.basmeih')
+            ]);
+
+            const dataAr = (await resAr.json()).data;
+            const dataLat = (await resLat.json()).data;
+            const dataMs = (await resMs.json()).data;
+
+            // Susun semula data supaya senang dibaca oleh loop display
+            const formattedData = dataAr.ayahs.map((ayat, index) => ({
+                nomorAyat: ayat.numberInSurah,
+                teksArab: ayat.text,
+                teksLatin: dataLat.ayahs[index].text,
+                teksMs: dataMs.ayahs[index].text,
+                audioAyat: `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayat.number}.mp3`
+            }));
+
             // Simpan dalam cache
-            localStorage.setItem('surah_yasin_36', JSON.stringify(data));
-            displayData(data);
+            localStorage.setItem(cacheKey, JSON.stringify(formattedData));
+            displayData(formattedData);
         } catch (error) {
-            console.error("Ralat:", error);
+            console.error("Ralat API Yasin:", error);
             yasinContainer.innerHTML = `
                 <div class="text-center p-5">
                     <i class="fas fa-wifi-slash fa-3x text-muted mb-3"></i>
@@ -41,10 +56,10 @@ async function loadYasin() {
         }
     }
 
-    function displayData(data) {
-        // Set audio penuh (Guna qari ke-5 atau default)
-        if (data.audioFull && data.audioFull["05"]) {
-            fullAudio.querySelector('source').src = data.audioFull["05"];
+    function displayData(ayahs) {
+        // Set audio penuh (Surah 36)
+        if (fullAudio) {
+            fullAudio.querySelector('source').src = `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/36.mp3`;
             fullAudio.load();
         }
 
@@ -52,26 +67,32 @@ async function loadYasin() {
 
         yasinContainer.innerHTML = '';
         
-        data.ayat.forEach((item) => {
+        ayahs.forEach((item) => {
+            // Buang teks Bismillah pada ayat pertama (kerana Yasin bermula dengan "Ya-Sin")
+            let teksArab = item.teksArab;
+            if (item.nomorAyat === 1 && teksArab.includes("بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ")) {
+                teksArab = teksArab.replace("بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "").trim();
+            }
+
             const verseHTML = `
                 <div class="yasin-item animate__animated animate__fadeInUp" id="verse-${item.nomorAyat}">
                     <div class="verse-no"><span>${item.nomorAyat}</span></div>
                     
-                    <div class="arabic-text" style="font-size: ${currentFontSize}rem;">
-                        ${item.teksArab}
+                    <div class="arabic-text" style="font-size: ${currentFontSize}rem; font-family: 'Uthman-Taha', serif;">
+                        ${teksArab}
                     </div>
                     
-                    <div class="latin-text">
+                    <div class="latin-text text-success fw-semibold my-2" style="font-size: 0.9rem;">
                         ${item.teksLatin}
                     </div>
                     
-                    <div class="translation-text">
-                        ${item.teksIndonesia}
+                    <div class="translation-text text-muted" style="font-size: 0.85rem; border-left: 2px solid #1b4332; padding-left: 10px;">
+                        ${item.teksMs}
                     </div>
                     
                     <div class="mt-4">
                         <button class="btn btn-sm btn-outline-success rounded-pill px-3 play-btn" 
-                                onclick="handleAyatAudio('${item.audio['05']}', this, ${item.nomorAyat})">
+                                onclick="handleAyatAudio('${item.audioAyat}', this, ${item.nomorAyat})">
                             <i class="fas fa-play me-1"></i> Dengar
                         </button>
                     </div>
@@ -103,9 +124,9 @@ function handleAyatAudio(url, btn, verseId) {
     currentActiveButton = btn;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
-    // Highlight Card (Guna warna emas tahlil)
+    // Highlight Card (Tema Emerald/Gold)
     currentCard.style.borderLeft = "4px solid #d4a373"; 
-    currentCard.style.backgroundColor = "#f9fbf9";
+    currentCard.style.backgroundColor = "#f0f7f4";
 
     currentAyatAudio = new Audio(url);
     currentAyatAudio.onplaying = () => {
@@ -114,7 +135,7 @@ function handleAyatAudio(url, btn, verseId) {
     };
 
     currentAyatAudio.play().catch(e => {
-        console.warn("Autoplay dicegah oleh pelayar.");
+        console.warn("Autoplay blocked.");
         stopAnyCurrentAyat();
     });
 
@@ -140,7 +161,7 @@ function stopAnyCurrentAyat() {
 }
 
 /**
- * Fungsi tukar saiz font (Hanya untuk tulisan Arab)
+ * Fungsi tukar saiz font
  */
 window.adjustFont = function(step) {
     let change = (step > 0) ? 0.2 : -0.2;
