@@ -1,6 +1,6 @@
 /**
  * Tahlil.js - QuranDigital2025
- * Susunan Tahlil Lengkap & Tersusun
+ * Status: Fixed Translation API (Bahasa Melayu)
  */
 
 const tahlilContent = document.getElementById("tahlil-content");
@@ -11,21 +11,31 @@ const API = "https://api.alquran.cloud/v1/ayah";
 
 async function getAyahData(surah, ayah) {
     try {
+        // Menggunakan ms.malay untuk kestabilan terjemahan Bahasa Melayu
         const [resAr, resLat, resMs] = await Promise.all([
             fetch(`${API}/${surah}:${ayah}`),
             fetch(`${API}/${surah}:${ayah}/en.transliteration`),
-            fetch(`${API}/${surah}:${ayah}/ms.translation`)
+            fetch(`${API}/${surah}:${ayah}/ms.malay`) 
         ]);
-        const [dataAr, dataLat, dataMs] = await Promise.all([resAr.json(), resLat.json(), resMs.json()]);
         
+        const [dataAr, dataLat, dataMs] = await Promise.all([
+            resAr.json(),
+            resLat.json(),
+            resMs.json()
+        ]);
+        
+        // Log untuk debugging (boleh buang selepas confirm)
+        console.log(`Loading ${surah}:${ayah}`, dataMs);
+
         return { 
             ar: dataAr.data.text, 
             lat: dataLat.data.text, 
-            // Membersihkan nombor ayat (1) dari teks terjemahan
+            // Membersihkan teks terjemahan daripada nombor ayat
             ms: dataMs.data.text.replace(/^\(\d+\)\s*/, '') 
         };
     } catch (error) {
-        return { ar: "", lat: "", ms: "" };
+        console.error("Gagal ambil data:", error);
+        return { ar: "", lat: "", ms: "Terjemahan tidak tersedia." };
     }
 }
 
@@ -57,7 +67,7 @@ async function loadTahlil() {
     let html = "";
 
     try {
-        // --- 1. AL-FATIHAH (SEKALI) ---
+        // --- 1. AL-FATIHAH ---
         let f = { ar: [], lat: [], ms: [] };
         for (let i = 1; i <= 7; i++) {
             let d = await getAyahData(1, i);
@@ -85,7 +95,6 @@ async function loadTahlil() {
         html += section("Tahlil & Takbir", "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ ۖ وَٱللَّٰهُ أَكْبَرُ", "La ilaha illallahu wallahu akbar", "Tiada Tuhan melainkan Allah, dan Allah Maha Besar.");
 
         // --- 4. AYAT PILIHAN ---
-        
         // Al-Baqarah 1-5
         let b15 = { ar: [], lat: [], ms: [] };
         for (let i = 1; i <= 5; i++) {
@@ -94,15 +103,13 @@ async function loadTahlil() {
         }
         html += section("Al-Baqarah 1–5", b15.ar.join(" "), b15.lat.join(" "), b15.ms.join(" "), "", await getAyahAudio(2, 1));
 
-        // Al-Baqarah 163
+        // Ayat Kursi & Al-Baqarah Lain
         let b163 = await getAyahData(2, 163);
         html += section("Al-Baqarah 163", b163.ar, b163.lat, b163.ms, "", await getAyahAudio(2, 163));
 
-        // Ayat Kursi
         let kursi = await getAyahData(2, 255);
         html += section("Ayat Kursi", kursi.ar, kursi.lat, kursi.ms, "", await getAyahAudio(2, 255));
 
-        // Al-Baqarah 284-286
         let bEnd = { ar: [], lat: [], ms: [] };
         for (let i = 284; i <= 286; i++) {
             let d = await getAyahData(2, i);
@@ -110,31 +117,24 @@ async function loadTahlil() {
         }
         html += section("Al-Baqarah 284–286", bEnd.ar.join(" "), bEnd.lat.join(" "), bEnd.ms.join(" "), "", await getAyahAudio(2, 284));
 
-        // Hud 73 (Ya Arhamar Rahimin)
+        // Hud & Ahzab
         let hud = await getAyahData(11, 73);
         html += section("Surah Hud Ayat 73", hud.ar, hud.lat, hud.ms, "Ya Arhamar Rahimin - Ulang 3 kali", await getAyahAudio(11, 73));
 
-        // Al-Ahzab 33
         let ahz33 = await getAyahData(33, 33);
         html += section("Surah Al-Ahzab Ayat 33", ahz33.ar, ahz33.lat, ahz33.ms, "", await getAyahAudio(33, 33));
 
-        // Al-Ahzab 56
         let ahz56 = await getAyahData(33, 56);
         html += section("Surah Al-Ahzab Ayat 56", ahz56.ar, ahz56.lat, ahz56.ms, "", await getAyahAudio(33, 56));
 
-        // --- 5. SELAWAT & SALAM ---
+        // --- 5. SELAWAT, ZIKIR & SYAHADAH ---
         html += section("Selawat Nabi", "اللَّهُمَّ صَلِّ عَلَىٰ سَيِّدِنَا مُحَمَّدٍ", "Allahumma salli 'ala sayyidina Muhammad", "Ya Allah, limpahkanlah selawat ke atas penghulu kami Nabi Muhammad.", "3 kali");
-        html += section("Salam Nabi", "وَسَلِّمْ عَلَىٰ سَيِّدِنَا مُحَمَّدٍ", "Wa sallim 'ala sayyidina Muhammad", "Dan berikanlah keselamatan ke atas penghulu kami Nabi Muhammad.");
-
-        // --- 6. HAUQALAH & ISTIGHFAR ---
         html += section("Hauqalah", "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ", "La hawla wala quwwata illa billah", "Tiada daya dan kekuatan melainkan dengan pertolongan Allah.");
         html += section("Istighfar", "أَسْتَغْفِرُ ٱللَّٰهَ ٱلْعَظِيمَ", "Astaghfirullahal 'azim", "Aku memohon ampun kepada Allah Yang Maha Agung.", "3 kali");
-
-        // --- 7. TAHLIL & SYAHADAH ---
         html += section("Tahlil", "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", "La ilaha illallah", "Tiada Tuhan melainkan Allah", "33 atau 100 kali");
         html += section("Kalimah Syahadah", "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ ٱللَّٰهِ", "Ashhadu alla ilaha illallah wa ashhadu anna Muhammadan rasulullah", "Aku bersaksi bahawa tiada Tuhan melainkan Allah dan Nabi Muhammad utusan Allah.");
 
-        // --- 8. PENUTUP (DOA) ---
+        // --- 6. PENUTUP ---
         html += `
         <div class="prayer-card text-center py-4 bg-success bg-opacity-10 border-success">
             <h5 class="fw-bold text-success mb-3">DOA TAHLIL</h5>
@@ -148,6 +148,7 @@ async function loadTahlil() {
         tahlilContent.innerHTML = html;
 
     } catch (err) {
+        console.error(err);
         loader.innerHTML = "Ralat memuatkan data.";
     }
 }
