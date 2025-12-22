@@ -1,6 +1,7 @@
 /**
  * Fail: quran.js
- * Deskripsi: Menguruskan senarai 114 Surah dengan gaya Unified Tahlil/Yasin
+ * Deskripsi: Menguruskan senarai 114 Surah menggunakan API Al-Quran Cloud (Global)
+ * Gaya: Unified Tahlil/Yasin Style
  */
 
 let surahData = [];
@@ -10,8 +11,8 @@ async function getSurahList() {
     const surahContainer = document.getElementById('surah-container');
     const surahList = document.getElementById('surah-list');
 
-    // Versi Cache untuk memastikan data sentiasa segar
-    const cacheVersion = "v3.0"; 
+    // Versi Cache untuk prestasi laju
+    const cacheVersion = "v4.0"; 
     if (localStorage.getItem('quran_version') !== cacheVersion) {
         localStorage.removeItem('quran_surah_list');
         localStorage.setItem('quran_version', cacheVersion);
@@ -25,17 +26,27 @@ async function getSurahList() {
         finalizeUI();
     } else {
         try {
-            const response = await fetch('https://equran.id/api/v2/surat');
+            // Menggunakan API Global yang lebih stabil
+            const response = await fetch('https://api.alquran.cloud/v1/surah');
             const result = await response.json();
             
-            if (result.data) {
-                surahData = result.data;
+            if (result.code === 200) {
+                // Map data API Cloud ke format yang kita mahukan
+                surahData = result.data.map(s => ({
+                    nomor: s.number,
+                    namaLatin: s.englishName,
+                    nama: s.name,
+                    jumlahAyat: s.numberOfAyahs,
+                    tempatTurun: s.revelationType === 'Meccan' ? 'Makkiyah' : 'Madaniyyah',
+                    arti: s.englishNameTranslation // Terjemahan Nama Surah (English/Global)
+                }));
+
                 localStorage.setItem('quran_surah_list', JSON.stringify(surahData));
                 displaySurah(surahData);
                 finalizeUI();
             }
         } catch (error) {
-            console.error("Ralat API:", error);
+            console.error("Ralat API Global:", error);
             if (loadingSpinner) {
                 loadingSpinner.innerHTML = `<p class="text-danger small">Gagal memuatkan data. Sila periksa internet.</p>`;
             }
@@ -66,24 +77,22 @@ function displaySurah(data) {
     }
 
     data.forEach((s, index) => {
-        const place = s.tempatTurun === 'Mekah' ? 'Makkiyah' : 'Madaniyyah';
-        
-        // Membina HTML yang sepadan dengan gaya Tahlil/Yasin
+        // Bina HTML Card
         const cardHTML = `
             <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.01}s">
-                <a href="surah.html?no=${s.nomor}" class="surah-card">
+                <a href="surah.html?no=${s.nomor}" class="surah-card text-decoration-none">
                     <div class="surah-no">
                         <span>${s.nomor}</span>
                     </div>
 
                     <div class="surah-info">
-                        <span class="surah-name-latin">${s.namaLatin}</span>
-                        <span class="surah-subtitle">${place} • ${s.jumlahAyat} AYAT</span>
+                        <span class="surah-name-latin fw-bold">${s.namaLatin}</span>
+                        <span class="surah-subtitle text-uppercase">${s.tempatTurun} • ${s.jumlahAyat} AYAT</span>
                     </div>
 
                     <div class="text-end">
-                        <div class="surah-name-arabic">${s.nama}</div>
-                        <small class="text-muted" style="font-size: 0.65rem; display: block; margin-top: -5px;">${s.arti}</small>
+                        <div class="surah-name-arabic" style="font-family: 'Amiri', serif; font-size: 1.4rem;">${s.nama}</div>
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">${s.arti}</small>
                     </div>
                 </a>
             </div>
@@ -110,5 +119,4 @@ if (searchInput) {
     });
 }
 
-// Jalankan apabila halaman dibuka
 document.addEventListener('DOMContentLoaded', getSurahList);
