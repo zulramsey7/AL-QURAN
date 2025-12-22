@@ -1,139 +1,57 @@
-<!DOCTYPE html>
-
-<html lang="ms">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <title>Tahlil Arwah Lengkap - QuranDigital2025</title>
-
-   
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-
-   
-
-    <link rel="stylesheet" href="style.css">
-
-</head>
-
 <body>
 
-
-
     <div class="app-wrapper">
-
-       
-
+        
         <div class="top-bar-container">
-
             <div class="top-bar-pill">
-
                 <a href="index.html" class="text-decoration-none text-dark me-auto">
-
                     <i class="fas fa-arrow-left"></i>
-
                 </a>
-
-                <h6 class="mb-0 fw-bold mx-auto" style="color: var(--tn-green-dark);">Tahlil Lengkap</h6>
-
+                <h6 class="mb-0 fw-bold mx-auto" style="color: #1b4332;">Tahlil Lengkap</h6>
                 <div class="ms-auto">
-
                     <button class="btn btn-sm p-0 me-2" onclick="adjustFont(-1)"><i class="fas fa-minus-circle text-muted"></i></button>
-
                     <button class="btn btn-sm p-0" onclick="adjustFont(1)"><i class="fas fa-plus-circle text-muted"></i></button>
-
                 </div>
-
             </div>
-
         </div>
 
-
-
-        <div class="prayer-card animate__animated animate__fadeIn mb-4">
-
-            <div class="text-center py-2">
-
-                <h1 class="arabic-text display-5 mb-1">تَهْلِيلُ الأَرْوَاحِ</h1>
-
-                <p class="mb-0 opacity-75 small">Susunan Bacaan Tahlil & Doa</p>
-
+        <div class="prayer-card-header animate__animated animate__fadeIn">
+            <div class="text-center">
+                <h1 class="arabic-text-header mb-1" style="font-family: 'Amiri', serif; font-size: 2.8rem; color: white;">تَهْلِيلُ الأَرْوَاحِ</h1>
+                <p class="mb-0 opacity-90 small text-white">Susunan Bacaan Tahlil & Doa</p>
             </div>
-
         </div>
 
-
-
-        <div id="tahlil-content">
-
-            <div class="text-center py-5" id="loader">
-
-                <div class="spinner-border text-success" role="status"></div>
-
-                <p class="mt-3 text-muted small fw-bold">Menyusun bacaan tahlil...</p>
-
+        <div class="container mt-n4"> <div id="tahlil-content">
+                <div class="text-center py-5" id="loader">
+                    <div class="spinner-border text-success" role="status"></div>
+                    <p class="mt-3 text-muted small fw-bold">Menyusun bacaan tahlil...</p>
+                </div>
             </div>
-
-            </div>
-
-
+        </div>
 
         <footer class="text-center py-5 text-muted">
-
-            <hr class="opacity-10 mb-4">
-
-            <p class="mb-0" style="font-size: 0.7rem;">04/12/2025 Aplikasi Islam</p>
-
+            <hr class="opacity-10 mb-4 mx-5">
+            <p class="mb-0" style="font-size: 0.7rem;">2025 Aplikasi Islam</p>
             <p class="fw-bold text-uppercase mb-0" style="font-size: 0.65rem;">QuranDigital2025</p>
-
             <button class="btn btn-sm btn-outline-success rounded-pill px-4 mt-3 shadow-sm" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-
                 <i class="fas fa-chevron-up me-1"></i> Kembali ke Atas
-
             </button>
-
         </footer>
 
+    </div>
 
-
-    </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="app.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="tahlil.js"></script>
 
-
-
     <script>
-
-        // Logik ringkas untuk ubah saiz font tulisan Arab secara global
-
         function adjustFont(step) {
-
             const arabicTexts = document.querySelectorAll('.arabic-text');
-
             arabicTexts.forEach(el => {
-
                 let currentSize = parseFloat(window.getComputedStyle(el).fontSize);
-
                 el.style.fontSize = (currentSize + (step * 2)) + 'px';
-
+                el.style.lineHeight = (currentSize + (step * 2)) * 1.5 + 'px'; // Selaraskan line height
             });
-
         }
-
     </script>
-
 </body>
-
-</html>
