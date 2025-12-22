@@ -1,6 +1,6 @@
 /**
  * Fail: yasin.js
- * Deskripsi: Menguruskan data Surah Yasin (Guna 100% gaya tahlil.css)
+ * Deskripsi: Menguruskan data Surah Yasin (Guna 100% gaya tahlil & quran)
  */
 
 let currentAyatAudio = null;
@@ -25,12 +25,15 @@ async function loadYasin() {
             
             const result = await response.json();
             const data = result.data;
+            
+            // Simpan dalam cache
             localStorage.setItem('surah_yasin_36', JSON.stringify(data));
             displayData(data);
         } catch (error) {
             console.error("Ralat:", error);
             yasinContainer.innerHTML = `
-                <div class="text-center p-4">
+                <div class="text-center p-5">
+                    <i class="fas fa-wifi-slash fa-3x text-muted mb-3"></i>
                     <p class="small text-muted">Gagal memuatkan data. Sila periksa internet anda.</p>
                     <button onclick="location.reload()" class="btn btn-sm btn-success rounded-pill px-4">Cuba Lagi</button>
                 </div>`;
@@ -39,7 +42,7 @@ async function loadYasin() {
     }
 
     function displayData(data) {
-        // Set audio penuh
+        // Set audio penuh (Guna qari ke-5 atau default)
         if (data.audioFull && data.audioFull["05"]) {
             fullAudio.querySelector('source').src = data.audioFull["05"];
             fullAudio.load();
@@ -51,8 +54,8 @@ async function loadYasin() {
         
         data.ayat.forEach((item) => {
             const verseHTML = `
-                <div class="tahlil-item animate__animated animate__fadeInUp" id="verse-${item.nomorAyat}">
-                    <div class="tahlil-badge">AYAT ${item.nomorAyat}</div>
+                <div class="yasin-item animate__animated animate__fadeInUp" id="verse-${item.nomorAyat}">
+                    <div class="verse-no"><span>${item.nomorAyat}</span></div>
                     
                     <div class="arabic-text" style="font-size: ${currentFontSize}rem;">
                         ${item.teksArab}
@@ -66,7 +69,7 @@ async function loadYasin() {
                         ${item.teksIndonesia}
                     </div>
                     
-                    <div class="mt-3">
+                    <div class="mt-4">
                         <button class="btn btn-sm btn-outline-success rounded-pill px-3 play-btn" 
                                 onclick="handleAyatAudio('${item.audio['05']}', this, ${item.nomorAyat})">
                             <i class="fas fa-play me-1"></i> Dengar
@@ -100,9 +103,9 @@ function handleAyatAudio(url, btn, verseId) {
     currentActiveButton = btn;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
-    // Highlight Card
+    // Highlight Card (Guna warna emas tahlil)
     currentCard.style.borderLeft = "4px solid #d4a373"; 
-    currentCard.style.backgroundColor = "#fdfbf7";
+    currentCard.style.backgroundColor = "#f9fbf9";
 
     currentAyatAudio = new Audio(url);
     currentAyatAudio.onplaying = () => {
@@ -110,7 +113,10 @@ function handleAyatAudio(url, btn, verseId) {
         btn.classList.replace('btn-outline-success', 'btn-danger');
     };
 
-    currentAyatAudio.play().catch(e => stopAnyCurrentAyat());
+    currentAyatAudio.play().catch(e => {
+        console.warn("Autoplay dicegah oleh pelayar.");
+        stopAnyCurrentAyat();
+    });
 
     currentAyatAudio.onended = () => {
         stopAnyCurrentAyat();
@@ -122,8 +128,8 @@ function stopAnyCurrentAyat() {
         currentAyatAudio.pause();
         currentAyatAudio = null;
     }
-    document.querySelectorAll('.tahlil-item').forEach(card => {
-        card.style.borderLeft = "none";
+    document.querySelectorAll('.yasin-item').forEach(card => {
+        card.style.borderLeft = "1px solid rgba(45, 106, 79, 0.05)";
         card.style.backgroundColor = "#ffffff";
     });
     if (currentActiveButton) {
@@ -140,7 +146,7 @@ window.adjustFont = function(step) {
     let change = (step > 0) ? 0.2 : -0.2;
     currentFontSize += change;
     
-    if (currentFontSize < 1.5) currentFontSize = 1.5;
+    if (currentFontSize < 1.6) currentFontSize = 1.6;
     if (currentFontSize > 3.5) currentFontSize = 3.5;
     
     document.querySelectorAll('.arabic-text').forEach(el => {

@@ -1,11 +1,11 @@
-/* Fail: solat.js - Fokus Waktu Solat Sahaja */
+/* Fail: solat.js - Fokus Waktu Solat Sahaja dengan Penambahbaikan UI */
 const { createApp } = Vue;
 
 createApp({
     data() {
         return {
             loading: false,
-            currentTime: '',
+            currentTime: '--:--:--',
             countdown: '00:00:00',
             hijriDate: '',
             locationName: 'Mencari Lokasi...',
@@ -50,7 +50,6 @@ createApp({
                 maximumAge: 60000 
             };
 
-            // Masih perlukan GPS untuk dapatkan waktu solat yang tepat mengikut kawasan
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async (pos) => {
@@ -77,7 +76,7 @@ createApp({
                 const month = now.getMonth() + 1;
                 const year = now.getFullYear();
                 
-                // Menggunakan API Aladhan untuk jadual bulanan
+                // Method 11 (JAKIM/Malaysia) jika tersedia, atau method 2 (ISNA)
                 const url = `https://api.aladhan.com/v1/calendar?latitude=${this.coords.lat}&longitude=${this.coords.lon}&method=11&month=${month}&year=${year}`;
                 
                 const res = await fetch(url);
@@ -86,7 +85,7 @@ createApp({
                 if (json.data) {
                     const todayData = json.data[now.getDate() - 1];
                     const t = todayData.timings;
-                    const fmt = (s) => s.split(' ')[0]; // Buang info timezone (e.g. "+08")
+                    const fmt = (s) => s.split(' ')[0]; 
 
                     this.dailyTimes = {
                         Subuh: fmt(t.Fajr),
@@ -106,24 +105,32 @@ createApp({
                         isha: fmt(d.timings.Isha)
                     }));
 
-                    this.hijriDate = `${todayData.date.hijri.day} ${todayData.date.hijri.month.en} ${todayData.date.hijri.year}`;
+                    // Format Tarikh Hijri yang lebih kemas
+                    const hd = todayData.date.hijri;
+                    this.hijriDate = `${hd.day} ${hd.month.en} ${hd.year}H`;
                     
                     if(todayData.meta && todayData.meta.timezone) {
-                        this.locationName = todayData.meta.timezone.split('/')[1].replace('_', ' ');
+                        const loc = todayData.meta.timezone.split('/')[1] || "Kuala Lumpur";
+                        this.locationName = loc.replace('_', ' ');
                     }
                     
                     this.calculateNextPrayer();
                 }
             } catch (e) {
                 console.error(e);
-                this.error = "Ralat memuatkan jadual solat.";
+                this.error = "Gagal memuatkan data solat. Sila cuba lagi.";
             }
         },
 
         startClock() {
             setInterval(() => {
                 const now = new Date();
-                this.currentTime = now.toLocaleTimeString('ms-MY', { hour12: false });
+                this.currentTime = now.toLocaleTimeString('ms-MY', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: false 
+                });
                 this.updateCountdown();
             }, 1000);
         },
@@ -147,23 +154,24 @@ createApp({
                 }
             }
             
-            // Jika semua waktu hari ini sudah lepas, seterusnya adalah Subuh esok
+            // Kes Midnight: Jika semua waktu hari ini lepas, tunjuk Subuh esok
             this.nextPrayerName = 'Subuh';
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            const [sh, sm] = this.dailyTimes['Subuh'].split(':');
-            tomorrow.setHours(parseInt(sh), parseInt(sm), 0, 0);
+            const subuhTime = this.dailyTimes['Subuh'].split(':');
+            tomorrow.setHours(parseInt(subuhTime[0]), parseInt(subuhTime[1]), 0, 0);
             this.nextPrayerTime = tomorrow;
         },
 
         updateCountdown() {
             if (!this.nextPrayerTime) return;
-            const diff = this.nextPrayerTime - new Date();
+            const now = new Date();
+            const diff = this.nextPrayerTime - now;
             
             if (diff <= 0) {
                 this.playAzan();
-                // Tunggu sebentar sebelum kira waktu seterusnya
-                setTimeout(() => this.calculateNextPrayer(), 2000);
+                // Refresh waktu solat seterusnya selepas 1 minit azan
+                setTimeout(() => this.calculateNextPrayer(), 60000);
                 return;
             }
             
@@ -177,8 +185,8 @@ createApp({
             const icons = { 
                 'Subuh': 'fas fa-cloud-moon', 
                 'Syuruk': 'fas fa-sun', 
-                'Zohor': 'fas fa-cloud-sun', 
-                'Asar': 'fas fa-certificate', 
+                'Zohor': 'fas fa-sun', 
+                'Asar': 'fas fa-cloud-sun', 
                 'Maghrib': 'fas fa-moon', 
                 'Isyak': 'fas fa-star-and-crescent' 
             };
@@ -186,9 +194,13 @@ createApp({
         },
 
         playAzan() {
+            // Mainkan azan jika setting untuk waktu solat tersebut adalah TRUE
             if (this.azanSettings[this.nextPrayerName] && !this.isAzanPlaying) {
                 this.isAzanPlaying = true;
-                this.audio.play().catch(e => console.log("Audio diblock browser:", e));
+                this.audio.play().catch(e => {
+                    console.warn("Browser menghalang autoplay audio. Pengguna perlu klik dahulu.");
+                    this.isAzanPlaying = false; // Reset jika gagal
+                });
             }
         },
 
@@ -203,6 +215,8 @@ createApp({
         },
 
         refreshLocation() {
+            this.loading = true;
+            localStorage.removeItem('azanSettings'); // Pilihan: reset cache jika mahu
             location.reload();
         }
     },

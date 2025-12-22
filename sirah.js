@@ -1,5 +1,6 @@
 /**
  * DATA SIRAH & PARA NABI - QuranDigital2025
+ * Menggunakan gaya kad seragam & fungsi klik pada butang sahaja
  */
 
 const sirahData = {
@@ -27,6 +28,7 @@ const sirahData = {
         scenes: [
             { img: "sirah1.png", text: "Tahun Kesedihan. Allah menghiburkan Rasulullah SAW dengan jemputan ke langit selepas pemergian Abu Talib & Khadijah." },
             { img: "sirah2.png", text: "Buraq membawa Rasulullah ke Masjidil Aqsa. Di sana, Baginda mengimamkan solat bersama para Nabi." },
+            { img: "sirah3.png", text: "Rasulullah naik ke langit merentas tujuh lapisan langit dan bertemu dengan para Nabi terdahulu." },
             { img: "sirah4.png", text: "Rasulullah naik ke Sidratul Muntaha dan menerima perintah solat lima waktu secara langsung daripada Allah SWT." }
         ]
       },
@@ -56,7 +58,7 @@ const sirahData = {
         { id: 15, title: "Nabi Harun AS", content: "Saudara Nabi Musa yang fasih berbicara. Beliau sentiasa membantu Musa dalam urusan dakwah menentang Firaun.", icon: "fa-comment", color: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)" },
         { id: 16, title: "Nabi Zulkifli AS", content: "Nabi yang sangat amanah dan kuat beribadah. Beliau memimpin kaumnya dengan penuh keadilan dan kesabaran.", icon: "fa-shield-alt", color: "linear-gradient(135deg, #304352 0%, #d7d2cc 100%)" },
         { id: 17, title: "Nabi Daud AS", content: "Nabi yang dikurniakan suara merdu dan mampu melembutkan besi. Beliau juga pemenang dalam perlawanan menentang Jalut.", icon: "fa-music", color: "linear-gradient(135deg, #00b09b 0%, #96c93d 100%)" },
-        { id: 18, title: "Nabi Sulaiman AS", content: "Nabi terkaya yang memerintah jin, haiwan, dan manusia. Beliau boleh memahami bahasa semut dan burung.", icon: "fa-gem", color: "linear-gradient(135deg, #642b73 0%, #c6426e 100%)" },
+        { id: 18, title: "Nabi Sulaiman AS", content: "Nabi terkaya yang memerintah jin, haiwan, and manusia. Beliau boleh memahami bahasa semut dan burung.", icon: "fa-gem", color: "linear-gradient(135deg, #642b73 0%, #c6426e 100%)" },
         { id: 19, title: "Nabi Ilyas AS", content: "Diutus kepada kaum yang menyembah berhala bernama Ba'al. Beliau menyeru kaumnya kembali kepada Allah yang Esa.", icon: "fa-sun", color: "linear-gradient(135deg, #f4c4f3 0%, #fc67fa 100%)" },
         { id: 20, title: "Nabi Ilyasa AS", content: "Penerus dakwah Nabi Ilyas. Beliau memimpin kaumnya dengan hikmah dan mukjizat yang banyak.", icon: "fa-book-open", color: "linear-gradient(135deg, #00c6ff 0%, #0072ff 100%)" },
         { id: 21, title: "Nabi Yunus AS", content: "Nabi yang ditelan ikan Paus besar selama 40 hari. Beliau sentiasa berzikir memohon ampun kepada Allah di dalam perut ikan.", icon: "fa-water", color: "linear-gradient(135deg, #0f2027 0%, #2c5364 100%)" },
@@ -77,22 +79,22 @@ function renderAllStories() {
 
 function createCardHTML(item, index, type) {
     return `
-        <div class="col-6 col-lg-3 mb-4 story-card animate__animated animate__fadeIn">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background: #ffffff;">
+        <div class="col-6 col-lg-3 mb-3 story-card animate__animated animate__fadeIn">
+            <div class="card h-100 border-0 shadow-sm" style="border-radius: 20px; background: #ffffff; overflow: hidden;">
                 <div class="card-body p-3 d-flex flex-column align-items-center text-center">
                     <div class="mb-3" style="background: ${item.color}; width: 45px; height: 45px; border-radius: 12px; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                         <i class="fas ${item.icon} fa-sm"></i>
                     </div>
-                    <div style="min-height: 40px; display: flex; align-items: center; justify-content: center;">
-                        <h6 class="fw-bold mb-0 card-title-text" style="color: #1b4332; font-size: 0.8rem; line-height: 1.2;">
+                    <div class="card-title-text" style="min-height: 40px; display: flex; align-items: center; justify-content: center;">
+                        <h6 class="fw-bold mb-0" style="color: #1b4332; font-size: 0.8rem; line-height: 1.2;">
                             ${item.title}
                         </h6>
                     </div>
-                    <div class="mt-auto pt-3">
+                    <div class="mt-3">
                         <button onclick="openStoryModal('${type}', ${item.id})" 
-                                class="btn btn-success shadow-sm fw-bold" 
-                                style="background-color: #2d6a4f; color: white; border: none; font-size: 0.65rem; border-radius: 8px; padding: 5px 15px; min-width: 80px; letter-spacing: 0.5px;">
-                            BACA
+                                class="btn btn-success shadow-sm fw-bold border-0" 
+                                style="background-color: #2d6a4f; color: white; font-size: 0.65rem; border-radius: 8px; padding: 6px 15px; min-width: 90px;">
+                            BACA KISAH
                         </button>
                     </div>
                 </div>
@@ -113,7 +115,7 @@ function openStoryModal(type, id) {
     if (story.isNovel) {
         modalDialog.classList.add('modal-xl');
         modalContent.innerHTML = `
-            <div id="novelCarousel" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
+            <div id="novelCarousel" class="carousel slide" data-bs-ride="false">
                 <div class="carousel-inner">
                     ${story.scenes.map((scene, i) => `
                         <div class="carousel-item ${i === 0 ? 'active' : ''}">
@@ -121,19 +123,20 @@ function openStoryModal(type, id) {
                                 <div class="col-lg-7">
                                     <img src="assets/${scene.img}" class="w-100" style="height:350px; object-fit:cover;" onerror="this.src='https://placehold.co/600x400?text=Imej+Sirah'">
                                 </div>
-                                <div class="col-lg-5 p-4 d-flex flex-column justify-content-center">
-                                    <p style="font-size: 1.05rem; line-height: 1.7; color: #333;">${scene.text}</p>
+                                <div class="col-lg-5 p-4 d-flex flex-column justify-content-center bg-white">
+                                    <p class="text-muted small mb-2">Bahagian ${i+1} daripada ${story.scenes.length}</p>
+                                    <p style="font-size: 1.05rem; line-height: 1.8; color: #2d3436; font-weight: 500;">${scene.text}</p>
                                     <div class="d-flex justify-content-between mt-4">
-                                        <button class="btn btn-outline-secondary btn-sm px-3" 
+                                        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" 
                                                 type="button" 
                                                 onclick="bootstrap.Carousel.getInstance(document.getElementById('novelCarousel')).prev()"
-                                                ${i === 0 ? 'disabled' : ''}>
-                                            <i class="fas fa-arrow-left"></i> Balik
+                                                ${i === 0 ? 'style="visibility:hidden"' : ''}>
+                                            <i class="fas fa-chevron-left"></i> Balik
                                         </button>
-                                        <button class="btn btn-success btn-sm px-4" 
+                                        <button class="btn btn-success btn-sm rounded-pill px-4 fw-bold" 
                                                 type="button" 
                                                 onclick="${i === story.scenes.length - 1 ? "bootstrap.Modal.getInstance(document.getElementById('readModal')).hide()" : "bootstrap.Carousel.getInstance(document.getElementById('novelCarousel')).next()" }">
-                                            ${i === story.scenes.length - 1 ? 'Tutup' : 'Terus <i class="fas fa-arrow-right"></i>'}
+                                            ${i === story.scenes.length - 1 ? 'Selesai' : 'Seterusnya <i class="fas fa-chevron-right"></i>'}
                                         </button>
                                     </div>
                                 </div>
@@ -143,22 +146,27 @@ function openStoryModal(type, id) {
             </div>`;
     } else {
         modalDialog.classList.remove('modal-xl');
-        modalContent.innerHTML = `<div class="p-4 text-center"><p style="font-size: 1.15rem; line-height: 1.8; color: #444; margin:0;">${story.content}</p></div>`;
+        modalContent.innerHTML = `
+            <div class="p-4">
+                <div class="p-4 rounded-4" style="background-color: #f8fbf9; border: 1px dashed rgba(45, 106, 79, 0.2);">
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #2d3436; margin:0; text-align: justify;">
+                        ${story.content}
+                    </p>
+                </div>
+            </div>`;
     }
 
     modalTitle.innerText = story.title;
     modalIcon.style.background = story.color;
     modalIcon.innerHTML = `<i class="fas ${story.icon}"></i>`;
     
-    // Pastikan modal di-init dengan betul
-    let modalElement = document.getElementById('readModal');
-    let modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+    const modalElement = document.getElementById('readModal');
+    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
     modalInstance.show();
 
-    // Init Carousel jika ia adalah novel
     if (story.isNovel) {
-        let carouselElement = document.getElementById('novelCarousel');
-        new bootstrap.Carousel(carouselElement);
+        const carouselElement = document.getElementById('novelCarousel');
+        new bootstrap.Carousel(carouselElement, { interval: false });
     }
 }
 
@@ -167,10 +175,18 @@ const searchInput = document.getElementById('searchInput');
 if (searchInput) {
     searchInput.addEventListener('input', function(e) {
         const term = e.target.value.toLowerCase();
+        let hasResults = false;
         document.querySelectorAll('.story-card').forEach(card => {
-            const title = card.querySelector('.card-title-text').innerText.toLowerCase();
-            card.style.display = title.includes(term) ? "block" : "none";
+            const title = card.querySelector('h6').innerText.toLowerCase();
+            if (title.includes(term)) {
+                card.style.display = "block";
+                hasResults = true;
+            } else {
+                card.style.display = "none";
+            }
         });
+        const noResults = document.getElementById('noResults');
+        if (noResults) noResults.classList.toggle('d-none', hasResults);
     });
 }
 

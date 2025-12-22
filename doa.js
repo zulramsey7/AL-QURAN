@@ -1,12 +1,12 @@
 /**
  * Fail: doa.js
  * Deskripsi: Menguruskan data Doa Harian dengan fungsi carian masa-nyata & Cache Offline
+ * Penyelarasan: Emerald Unified Style 2025
  */
 
 let allDoa = [];
 
 async function loadDoa() {
-    const doaList = document.getElementById('doa-list');
     const loadingSpinner = document.getElementById('loading-spinner');
     const doaContent = document.getElementById('doa-content');
 
@@ -18,7 +18,7 @@ async function loadDoa() {
         displayDoa(allDoa);
         finalizeUI();
         
-        // Cuba kemaskini data di latar belakang (Background Update)
+        // Cuba kemaskini data di latar belakang
         updateDataInBackground();
     } else {
         await fetchFreshData();
@@ -63,7 +63,6 @@ async function updateDataInBackground() {
         const result = await response.json();
         const newData = result.data || result;
         
-        // Hanya kemaskini jika data berbeza
         if (JSON.stringify(newData) !== JSON.stringify(allDoa)) {
             allDoa = newData;
             localStorage.setItem('doa_harian_data', JSON.stringify(allDoa));
@@ -83,38 +82,35 @@ function displayDoa(data) {
     list.innerHTML = '';
 
     if (!data || data.length === 0) {
-        noResults.classList.remove('d-none');
+        if (noResults) noResults.classList.remove('d-none');
         return;
     } else {
-        noResults.classList.add('d-none');
+        if (noResults) noResults.classList.add('d-none');
     }
 
-    // Guna DocumentFragment untuk prestasi paparan lebih laju
     const fragment = document.createDocumentFragment();
 
     data.forEach((doa, index) => {
         const col = document.createElement('div');
         col.className = `col-12 col-md-6 col-lg-4 animate__animated animate__fadeInUp`;
-        col.style.animationDelay = `${Math.min(index * 0.05, 1)}s`; // Hadkan delay max 1s
+        col.style.animationDelay = `${Math.min(index * 0.05, 1)}s`;
 
         col.innerHTML = `
-            <div class="card doa-card">
-                <div class="card-body d-flex flex-column">
-                    <span class="badge-category">Doa Harian</span>
-                    <h5 class="doa-title">${doa.title}</h5>
-                    
-                    <div class="arabic-text">
-                        ${doa.arabic}
-                    </div>
-                    
-                    <div class="latin-text">
-                        ${doa.latin}
-                    </div>
-                    
-                    <div class="translation-text mt-auto">
-                        <strong class="d-block mb-1 text-dark small" style="font-size: 0.75rem;">MAKSUD:</strong>
-                        ${doa.translation}
-                    </div>
+            <div class="doa-card h-100">
+                <span class="type-badge">Doa Harian</span>
+                <h5 class="doa-title-latin">${doa.title}</h5>
+                
+                <div class="arabic-text">
+                    ${doa.arabic}
+                </div>
+                
+                <div class="latin-text">
+                    ${doa.latin}
+                </div>
+                
+                <div class="translation-text mt-auto">
+                    <strong class="d-block mb-1 text-success small" style="font-size: 0.7rem; letter-spacing: 0.5px;">MAKSUD:</strong>
+                    ${doa.translation}
                 </div>
             </div>
         `;
@@ -128,19 +124,21 @@ function displayDoa(data) {
  * Logik Fungsi Carian Masa-Nyata (Debounced)
  */
 let searchTimeout;
-document.getElementById('search-doa').addEventListener('input', function(e) {
-    clearTimeout(searchTimeout);
-    const keyword = e.target.value.toLowerCase().trim();
+const searchInput = document.getElementById('search-doa');
+if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        const keyword = e.target.value.toLowerCase().trim();
 
-    // Debounce 300ms supaya tidak berat semasa menaip laju
-    searchTimeout = setTimeout(() => {
-        const filtered = allDoa.filter(doa => 
-            doa.title.toLowerCase().includes(keyword) || 
-            doa.translation.toLowerCase().includes(keyword)
-        );
-        displayDoa(filtered);
-    }, 300);
-});
+        searchTimeout = setTimeout(() => {
+            const filtered = allDoa.filter(doa => 
+                doa.title.toLowerCase().includes(keyword) || 
+                doa.translation.toLowerCase().includes(keyword)
+            );
+            displayDoa(filtered);
+        }, 300);
+    });
+}
 
 function showErrorUI() {
     const doaList = document.getElementById('doa-list');
@@ -153,7 +151,7 @@ function showErrorUI() {
                 <h6 class="fw-bold">Sambungan Gagal</h6>
                 <p class="small text-muted">Data tidak dapat dimuatkan. Sila semak internet anda.</p>
                 <div class="d-flex justify-content-center gap-2 mt-3">
-                    <button onclick="location.reload()" class="btn btn-success rounded-pill px-4">Cuba Lagi</button>
+                    <button onclick="location.reload()" class="btn btn-success rounded-pill px-4 shadow-sm">Cuba Lagi</button>
                 </div>
             </div>
         </div>`;

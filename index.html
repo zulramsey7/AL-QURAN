@@ -8,7 +8,6 @@
     <title>QuranDigital2025</title>
     
     <link rel="manifest" href="manifest.json">
-
     <link rel="apple-touch-icon" href="icon-192x192.png">
     <link rel="icon" type="image/png" href="icon-192x192.png">
     
@@ -38,8 +37,6 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
-
     <div class="app-wrapper">
         
         <div class="top-bar-container">
@@ -50,25 +47,25 @@
         </div>
 
         <div class="prayer-card">
-    <div class="d-flex justify-content-between align-items-start mb-2">
-        <div>
-            <h6 class="mb-0 opacity-75" style="font-size: 0.8rem;">
-                <i class="fas fa-location-dot me-1"></i> <span id="user-location">Mengesan lokasi...</span>
-            </h6>
-            <h1 id="current-time-display" class="fw-bold mb-0" style="font-size: 3rem; letter-spacing: -2px;">00:00</h1>
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <h6 class="mb-0 opacity-75" style="font-size: 0.8rem;">
+                        <i class="fas fa-location-dot me-1"></i> <span id="user-location">Mengesan lokasi...</span>
+                    </h6>
+                    <h1 id="current-time-display" class="fw-bold mb-0" style="font-size: 3rem; letter-spacing: -2px;">00:00</h1>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-white text-success rounded-pill px-3 py-2 fw-bold" id="active-prayer-name">---</span>
+                </div>
+            </div>
+            
+            <div class="mt-3 p-2 rounded-3" style="background: rgba(255,255,255,0.15);">
+                <p class="mb-0 small fw-bold">
+                    <i class="far fa-clock me-1"></i> 
+                    <span id="time-to-azan">Mengira baki waktu...</span> ke <span id="next-prayer-name">Azan</span>
+                </p>
+            </div>
         </div>
-        <div class="text-end">
-            <span class="badge bg-white text-success rounded-pill px-3 py-2 fw-bold" id="active-prayer-name">---</span>
-        </div>
-    </div>
-    
-    <div class="mt-3 p-2 rounded-3" style="background: rgba(255,255,255,0.15);">
-        <p class="mb-0 small fw-bold">
-            <i class="far fa-clock me-1"></i> 
-            <span id="time-to-azan">Mengira baki waktu...</span> ke <span id="next-prayer-name">Azan</span>
-        </p>
-    </div>
-</div>
 
         <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white animate__animated animate__fadeIn">
             <a href="quran.html" class="text-decoration-none card-body p-3 d-flex align-items-center">
@@ -141,7 +138,7 @@
         </div>
 
         <div id="install-banner">
-            <img src="icon-192x192.png" width="35" class="rounded-3 shadow-sm">
+            <img src="icon-192x192.png" width="35" class="rounded-3 shadow-sm" alt="App Icon">
             <div class="flex-grow-1">
                 <h6 class="mb-0 fw-bold" style="font-size: 0.75rem;">Pasang Aplikasi</h6>
                 <p class="mb-0 text-muted" style="font-size: 0.65rem;">Klik untuk akses pantas.</p>
@@ -173,13 +170,14 @@
 
     </div>
 
+    <script src="app.js"></script>
+
     <script>
-    // Data Zikir Ringkas
+    // Hanya kekalkan logik Zikir, Kongsi & Splash Screen
     const zikirs = [
         { ar: "سُبْحَانَ اللَّهِ", ms: "Maha Suci Allah" },
         { ar: "ٱلْحَمْدُ لِلَّهِ", ms: "Segala puji bagi Allah" },
         { ar: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", ms: "Tiada Tuhan selain Allah" },
-        { ar: "ٱللَّٰهُ أَكْبَرُ", ms: "Allah Maha Besar" },
         { ar: "أَسْتَغْفِرُ ٱللَّٰهَ", ms: "Aku memohon ampun kepada Allah" }
     ];
 
@@ -193,31 +191,7 @@
         }
     }
 
-    function shareApp() {
-        if (navigator.share) {
-            navigator.share({
-                title: 'QuranDigital 2025',
-                text: 'Jom gunakan aplikasi QuranDigital untuk ketenangan jiwa.',
-                url: window.location.href
-            });
-        } else {
-            alert("Sila salin pautan: " + window.location.href);
-        }
-    }
-
-    if (typeof window.deferredPrompt === 'undefined') {
-        window.deferredPrompt = null;
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        window.deferredPrompt = e;
-        const installBanner = document.getElementById('install-banner');
-        if (!window.matchMedia('(display-mode: standalone)').matches && installBanner) {
-            installBanner.style.display = 'flex';
-        }
-    });
-
+    // Jalankan zikir & splash bila load
     window.addEventListener('load', () => {
         updateDailyZikir();
         const splash = document.getElementById('splash-screen');
@@ -225,9 +199,7 @@
             setTimeout(() => {
                 splash.classList.add('fade-out');
                 sessionStorage.setItem('splashShown', 'true');
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                }, 600);
+                setTimeout(() => { splash.style.display = 'none'; }, 600);
             }, 2000);
         }
     });

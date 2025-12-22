@@ -131,21 +131,21 @@ body {
 
 
 
-/* 4. PRAYER CARD (WITH LOCAL BACKGROUND IMAGE) */
+/* 4. PRAYER CARD (DENGAN GAMBAR LATAR BELAKANG) */
 .prayer-card {
     position: relative;
-    /* Gantikan 'assets/img/mosque-bg.jpg' dengan laluan fail gambar anda */
+    /* Pastikan laluan fail gambar 'assets/masjid.jpg' adalah betul */
     background: linear-gradient(135deg, rgba(27, 67, 50, 0.88) 0%, rgba(45, 106, 79, 0.75) 100%), 
                 url('assets/masjid.jpg'); 
     background-size: cover;
     background-position: center;
-    border-radius: var(--tn-card-radius);
-    color: var(--tn-white);
+    border-radius: 20px; /* Gunakan nilai tetap jika var tidak aktif */
+    color: #ffffff;
     padding: 25px;
     margin-bottom: 25px;
     box-shadow: 0 15px 35px rgba(27, 67, 50, 0.2);
     overflow: hidden; 
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Garisan halus supaya nampak premium */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Tambahan efek "Glassmorphism" pada baki waktu azan */

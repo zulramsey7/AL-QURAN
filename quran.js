@@ -1,6 +1,6 @@
 /**
  * Fail: quran.js
- * Deskripsi: Menguruskan senarai 114 Surah dengan tema Emerald Peace
+ * Deskripsi: Menguruskan senarai 114 Surah dengan gaya Unified Tahlil/Yasin
  */
 
 let surahData = [];
@@ -10,10 +10,10 @@ async function getSurahList() {
     const surahContainer = document.getElementById('surah-container');
     const surahList = document.getElementById('surah-list');
 
-    // --- FORCE CACHE REFRESH ---
-    const cacheVersion = "v2.5"; // Versi Emerald
+    // Versi Cache untuk memastikan data sentiasa segar
+    const cacheVersion = "v3.0"; 
     if (localStorage.getItem('quran_version') !== cacheVersion) {
-        localStorage.clear();
+        localStorage.removeItem('quran_surah_list');
         localStorage.setItem('quran_version', cacheVersion);
     }
 
@@ -44,8 +44,10 @@ async function getSurahList() {
 
     function finalizeUI() {
         if (loadingSpinner) loadingSpinner.classList.add('d-none');
-        if (surahContainer) surahContainer.classList.remove('d-none');
-        if (surahList) surahList.classList.remove('d-none');
+        if (surahContainer) {
+            surahContainer.classList.remove('d-none');
+            surahContainer.classList.add('animate__animated', 'animate__fadeIn');
+        }
     }
 }
 
@@ -54,19 +56,21 @@ function displaySurah(data) {
     if (!list) return;
     list.innerHTML = '';
 
+    const noSurahEl = document.getElementById('no-surah');
+
     if (data.length === 0) {
-        document.getElementById('no-surah')?.classList.remove('d-none');
+        noSurahEl?.classList.remove('d-none');
         return;
     } else {
-        document.getElementById('no-surah')?.classList.add('d-none');
+        noSurahEl?.classList.add('d-none');
     }
 
     data.forEach((s, index) => {
         const place = s.tempatTurun === 'Mekah' ? 'Makkiyah' : 'Madaniyyah';
         
-        // Membina HTML yang sepadan dengan quran.css
+        // Membina HTML yang sepadan dengan gaya Tahlil/Yasin
         const cardHTML = `
-            <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.02}s">
+            <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.01}s">
                 <a href="surah.html?no=${s.nomor}" class="surah-card">
                     <div class="surah-no">
                         <span>${s.nomor}</span>
@@ -74,15 +78,12 @@ function displaySurah(data) {
 
                     <div class="surah-info">
                         <span class="surah-name-latin">${s.namaLatin}</span>
-                        <div class="d-flex align-items-center">
-                            <span class="type-badge">${place}</span>
-                            <span class="surah-meta ms-2">• ${s.jumlahAyat} Ayat</span>
-                        </div>
+                        <span class="surah-subtitle">${place} • ${s.jumlahAyat} AYAT</span>
                     </div>
 
                     <div class="text-end">
-                        <div class="arabic-name">${s.nama}</div>
-                        <small class="text-muted" style="font-size: 0.65rem;">${s.arti}</small>
+                        <div class="surah-name-arabic">${s.nama}</div>
+                        <small class="text-muted" style="font-size: 0.65rem; display: block; margin-top: -5px;">${s.arti}</small>
                     </div>
                 </a>
             </div>
@@ -109,5 +110,5 @@ if (searchInput) {
     });
 }
 
-// Jalankan fungsi apabila DOM sedia
+// Jalankan apabila halaman dibuka
 document.addEventListener('DOMContentLoaded', getSurahList);

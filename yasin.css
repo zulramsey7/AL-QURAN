@@ -1,148 +1,137 @@
 /* Fail: yasin.css 
-   Tema: 100% Identikal dengan Tahlil & Quran (Header Putih + Sarikata Rapi)
+   Tema: Gabungan Header Premium + Kandungan Tahlil-Style
 */
 
 :root {
     --tahlil-emerald: #2d6a4f;
+    --tahlil-dark: #1b4332;
     --tahlil-gold: #d4a373;
     --tahlil-card-bg: #ffffff;
-    --tahlil-arabic-color: #1b4332;
-    --section-spacing: 35px;
+    --tahlil-bg-soft: #f8fbf9;
 }
 
-/* --- 1. HEADER SECTION (Tajuk Surah Putih) --- */
+body {
+    background-color: var(--tahlil-bg-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1a1a1a;
+}
+
+/* --- 1. HEADER SECTION (Khas untuk Yasin - Putih & Center) --- */
 .yasin-header {
-    background: linear-gradient(135deg, var(--tahlil-emerald), #40916c);
-    padding: 40px 20px;
-    text-align: center;
-    border-radius: 0 0 35px 35px;
+    background: linear-gradient(135deg, var(--tahlil-dark), var(--tahlil-emerald));
+    padding: 45px 20px;
+    text-align: center; /* Center teks */
+    border-radius: 0 0 40px 40px;
     margin-bottom: 30px;
-    box-shadow: 0 10px 20px rgba(45, 106, 79, 0.1);
+    box-shadow: 0 10px 25px rgba(27, 67, 50, 0.15);
 }
 
 .yasin-header h1 {
     font-family: 'Amiri', serif !important;
     color: #ffffff !important; /* Tulisan Putih */
-    font-size: 3.2rem;
-    margin: 0;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+    font-size: 3.5rem;
+    margin-bottom: 5px;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .yasin-header p {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9) !important; /* Tulisan Putih Halus */
+    font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-top: 10px;
 }
 
-/* --- 2. KAD AYAT (Tahlil Style) --- */
-.tahlil-item {
+/* --- 2. TAHLIL ITEM CONTAINER (Kandungan Ayat) --- */
+.yasin-item, .tahlil-item {
     background: var(--tahlil-card-bg);
-    border-radius: 24px; 
-    padding: 30px;
-    margin-bottom: var(--section-spacing);
-    border: 1px solid rgba(45, 106, 79, 0.06);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
 
-.tahlil-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(45, 106, 79, 0.08);
+/* Badge Nombor (Gaya Diamond) */
+.tahlil-no {
+    width: 35px;
+    height: 35px;
+    background: var(--tahlil-emerald);
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transform: rotate(45deg);
+    margin-bottom: 25px;
+    margin-left: 8px;
 }
 
-/* Badge Ayat */
-.tahlil-badge {
-    display: inline-flex;
-    font-size: 0.7rem;
-    padding: 5px 15px;
-    font-weight: 800;
-    border-radius: 50px;
-    background: linear-gradient(135deg, var(--tahlil-emerald), #40916c);
-    color: #ffffff;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.tahlil-no span {
+    transform: rotate(-45deg);
+    display: block;
 }
 
-/* --- 3. TEKS DISPLAY --- */
+/* --- 3. TULISAN ARAB, LATIN & TERJEMAHAN (Tahlil Style) --- */
 .arabic-text {
     font-family: 'Amiri', serif !important;
-    font-size: 2.3rem; 
-    line-height: 2.8;
+    font-size: 2rem;
+    line-height: 2.5;
     direction: rtl;
     text-align: right;
-    margin-bottom: 25px;
-    color: var(--tahlil-arabic-color);
-    word-spacing: 6px;
+    color: var(--tahlil-dark);
+    margin-bottom: 20px;
 }
 
-/* Sarikata Latin (Kekal Kecil) */
 .latin-text {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-style: italic;
     color: var(--tahlil-emerald);
-    margin-bottom: 15px;
-    font-size: 0.88rem !important;
-    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
     line-height: 1.6;
-    border-left: 3.5px solid var(--tahlil-gold); 
-    padding-left: 18px;
+    border-left: 3px solid var(--tahlil-gold);
+    padding-left: 15px;
+    display: block;
 }
 
-/* Sarikata Terjemahan (Kekal Kecil) */
 .translation-text {
-    color: #4a4e51;
-    font-size: 0.85rem !important;
-    padding: 15px 20px;
-    line-height: 1.7;
+    color: #5c636a;
+    font-size: 0.85rem;
+    line-height: 1.6;
     text-align: left;
-    background-color: #f9fbf9; 
-    border-radius: 14px;
-    border: 1px solid rgba(45, 106, 79, 0.03);
+    padding-top: 15px;
+    border-top: 1px solid #f1f1f1;
 }
 
-/* --- 4. BUTTONS & ACCENTS --- */
-.play-btn {
-    transition: all 0.3s ease;
-    border-width: 1.5px !important;
-    font-size: 0.75rem;
-    font-weight: 600;
+/* --- 4. DARK MODE SUPPORT --- */
+body.dark-mode .yasin-header {
+    background: linear-gradient(135deg, #0d1a14, #1b4332);
 }
 
-.tahlil-item::after {
-    content: "❦";
-    position: absolute;
-    bottom: 10px;
-    right: 25px;
-    font-size: 1.2rem;
-    color: rgba(212, 163, 115, 0.15);
+body.dark-mode .yasin-item, 
+body.dark-mode .tahlil-item {
+    background: #1e2b24;
+    border-color: #2d3e35;
 }
 
-/* --- 5. RESPONSIVE (Mobile) --- */
-@media (max-width: 480px) {
-    .yasin-header {
-        padding: 30px 15px;
-    }
-    .yasin-header h1 {
-        font-size: 2.5rem;
-    }
-    .tahlil-item {
-        padding: 22px;
-        margin-bottom: 25px;
-    }
-    .arabic-text {
-        font-size: 1.95rem;
-        line-height: 2.4;
-    }
-    .latin-text {
-        font-size: 0.85rem !important;
-    }
-    .translation-text {
-        font-size: 0.8rem !important;
-    }
+body.dark-mode .arabic-text {
+    color: #ffffff;
+}
+
+body.dark-mode .translation-text {
+    border-color: rgba(255,255,255,0.1);
+    color: #adb5bd;
+}
+
+/* --- 5. RESPONSIVE --- */
+@media (max-width: 576px) {
+    .yasin-header h1 { font-size: 2.8rem; }
+    .arabic-text { font-size: 1.75rem; }
+    .yasin-item, .tahlil-item { padding: 20px; }
 }

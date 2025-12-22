@@ -1,150 +1,143 @@
-/* Fail: solat.css */
+/* --- SOLAT CSS - UNIFIED WITH TAHLIL & QURAN STYLE --- */
+
 :root {
-  --primary-green: #2d6a4f;
-  --dark-green: #1b4332;
-  --soft-green: #f1f8f4;
-  --gold: #ffc107;
-  --dark-text: #1a1a1a;
-  --muted-text: #6c757d;
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
-  --glass: rgba(255, 255, 255, 0.15);
-  --radius-lg: 24px;
-  --radius-md: 16px;
+    --solat-emerald: #2d6a4f;
+    --solat-dark: #1b4332;
+    --solat-gold: #d4a373;
+    --solat-card-bg: #ffffff;
+    --solat-bg-soft: #f8fbf9;
+    --solat-glass: rgba(255, 255, 255, 0.15);
 }
 
 [v-cloak] { display: none; }
 
 body {
-  background-color: #f8fbf9;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--dark-text);
-  overflow-x: hidden;
-  -webkit-tap-highlight-color: transparent;
+    background-color: var(--solat-bg-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1a1a1a;
 }
 
-/* Hero Section */
-.prayer-hero-v2 {
-  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%);
-  background-size: 200% 200%;
-  animation: gradientFlow 8s ease infinite;
-  color: white;
-  padding: 95px 20px 40px; 
-  border-radius: 0 0 40px 40px;
-  position: relative;
-  box-shadow: 0 10px 25px rgba(27, 67, 50, 0.15);
-}
-
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* --- 1. PRAYER CARD HEADER (Sama seperti Tahlil/Quran) --- */
+/* Gaya ini sudah ada dalam style.css, tetapi kita pastikan ia cantik di solat.html */
+.prayer-card {
+    background-size: cover;
+    background-position: center;
+    border-radius: 20px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 10px 25px rgba(27, 67, 50, 0.15);
 }
 
 .clock-text {
-  font-weight: 800;
-  letter-spacing: -2px;
-  text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-weight: 800;
+    letter-spacing: -2px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.countdown-pill {
-  background: var(--glass);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 8px 20px;
-  border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: inline-block;
-}
-
-/* Prayer Cards List */
+/* --- 2. PRAYER LIST ITEMS (Gaya Tahlil Item) --- */
 .prayer-card-item {
-  background: white;
-  padding: 14px 18px;
-  border-radius: var(--radius-md);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid rgba(0,0,0,0.04);
-  transition: all 0.3s ease;
-  margin-bottom: 8px;
+    background: var(--solat-card-bg);
+    border-radius: 15px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
 }
 
 .active-now {
-  background: var(--soft-green) !important;
-  border: 1.5px solid var(--primary-green) !important;
-  transform: scale(1.01);
-  box-shadow: var(--shadow-sm);
+    background: #e9f5ee !important;
+    border: 1.5px solid var(--solat-emerald) !important;
+    transform: scale(1.02);
 }
 
 .prayer-icon {
-  width: 40px;
-  height: 40px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-green);
-  font-size: 1.1rem;
+    width: 38px;
+    height: 38px;
+    background: var(--solat-bg-soft);
+    color: var(--solat-emerald);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
 }
 
-/* New Qibla Redirect Card */
-.card[href="qiblat.html"] {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card[href="qiblat.html"]:active {
-  transform: scale(0.98);
-}
-
-.bg-success.bg-opacity-10 {
-  background-color: rgba(45, 106, 79, 0.1) !important;
-}
-
-/* Azan Overlay */
-.stop-azan-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Table Bulanan */
+/* --- 3. JADUAL BULANAN TABLE --- */
 .table-responsive {
-  max-height: 400px;
-  overflow-y: auto;
+    border-radius: 15px;
 }
 
 .table thead th {
-  background: #f1f3f2;
-  color: var(--dark-green);
-  font-weight: 700;
-  font-size: 0.7rem;
-  padding: 12px 8px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+    background: #f1f3f2 !important;
+    color: var(--solat-dark) !important;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 15px 10px;
 }
 
-/* Utilities */
-.cursor-pointer { cursor: pointer; }
+.table tbody td {
+    padding: 12px 10px;
+    font-size: 0.85rem;
+    border-color: rgba(0,0,0,0.02);
+}
 
-/* Responsive Fixes */
-@media (max-width: 768px) {
-  .display-1 { font-size: 3.2rem; }
-  .prayer-hero-v2 { padding-top: 100px; padding-bottom: 30px; }
-  
-  .prayer-card-item {
-    padding: 12px 15px;
-  }
-  
-  .table thead th {
-    font-size: 0.6rem;
-  }
+.table-success {
+    background-color: rgba(45, 106, 79, 0.1) !important;
+    color: var(--solat-dark) !important;
+}
+
+/* --- 4. AZAN OVERLAY --- */
+.stop-azan-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- 5. DARK MODE SUPPORT --- */
+body.dark-mode {
+    background-color: #121212;
+}
+
+body.dark-mode .prayer-card-item {
+    background: #1e2b24;
+    border-color: #2d3e35;
+    color: white;
+}
+
+body.dark-mode .prayer-card-item .text-dark {
+    color: white !important;
+}
+
+body.dark-mode .table {
+    background: #1e2b24;
+    color: #adb5bd;
+}
+
+body.dark-mode .table thead th {
+    background: #2d3e35 !important;
+    color: white !important;
+}
+
+/* --- 6. RESPONSIVE --- */
+@media (max-width: 576px) {
+    .clock-text {
+        font-size: 3rem !important;
+    }
+    
+    .prayer-card-item {
+        padding: 14px 16px;
+    }
 }
