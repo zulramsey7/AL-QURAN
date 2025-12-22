@@ -8,27 +8,37 @@
     --tn-bg-soft: #f8fbf9;
     --tn-text-main: #2b2d42;
     --tn-text-muted: #6c757d;
+    --tn-border: rgba(0, 0, 0, 0.05);
 }
 
 body {
     background-color: var(--tn-bg-soft);
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--tn-text-main);
+    line-height: 1.6;
 }
 
 /* --- 1. HEADER & PLAYER CARD (STYLE MASJID) --- */
 .prayer-card-header {
-    background: linear-gradient(rgba(27, 67, 50, 0.8), rgba(27, 67, 50, 0.9)), 
+    background: linear-gradient(rgba(27, 67, 50, 0.85), rgba(27, 67, 50, 0.95)), 
                 url('assets/masjid.jpg');
     background-size: cover;
     background-position: center;
-    padding: 110px 20px 80px;
+    padding: 120px 20px 100px;
     text-align: center;
     border-radius: 0 0 40px 40px;
     color: white;
-    margin-bottom: -30px; /* Bagi kad bawah overlap sikit */
     position: relative;
     z-index: 1;
+}
+
+/* Penyelarasan untuk Top Bar agar tidak tenggelam */
+.top-bar-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 15px;
 }
 
 /* --- 2. AYAT/PRAYER CARD ITEM (KAD TAHLIL) --- */
@@ -37,20 +47,29 @@ body {
     border-radius: 24px;
     padding: 30px;
     margin-bottom: 20px;
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--tn-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     position: relative;
+    z-index: 2;
 }
 
 .prayer-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Kontainer utama untuk kad tahlil supaya overlap dengan header */
+#tahlil-content {
+    margin-top: -50px;
+    padding: 0 20px 50px;
+    position: relative;
+    z-index: 10;
 }
 
 /* --- 3. TULISAN ARAB --- */
 .arabic-text {
-    font-family: 'Amiri', 'Uthman-Taha', serif !important;
+    font-family: 'Amiri', serif !important;
     font-size: 2.2rem;
     line-height: 2.8;
     direction: rtl;
@@ -66,31 +85,33 @@ body {
     color: var(--tn-emerald);
     font-size: 0.95rem;
     line-height: 1.6;
-    border-left: 3px solid var(--tn-gold);
-    padding-left: 15px;
-    margin-bottom: 15px;
+    border-left: 3.5px solid var(--tn-gold);
+    padding-left: 18px;
+    margin-bottom: 18px;
     display: block;
     font-style: italic;
+    font-weight: 500;
 }
 
 /* --- 5. TERJEMAHAN --- */
 .small.text-dark {
     color: var(--tn-text-muted) !important;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     line-height: 1.7;
     text-align: left;
-    padding-top: 15px;
+    padding-top: 18px;
     border-top: 1px solid #f1f3f5;
     display: block;
+    opacity: 0.9;
 }
 
 /* --- 6. BADGE REPEAT & TITLE --- */
 .text-success.fw-bold {
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
+    letter-spacing: 1.5px;
     color: var(--tn-emerald) !important;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     display: block;
 }
 
@@ -99,26 +120,29 @@ body {
     color: var(--tn-emerald) !important;
     font-weight: 700;
     padding: 6px 14px;
-    border-radius: 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    border: 1px solid rgba(45, 106, 79, 0.1);
 }
 
 /* --- 7. AUDIO PLAYER CUSTOM --- */
 audio {
-    filter: sepia(20%) saturate(70%) hue-rotate(90deg); /* Biar warna audio match tema hijau */
-    height: 35px;
-    border-radius: 10px;
+    filter: sepia(20%) saturate(80%) hue-rotate(100deg) brightness(95%);
+    height: 38px;
+    border-radius: 12px;
+    width: 100%;
 }
 
 /* --- 8. DARK MODE --- */
 body.dark-mode {
-    background-color: #121212;
+    background-color: #121b16;
     color: #e0e0e0;
 }
 
 body.dark-mode .prayer-card {
-    background: #1e1e1e;
-    border-color: #2d2d2d;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    background: #1e2621;
+    border-color: #2d3831;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 body.dark-mode .arabic-text {
@@ -127,26 +151,36 @@ body.dark-mode .arabic-text {
 
 body.dark-mode .small.text-dark {
     color: #adb5bd !important;
-    border-top-color: #2d2d2d;
+    border-top-color: rgba(255,255,255,0.08);
 }
 
 body.dark-mode .italic {
     color: #81c784;
+    border-left-color: var(--tn-gold);
+}
+
+body.dark-mode .badge.bg-success.bg-opacity-10 {
+    background-color: rgba(45, 106, 79, 0.2) !important;
+    color: #81c784 !important;
 }
 
 /* --- 9. RESPONSIVE --- */
 @media (max-width: 576px) {
     .arabic-text {
-        font-size: 1.85rem;
-        line-height: 2.5;
+        font-size: 1.9rem;
+        line-height: 2.6;
     }
     
     .prayer-card {
-        padding: 22px;
+        padding: 24px;
         border-radius: 20px;
     }
 
     .prayer-card-header {
-        padding: 100px 15px 70px;
+        padding: 110px 15px 80px;
+    }
+
+    #tahlil-content {
+        margin-top: -40px;
     }
 }
