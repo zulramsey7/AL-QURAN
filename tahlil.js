@@ -1,41 +1,42 @@
 /**
  * Tahlil.js - QuranDigital2025
- * Status: Fixed Translation API (Bahasa Melayu)
+ * Status: Updated with High Stability Translation API
  */
 
 const tahlilContent = document.getElementById("tahlil-content");
 const loader = document.getElementById("loader");
 const API = "https://api.alquran.cloud/v1/ayah";
 
-// --- 1. FUNGSI PENGAMBILAN DATA ---
+// --- 1. FUNGSI PENGAMBILAN DATA (DENGAN STABILITI TINGGI) ---
 
 async function getAyahData(surah, ayah) {
     try {
-        // Menggunakan ms.malay untuk kestabilan terjemahan Bahasa Melayu
+        // Menggunakan ms.basmeih kerana ia edisi terjemahan Malaysia paling stabil di API ini
         const [resAr, resLat, resMs] = await Promise.all([
             fetch(`${API}/${surah}:${ayah}`),
             fetch(`${API}/${surah}:${ayah}/en.transliteration`),
-            fetch(`${API}/${surah}:${ayah}/ms.malay`) 
+            fetch(`${API}/${surah}:${ayah}/ms.basmeih`) 
         ]);
         
-        const [dataAr, dataLat, dataMs] = await Promise.all([
-            resAr.json(),
-            resLat.json(),
-            resMs.json()
-        ]);
-        
-        // Log untuk debugging (boleh buang selepas confirm)
-        console.log(`Loading ${surah}:${ayah}`, dataMs);
+        const dataAr = await resAr.json();
+        const dataLat = await resLat.json();
+        const dataMs = await resMs.json();
+
+        // Jika API terjemahan gagal atau memulangkan teks Arab semula
+        let translation = dataMs.data.text;
+        if (!translation || translation.includes("Allah") && translation.length < 10 && dataAr.data.text.length > 20) {
+             translation = "Terjemahan sedang dimuatkan...";
+        }
 
         return { 
             ar: dataAr.data.text, 
             lat: dataLat.data.text, 
-            // Membersihkan teks terjemahan daripada nombor ayat
-            ms: dataMs.data.text.replace(/^\(\d+\)\s*/, '') 
+            // Membersihkan teks daripada nombor ayat (1), (2) dsb
+            ms: translation.replace(/^\(\d+\)\s*/, '') 
         };
     } catch (error) {
-        console.error("Gagal ambil data:", error);
-        return { ar: "", lat: "", ms: "Terjemahan tidak tersedia." };
+        console.error("Gagal ambil data untuk", surah, ayah, error);
+        return { ar: "", lat: "", ms: "Sila periksa sambungan internet untuk terjemahan." };
     }
 }
 
@@ -51,13 +52,13 @@ async function getAyahAudio(surah, ayah) {
 
 function section(title, arabic, latin = "", translation = "", repeat = "", audio = "") {
     return `
-    <div class="prayer-card mb-3 animate__animated animate__fadeInUp">
+    <div class="prayer-card mb-4 animate__animated animate__fadeInUp">
         <h6 class="text-success fw-bold">${title}</h6>
         <p class="arabic-text">${arabic}</p>
         ${latin ? `<p class="italic">${latin}</p>` : ""}
         ${translation ? `<p class="small text-dark">"${translation}"</p>` : ""}
         ${repeat ? `<span class="badge bg-success bg-opacity-10 text-success mb-2">${repeat}</span>` : ""}
-        ${audio ? `<audio controls class="w-100 mt-2"><source src="${audio}" type="audio/mpeg"></audio>` : ""}
+        ${audio ? `<audio controls class="w-100 mt-2 shadow-sm"><source src="${audio}" type="audio/mpeg"></audio>` : ""}
     </div>`;
 }
 
@@ -149,7 +150,7 @@ async function loadTahlil() {
 
     } catch (err) {
         console.error(err);
-        loader.innerHTML = "Ralat memuatkan data.";
+        loader.innerHTML = "<p class='text-danger'>Ralat memuatkan data. Sila refresh halaman.</p>";
     }
 }
 
